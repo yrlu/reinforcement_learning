@@ -33,9 +33,11 @@ class GridWorld(mdp.MDP):
     self.trans_prob = trans_prob
 
   def show_grid(self):
-    print self.grid
+    for i in range(len(self.grid)):
+      print self.grid[i]
 
-  def get_gird(self):
+
+  def get_grid(self):
     return self.grid
 
   def get_states(self):

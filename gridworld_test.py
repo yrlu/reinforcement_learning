@@ -12,11 +12,11 @@ class GridWorldTest(unittest.TestCase):
     self.gw_non_deterministic = gridworld.GridWorld(grid, {(0,4),(1,4)}, 0.8)
 
   def test_grid_dims(self):
-    self.assertEqual(len(self.gw_deterministic.get_gird()), 3)
-    self.assertEqual(len(self.gw_deterministic.get_gird()[0]), 5)
+    self.assertEqual(len(self.gw_deterministic.get_grid()), 3)
+    self.assertEqual(len(self.gw_deterministic.get_grid()[0]), 5)
 
   def test_grid_values(self):
-    grid_tmp = self.gw_deterministic.get_gird()
+    grid_tmp = self.gw_deterministic.get_grid()
     for i in range(len(grid_tmp)):
       for j in range(len(grid_tmp[0])):
         self.assertEqual(self.grid[i][j], grid_tmp[i][j])

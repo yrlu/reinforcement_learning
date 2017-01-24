@@ -5,7 +5,6 @@
 # 
 # MIT License
 
-
 class MDP:
 
   def get_states(self):
