@@ -1,14 +1,16 @@
 # Gridworld environment based on mdp.py
 # Gridworld provides a basic environment for RL agents to interact with
-# 
+#
 # ---
 # @author Yiren Lu
 # @email luyiren [at] seas [dot] upenn [dot] edu
-# 
+#
 # MIT License
 
 import mdp
 import numpy as np
+import unittest
+
 
 class GridWorld(mdp.MDP):
   """
@@ -26,14 +28,15 @@ class GridWorld(mdp.MDP):
     self.width = len(grid[0])
     self.terminals = terminals
     self.grid = grid
-    self.neighbors = [(0,1),(0,-1),(1,0),(-1,0),(0,0)]
-    self.actions =   [  0,    1,    2,    3,    4]
+    self.neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)]
+    self.actions = [0, 1, 2, 3, 4]
     self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
     #                   right,    left,     down,     up
     # self.action_nei = {0: (0,1), 1:(0,-1), 2:(1,0), 3:(-1,0)}
 
     # If the mdp is deterministic, the transition probability of taken a certain action should be 1
-    # otherwise < 1, the rest of the probability are equally spreaded onto other neighboring states.
+    # otherwise < 1, the rest of the probability are equally spreaded onto
+    # other neighboring states.
     self.trans_prob = trans_prob
 
   def show_grid(self):
@@ -48,7 +51,9 @@ class GridWorld(mdp.MDP):
     returns
       a list of all states
     """
-    return filter(lambda x: self.grid[x[0]][x[1]] != 'x', [(i,j) for i in range(self.height) for j in range(self.width)])
+    return filter(
+        lambda x: self.grid[x[0]][x[1]] != 'x',
+        [(i, j) for i in range(self.height) for j in range(self.width)])
 
   def get_actions(self, state):
     """
@@ -60,8 +65,9 @@ class GridWorld(mdp.MDP):
     for i in range(len(self.actions)):
       inc = self.neighbors[i]
       a = self.actions[i]
-      nei_s = (state[0]+inc[0], state[1]+inc[1])
-      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[1] >= 0 and nei_s[1] < self.width and self.grid[nei_s[0]][nei_s[1]] != 'x':
+      nei_s = (state[0] + inc[0], state[1] + inc[1])
+      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[1] >= 0 and nei_s[
+              1] < self.width and self.grid[nei_s[0]][nei_s[1]] != 'x':
         res.append((a, nei_s))
     return res
 
@@ -86,26 +92,29 @@ class GridWorld(mdp.MDP):
     """
     if self.trans_prob == 1:
       inc = self.neighbors[action]
-      nei_s = (state[0]+inc[0], state[1]+inc[1])
-      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[1] >= 0 and nei_s[1] < self.width:
+      nei_s = (state[0] + inc[0], state[1] + inc[1])
+      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[
+              1] >= 0 and nei_s[1] < self.width:
         return [(nei_s, 1)]
       else:
         return [(state, 1)]
     else:
       action_states = self.get_actions(state)
       inc = self.neighbors[action]
-      nei_s = (state[0]+inc[0], state[1]+inc[1])
+      nei_s = (state[0] + inc[0], state[1] + inc[1])
       res = []
-      
-      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[1] >= 0 and nei_s[1] < self.width:
+
+      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[
+              1] >= 0 and nei_s[1] < self.width:
         for i in range(len(action_states)):
-          if(action_states[i][0] == action):
+          if action_states[i][0] == action:
             res.append((action_states[i][1], self.trans_prob))
           else:
-            res.append((action_states[i][1], (1-self.trans_prob)/(len(action_states)-1)))
+            res.append(
+                (action_states[i][1], (1 - self.trans_prob) / (len(action_states) - 1)))
       else:
         for i in range(len(action_states)):
-          res.append((action_states[i][1], 1/len(action_states)))
+          res.append((action_states[i][1], 1 / len(action_states)))
       return res
 
   def is_terminal(self, state):
@@ -123,11 +132,11 @@ class GridWorld(mdp.MDP):
     prints a nice layout of the values in grid
     """
     value_grid = np.zeros((len(self.grid), len(self.grid[0])))
-    
+
     for k in agent.values:
       value_grid[k[0]][k[1]] = float(agent.values[k])
 
-    row_format ='{:>20.4}' * (len(value_grid) + 1)
+    row_format = '{:>20.4}' * (len(value_grid) + 1)
     for row in value_grid:
       print row_format.format(*row)
 
@@ -138,84 +147,11 @@ class GridWorld(mdp.MDP):
     policy_grid = np.chararray((len(self.grid), len(self.grid[0])))
 
     for k in agent.values:
-      if self.is_terminal((k[0],k[1])) or self.grid[k[0]][k[1]] == 'x':
+      if self.is_terminal((k[0], k[1])) or self.grid[k[0]][k[1]] == 'x':
         policy_grid[k[0]][k[1]] = '-'
       else:
-        policy_grid[k[0]][k[1]] = self.dirs[agent.get_action((k[0],k[1]))]
+        policy_grid[k[0]][k[1]] = self.dirs[agent.get_action((k[0], k[1]))]
 
-    row_format ='{:>20}' * (len(policy_grid) + 1)
+    row_format = '{:>20}' * (len(policy_grid) + 1)
     for row in policy_grid:
       print row_format.format(*row)
-
-import unittest
-
-class GridWorldTest(unittest.TestCase):
-  """
-  Unit test for grid world
-  """
-
-  def setUp(self):
-    # grid = [['0','0','0','0','0'],['0','0','0','0','0'],['10','10','0','0','0']]
-    grid = [['0','0','0','0','10'],
-            ['0','x','0','0','-10'],
-            ['0','0','0','0','0']]
-    # grid = [[0,0,0,0,10],
-            # [0,0,0,0,-10],
-            # [0,0,0,0,0]]
-    self.grid = grid
-    self.gw_deterministic = GridWorld(grid, {(0,4),(1,4)}, 1)
-    self.gw_non_deterministic = GridWorld(grid, {(0,4),(1,4)}, 0.8)
-
-  def test_grid_dims(self):
-    self.assertEqual(len(self.gw_deterministic.get_grid()), 3)
-    self.assertEqual(len(self.gw_deterministic.get_grid()[0]), 5)
-
-  def test_grid_values(self):
-    grid_tmp = self.gw_deterministic.get_grid()
-    for i in range(len(grid_tmp)):
-      for j in range(len(grid_tmp[0])):
-        self.assertEqual(self.grid[i][j], grid_tmp[i][j])
-
-  def test_get_states(self):
-    self.assertEqual(len(self.gw_deterministic.get_states()), 14)
-
-  def test_get_actions(self):
-    self.assertEqual(len(self.gw_deterministic.get_actions((0,0))), 3);
-    self.assertEqual(len(self.gw_deterministic.get_actions((2,0))), 3);
-    self.assertEqual(len(self.gw_deterministic.get_actions((2,4))), 3);
-    self.assertEqual(len(self.gw_deterministic.get_actions((0,4))), 3);
-    self.assertEqual(len(self.gw_deterministic.get_actions((1,0))), 3);
-    
-  def test_get_reward(self):
-    self.assertEqual(self.gw_deterministic.get_reward((0,0)), 0);
-    self.assertEqual(self.gw_deterministic.get_reward((0,4)), 10.0);
-    self.assertEqual(self.gw_deterministic.get_reward((1,4)), -10.0);
-
-  def test_trans_prob_deter(self):
-    self.assertEqual(len(self.gw_deterministic.get_transition_states_and_probs((0,0),0)), 1)
-    self.assertEqual(self.gw_deterministic.get_transition_states_and_probs((0,0),0)[0][0], (0,1))
-    self.assertEqual(self.gw_deterministic.get_transition_states_and_probs((0,0),0)[0][1], 1)
-
-    self.assertEqual(len(self.gw_deterministic.get_transition_states_and_probs((0,0),1)), 1)
-    self.assertEqual(self.gw_deterministic.get_transition_states_and_probs((0,0),1)[0][0], (0,0))
-    self.assertEqual(self.gw_deterministic.get_transition_states_and_probs((0,0),1)[0][1], 1)
-
-  def test_trans_prob_non_deter(self):
-    self.assertEqual(len(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)), 3)
-    self.assertEqual(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[0][0], (0,1))
-    self.assertEqual(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[0][1], 0.8)
-    # print self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)
-
-    self.assertTrue(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[1][1]-0.1 < 1e-5)
-    self.assertTrue(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[2][1]-0.1 < 1e-5)
-
-    self.assertEqual(len(self.gw_non_deterministic.get_transition_states_and_probs((1,0),0)), 3)
-    # self.assertEqual(self.gw_non_deterministic.get_transition_states_and_probs((1,0),0)[0][0], (0,1))
-    # self.assertEqual(self.gw_non_deterministic.get_transition_states_and_probs((1,0),0)[0][1], 0.8)
-
-  def test_terminals(self):
-    self.assertTrue(self.gw_deterministic.is_terminal((0,4)))
-    self.assertTrue(self.gw_deterministic.is_terminal((1,4)))
-
-if __name__ == '__main__':
-  unittest.main()

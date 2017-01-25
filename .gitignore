@@ -1,3 +1,5 @@
 .DS_Store
 .coverage
 *.pyc
+run_tests.sh
+run_format.sh
