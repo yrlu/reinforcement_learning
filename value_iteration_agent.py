@@ -8,7 +8,6 @@
 # MIT License
 
 import agent
-import pdb
 
 class ValueIterationAgent(agent.Agent):
 
@@ -26,15 +25,13 @@ class ValueIterationAgent(agent.Agent):
     states = mdp.get_states()
     # init values
     self.values = {}
-    for i in range(len(self.mdp.grid)):
-      for j in range(len(self.mdp.grid[0])):
-        if mdp.is_terminal((i,j)):
-          self.values[(i,j)] = mdp.get_reward((i,j))
-        else:
-          self.values[(i,j)] = 0
-    # for s in states:
-      # self.values[s] = 0
-    
+
+    for s in states:
+      if mdp.is_terminal(s):
+        self.values[s] = mdp.get_reward(s)
+      else:
+        self.values[s] = 0
+
     # useful functions of the mdp:
     #   mdp.get_states()                                      {s} 
     #   mdp.get_actions(state)                                {a}
@@ -48,7 +45,6 @@ class ValueIterationAgent(agent.Agent):
 
       for s in states:
         if mdp.is_terminal(s):
-          # self.values[s] = mdp.get_reward(s)
           continue
 
         actions = [a_s[0] for a_s in mdp.get_actions(s)]
@@ -67,6 +63,8 @@ class ValueIterationAgent(agent.Agent):
       a dictionary {<state, value>}
     """
     return self.values
+
+  
 
 
   def get_action(self, state):
@@ -101,17 +99,18 @@ class ValueIterationAgentTest(unittest.TestCase):
     self.gw_deterministic = gridworld.GridWorld(grid, {(0,3),(1,3)}, 1)
     self.gw_non_deterministic = gridworld.GridWorld(grid, {(0,3),(1,3)}, 0.8)
 
-    self.agent = ValueIterationAgent(self.gw_non_deterministic, 0.9, 4)
+    self.agent = ValueIterationAgent(self.gw_non_deterministic, 0.9, 100)
     self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
 
   def test_values(self):
-    values = self.agent.get_values()
-    for i in range(len(self.grid)):
-      print [values[(i, j)] for j in range(len(self.grid[0]))]
+    print 
+    self.gw_non_deterministic.display_value_grid(self.agent)
 
   def test_actions(self):
-    for i in range(len(self.grid)):
-      print [self.dirs[self.agent.get_action((i,j))] for j in range(len(self.grid[0]))]
+    print 
+    self.gw_non_deterministic.display_policy_grid(self.agent)
+    # for i in range(len(self.grid)):
+      # print [self.dirs[self.agent.get_action((i,j))] for j in range(len(self.grid[0]))]
 
 if __name__ == '__main__':
   unittest.main()

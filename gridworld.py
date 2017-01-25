@@ -8,6 +8,7 @@
 # MIT License
 
 import mdp
+import numpy as np
 
 class GridWorld(mdp.MDP):
   """
@@ -27,6 +28,7 @@ class GridWorld(mdp.MDP):
     self.grid = grid
     self.neighbors = [(0,1),(0,-1),(1,0),(-1,0),(0,0)]
     self.actions =   [  0,    1,    2,    3,    4]
+    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
     #                   right,    left,     down,     up
     # self.action_nei = {0: (0,1), 1:(0,-1), 2:(1,0), 3:(-1,0)}
 
@@ -37,7 +39,6 @@ class GridWorld(mdp.MDP):
   def show_grid(self):
     for i in range(len(self.grid)):
       print self.grid[i]
-
 
   def get_grid(self):
     return self.grid
@@ -117,7 +118,34 @@ class GridWorld(mdp.MDP):
     else:
       return False
 
+  def display_value_grid(self, agent):
+    """
+    prints a nice layout of the values in grid
+    """
+    value_grid = np.zeros((len(self.grid), len(self.grid[0])))
+    
+    for k in agent.values:
+      value_grid[k[0]][k[1]] = float(agent.values[k])
 
+    row_format ='{:>20.4}' * (len(value_grid) + 1)
+    for row in value_grid:
+      print row_format.format(*row)
+
+  def display_policy_grid(self, agent):
+    """
+    prints a nice layout of the policy in grid
+    """
+    policy_grid = np.chararray((len(self.grid), len(self.grid[0])))
+
+    for k in agent.values:
+      if self.is_terminal((k[0],k[1])) or self.grid[k[0]][k[1]] == 'x':
+        policy_grid[k[0]][k[1]] = '-'
+      else:
+        policy_grid[k[0]][k[1]] = self.dirs[agent.get_action((k[0],k[1]))]
+
+    row_format ='{:>20}' * (len(policy_grid) + 1)
+    for row in policy_grid:
+      print row_format.format(*row)
 
 import unittest
 
@@ -178,8 +206,8 @@ class GridWorldTest(unittest.TestCase):
     self.assertEqual(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[0][1], 0.8)
     # print self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)
 
-    self.assertTrue(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[1][1]-0.1 < 0.0001)
-    self.assertTrue(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[2][1]-0.1 < 0.0001)
+    self.assertTrue(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[1][1]-0.1 < 1e-5)
+    self.assertTrue(self.gw_non_deterministic.get_transition_states_and_probs((0,0),0)[2][1]-0.1 < 1e-5)
 
     self.assertEqual(len(self.gw_non_deterministic.get_transition_states_and_probs((1,0),0)), 3)
     # self.assertEqual(self.gw_non_deterministic.get_transition_states_and_probs((1,0),0)[0][0], (0,1))
