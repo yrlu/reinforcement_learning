@@ -5,22 +5,27 @@
 - OpenAI Gym
 - Numpy
 
+#### Unit Tests
+
+- Files: `test_*.py`
+- Run unit test for [class]:
+
+`python test_[class].py`
+
+- Test coverage (requires `coverage` and `nose`):
+
+`nosetests --with-coverage --cover-inclusive --cover-package=.`
+
 
 #### Implemented Environments
 
-- mdp
-
-Abstract class of the environments
-
-- Gridworld
-
-Gridworld based on mdp
+- `mdp.py`: Abstract class of the environments
+- `gridworld.py`: Gridworld based on mdp
 
 #### Implemented Agents
 
 ##### Dynamic Programming MDP Solver
 
-- Policy evaluation
-- Value Iteration
+- `value_iteration_agent.py`: value iteration & policy evaluation
 
 
