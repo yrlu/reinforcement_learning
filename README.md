@@ -27,3 +27,10 @@
 
 `nosetests --with-coverage --cover-inclusive --cover-package=.`
 
+### Math
+
+Check out my [blog post: Learn Reinforcement Learning by Coding (in progress)](http://blog.luyiren.me/posts/reinforcement-learning-notes.html)
+
+### MIT License
+
+
