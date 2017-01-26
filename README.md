@@ -1,22 +1,22 @@
 ## Implementations of Reinforcement Learning algorithms in Python
 
-#### Dependencies
+### Dependencies
 
 - OpenAI Gym
 - Numpy
 
-#### Implemented Environments
+### Implemented Environments
 
 - `mdp.py`: Abstract class of the environments
 - `gridworld.py`: Gridworld based on mdp
 
-#### Implemented Agents
+### Implemented Agents
 
 ##### Dynamic Programming MDP Solver
 
 - `value_iteration_agent.py`: value iteration & policy evaluation
 
-#### Unit Tests
+### Unit Tests
 
 - Files: `test_*.py`
 - Run unit test for [class]:
