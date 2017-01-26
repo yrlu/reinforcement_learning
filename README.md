@@ -10,7 +10,7 @@
 
 - mdp
 
-Base class of the environments
+Abstract class of the environments
 
 - Gridworld
 
@@ -21,6 +21,6 @@ Gridworld based on mdp
 ##### Dynamic Programming MDP Solver
 
 - Policy evaluation
-- Value Iteration Agent
+- Value Iteration
 
 
