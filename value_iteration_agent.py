@@ -57,7 +57,7 @@ class ValueIterationAgent(agent.Agent):
                      values_tmp[P_s1sa[s1_id][0]]) for s1_id in range(len(P_s1sa))]))
         # V(s) = max_{a} \sum_{s'} P(s'| s, a) (R(s,a,s') + \gamma V(s'))
         self.values[s] = max(v_s)
-
+        
   def get_values(self):
     """
     returns
