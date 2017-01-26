@@ -18,8 +18,9 @@ Gridworld based on mdp
 
 #### Implemented Agents
 
-##### Model-based Dynamic Programming Agents
+##### Dynamic Programming MDP Solver
 
+- Policy evaluation
 - Value Iteration Agent
 
 

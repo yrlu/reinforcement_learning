@@ -8,6 +8,7 @@
 # MIT License
 
 import agent
+import math
 
 
 class ValueIterationAgent(agent.Agent):
@@ -22,7 +23,6 @@ class ValueIterationAgent(agent.Agent):
     """
     self.mdp = mdp
     self.gamma = gamma
-    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
     states = mdp.get_states()
     # init values
     self.values = {}
@@ -65,12 +65,78 @@ class ValueIterationAgent(agent.Agent):
     """
     return self.values
 
+  def eval_policy(self, policy, iterations=100):
+    """
+    evaluate a policy distribution
+    returns
+      a map {<state, value>}
+    """
+    values = {}
+    states = self.mdp.get_states()
+    for s in states:
+      if self.mdp.is_terminal(s):
+        values[s] = self.mdp.get_reward(s)
+      else:
+        values[s] = 0
+
+    for i in range(iterations):
+      values_tmp = values.copy()
+
+      for s in states:
+        if self.mdp.is_terminal(s):
+          continue
+        actions = [a_s[0] for a_s in self.mdp.get_actions(s)]
+        # v(s) = \sum_{a\in A} \pi(a|s) (R(s,a,s') + \gamma \sum_{s'\in S} P(s'| s, a) v(s'))
+        values[s] = sum([policy[s][i][1]*(self.mdp.get_reward(s) + self.gamma * sum([s1_p*values_tmp[s1] 
+          for s1,s1_p in self.mdp.get_transition_states_and_probs(s, actions[i])]))
+          for i in range(len(actions))])
+    return values
+
+  def get_optimal_policy(self):
+    """
+    returns
+      a dictionary {<state, action>}
+    """
+    states = self.mdp.get_states()
+    policy = {}
+    for s in states:
+      policy[s] = [(self.get_action(s),1)]
+    return policy
+
+  def get_policy_dist(self):
+    """
+    returns
+      a dictionary {<state, action_dist>}
+    """
+    states = self.mdp.get_states()
+    policy = {}
+    for s in states:
+      policy[s] = self.get_action_dist(s)
+    return policy
+
+  def get_action_dist(self, state):
+    """
+    args
+      state    current state
+    returns
+      a list of {<action, prob>} pairs representing the action distribution on state 
+    """
+    actions = [a_s[0] for a_s in self.mdp.get_actions(state)]
+    # \sum_{s'} P(s'|s,a)*(R(s,a,s') + \gamma v(s'))
+    v_a = [sum([s1_p*(self.mdp.get_reward(state) + self.gamma*self.values[s1])
+            for s1, s1_p in self.mdp.get_transition_states_and_probs(state, a)])
+            for a in actions]
+
+    # I exponentiated the v_s^a's to make them positive
+    v_a = [math.exp(v) for v in v_a]
+    return [(actions[i], v_a[i]/sum(v_a)) for i in range(len(actions))]
+
   def get_action(self, state):
     """
-      args
-        state    current state
-      returns
-        an action to take given the state
+    args
+      state    current state
+    returns
+      an action to take given the state
     """
     actions = [a_s[0] for a_s in self.mdp.get_actions(state)]
     v_s = []

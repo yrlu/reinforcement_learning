@@ -127,30 +127,33 @@ class GridWorld(mdp.MDP):
     else:
       return False
 
-  def display_value_grid(self, agent):
+  def display_value_grid(self, values):
     """
     prints a nice layout of the values in grid
     """
     value_grid = np.zeros((len(self.grid), len(self.grid[0])))
 
-    for k in agent.values:
-      value_grid[k[0]][k[1]] = float(agent.values[k])
+    for k in values:
+      value_grid[k[0]][k[1]] = float(values[k])
 
     row_format = '{:>20.4}' * (len(value_grid) + 1)
     for row in value_grid:
       print row_format.format(*row)
 
-  def display_policy_grid(self, agent):
+  def display_policy_grid(self, policy):
     """
     prints a nice layout of the policy in grid
+    input:
+      policy    a dictionary of the optimal policy {<state, action_dist>}
     """
     policy_grid = np.chararray((len(self.grid), len(self.grid[0])))
 
-    for k in agent.values:
+    for k in self.get_states():
       if self.is_terminal((k[0], k[1])) or self.grid[k[0]][k[1]] == 'x':
         policy_grid[k[0]][k[1]] = '-'
       else:
-        policy_grid[k[0]][k[1]] = self.dirs[agent.get_action((k[0], k[1]))]
+        # policy_grid[k[0]][k[1]] = self.dirs[agent.get_action((k[0], k[1]))]
+        policy_grid[k[0]][k[1]] = self.dirs[policy[(k[0], k[1])][0][0]]
 
     row_format = '{:>20}' * (len(policy_grid) + 1)
     for row in policy_grid:
