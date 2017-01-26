@@ -48,7 +48,7 @@ class ValueIterationAgent(agent.Agent):
         if mdp.is_terminal(s):
           continue
 
-        actions = [a_s[0] for a_s in mdp.get_actions(s)]
+        actions = mdp.get_actions(s)
         v_s = []
         for a in actions:
           P_s1sa = mdp.get_transition_states_and_probs(s, a)
@@ -57,7 +57,7 @@ class ValueIterationAgent(agent.Agent):
                      values_tmp[P_s1sa[s1_id][0]]) for s1_id in range(len(P_s1sa))]))
         # V(s) = max_{a} \sum_{s'} P(s'| s, a) (R(s,a,s') + \gamma V(s'))
         self.values[s] = max(v_s)
-        
+
   def get_values(self):
     """
     returns
@@ -85,11 +85,12 @@ class ValueIterationAgent(agent.Agent):
       for s in states:
         if self.mdp.is_terminal(s):
           continue
-        actions = [a_s[0] for a_s in self.mdp.get_actions(s)]
-        # v(s) = \sum_{a\in A} \pi(a|s) (R(s,a,s') + \gamma \sum_{s'\in S} P(s'| s, a) v(s'))
-        values[s] = sum([policy[s][i][1]*(self.mdp.get_reward(s) + self.gamma * sum([s1_p*values_tmp[s1] 
-          for s1,s1_p in self.mdp.get_transition_states_and_probs(s, actions[i])]))
-          for i in range(len(actions))])
+        actions = self.mdp.get_actions(s)
+        # v(s) = \sum_{a\in A} \pi(a|s) (R(s,a,s') + \gamma \sum_{s'\in S}
+        # P(s'| s, a) v(s'))
+        values[s] = sum([policy[s][i][1] * (self.mdp.get_reward(s) + self.gamma * sum([s1_p * values_tmp[s1]
+                                                                                       for s1, s1_p in self.mdp.get_transition_states_and_probs(s, actions[i])]))
+                         for i in range(len(actions))])
     return values
 
   def get_optimal_policy(self):
@@ -100,7 +101,7 @@ class ValueIterationAgent(agent.Agent):
     states = self.mdp.get_states()
     policy = {}
     for s in states:
-      policy[s] = [(self.get_action(s),1)]
+      policy[s] = [(self.get_action(s), 1)]
     return policy
 
   def get_policy_dist(self):
@@ -119,17 +120,17 @@ class ValueIterationAgent(agent.Agent):
     args
       state    current state
     returns
-      a list of {<action, prob>} pairs representing the action distribution on state 
+      a list of {<action, prob>} pairs representing the action distribution on state
     """
-    actions = [a_s[0] for a_s in self.mdp.get_actions(state)]
+    actions = self.mdp.get_actions(state)
     # \sum_{s'} P(s'|s,a)*(R(s,a,s') + \gamma v(s'))
-    v_a = [sum([s1_p*(self.mdp.get_reward(state) + self.gamma*self.values[s1])
-            for s1, s1_p in self.mdp.get_transition_states_and_probs(state, a)])
-            for a in actions]
+    v_a = [sum([s1_p * (self.mdp.get_reward_sas(state, a, s1) + self.gamma * self.values[s1])
+                for s1, s1_p in self.mdp.get_transition_states_and_probs(state, a)])
+           for a in actions]
 
     # I exponentiated the v_s^a's to make them positive
     v_a = [math.exp(v) for v in v_a]
-    return [(actions[i], v_a[i]/sum(v_a)) for i in range(len(actions))]
+    return [(actions[i], v_a[i] / sum(v_a)) for i in range(len(actions))]
 
   def get_action(self, state):
     """
@@ -138,7 +139,7 @@ class ValueIterationAgent(agent.Agent):
     returns
       an action to take given the state
     """
-    actions = [a_s[0] for a_s in self.mdp.get_actions(state)]
+    actions = self.mdp.get_actions(state)
     v_s = []
     for a in actions:
       P_s1sa = self.mdp.get_transition_states_and_probs(state, a)

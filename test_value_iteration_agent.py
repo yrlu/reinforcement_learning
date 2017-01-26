@@ -20,15 +20,16 @@ class ValueIterationAgentTest(unittest.TestCase):
 
     self.agent = value_iteration_agent.ValueIterationAgent(
         self.gw_non_deterministic, 0.9, 100)
-    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
 
   def test_eval_policy(self):
     print 'Show evaluation of the optimal policy:'
-    self.gw_non_deterministic.display_value_grid(self.agent.eval_policy(self.agent.get_policy_dist()))
+    self.gw_non_deterministic.display_value_grid(
+        self.agent.eval_policy(self.agent.get_policy_dist()))
 
   def test_show_policy(self):
     print 'Show policy learned by value iteration:'
-    self.gw_non_deterministic.display_policy_grid(self.agent.get_optimal_policy())
+    self.gw_non_deterministic.display_policy_grid(
+        self.agent.get_optimal_policy())
 
   def test_values(self):
     print 'Show value iteration results:'

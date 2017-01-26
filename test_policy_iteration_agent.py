@@ -20,11 +20,11 @@ class PolicyIterationAgentTest(unittest.TestCase):
 
     self.agent = policy_iteration_agent.PolicyIterationAgent(
         self.gw_non_deterministic, 0.9, 100)
-    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
 
   def test_show_policy(self):
     print 'Show policy learned by value iteration:'
-    self.gw_non_deterministic.display_policy_grid(self.agent.get_optimal_policy())
+    self.gw_non_deterministic.display_policy_grid(
+        self.agent.get_optimal_policy())
 
   def test_values(self):
     print 'Show value iteration results:'

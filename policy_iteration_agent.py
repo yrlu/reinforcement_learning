@@ -48,21 +48,20 @@ class PolicyIterationAgent(agent.Agent):
       values_tmp = self.values.copy()
       policy_tmp = self.policy.copy()
 
-
       for s in states:
         # policy iteration
         if mdp.is_terminal(s):
           continue
 
-        self.values[s] = sum([P_s1_s_a * (self.mdp.get_reward(s) + self.gamma*values_tmp[s1]) for s1,P_s1_s_a in self.mdp.get_transition_states_and_probs(s, policy_tmp[s])])
+        self.values[s] = sum([P_s1_s_a * (self.mdp.get_reward_sas(s, policy_tmp[s], s1) + self.gamma * values_tmp[s1]) 
+                              for s1, P_s1_s_a in self.mdp.get_transition_states_and_probs(s, policy_tmp[s])])
 
         # policy improvement
-        actions = [a_s[0] for a_s in mdp.get_actions(s)]
-        # print actions
-        v_a = [sum([P_s1_s_a * (self.mdp.get_reward(s) + self.gamma*values_tmp[s1]) 
-                for s1, P_s1_s_a in self.mdp.get_transition_states_and_probs(s, a)]) for a in actions]
+        actions = mdp.get_actions(s)
+        v_a = [sum([P_s1_s_a * (self.mdp.get_reward_sas(s, policy_tmp[s], s1) + self.gamma * values_tmp[s1]) 
+              for s1, P_s1_s_a in self.mdp.get_transition_states_and_probs(s, a)]) 
+              for a in actions]
         self.policy[s] = actions[v_a.index(max(v_a))]
-        # print s,self.policy[s], v_a.index(max(v_a)), max(v_a), actions[v_a.index(max(v_a))]
 
   def get_values(self):
     """
@@ -79,7 +78,7 @@ class PolicyIterationAgent(agent.Agent):
     states = self.mdp.get_states()
     policy = {}
     for s in states:
-      policy[s] = [(self.get_action(s),1)]
+      policy[s] = [(self.get_action(s), 1)]
     return policy
 
   def get_action(self, state):

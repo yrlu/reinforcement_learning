@@ -14,7 +14,8 @@
 
 ##### Dynamic Programming MDP Solver
 
-- `value_iteration_agent.py`: value iteration & policy evaluation
+- `value_iteration_agent.py`: value iteration
+- `policy_iteration_agent.py`: policy iteration - policy evaluation & policy improvement
 
 ### Unit Tests
 

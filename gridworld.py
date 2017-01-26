@@ -59,17 +59,47 @@ class GridWorld(mdp.MDP):
     """
     get all the actions that can be takens on the current state
     returns
-      a list of (action, state) pairs
+      a list of actions
     """
-    res = []
+    actions = []
     for i in range(len(self.actions)):
       inc = self.neighbors[i]
       a = self.actions[i]
       nei_s = (state[0] + inc[0], state[1] + inc[1])
       if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[1] >= 0 and nei_s[
               1] < self.width and self.grid[nei_s[0]][nei_s[1]] != 'x':
-        res.append((a, nei_s))
-    return res
+        actions.append(a)
+    return actions
+
+  def __get_action_states(self, state):
+    """
+    get all the actions that can be takens on the current state
+    returns
+      a list of (action, state) pairs
+    """
+    a_s = []
+    for i in range(len(self.actions)):
+      inc = self.neighbors[i]
+      a = self.actions[i]
+      nei_s = (state[0] + inc[0], state[1] + inc[1])
+      if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[1] >= 0 and nei_s[
+              1] < self.width and self.grid[nei_s[0]][nei_s[1]] != 'x':
+        a_s.append((a, nei_s))
+    return a_s
+
+  def get_reward_sas(self, state, action, state1):
+    """
+    args
+      state     current state
+      action    action
+      state1    next state
+    returns
+      the reward on current state
+    """
+    if not self.grid[state[0]][state[1]] == 'x':
+      return float(self.grid[state[0]][state[1]])
+    else:
+      return 0
 
   def get_reward(self, state):
     """
@@ -99,7 +129,7 @@ class GridWorld(mdp.MDP):
       else:
         return [(state, 1)]
     else:
-      action_states = self.get_actions(state)
+      action_states = self.__get_action_states(state)
       inc = self.neighbors[action]
       nei_s = (state[0] + inc[0], state[1] + inc[1])
       res = []
