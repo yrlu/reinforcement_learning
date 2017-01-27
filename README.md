@@ -10,7 +10,7 @@
 - `mdp.py`: Abstract class of the environments
 - `gridworld.py`: Gridworld based on mdp
 
-### Implemented Agents
+### Implemented Algorithms
 
 ##### Dynamic Programming MDP Solver
 

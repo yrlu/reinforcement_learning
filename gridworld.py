@@ -159,7 +159,7 @@ class GridWorld(mdp.MDP):
 
   def display_value_grid(self, values):
     """
-    prints a nice layout of the values in grid
+    prints a nice table of the values in grid
     """
     value_grid = np.zeros((len(self.grid), len(self.grid[0])))
 
@@ -172,7 +172,7 @@ class GridWorld(mdp.MDP):
 
   def display_policy_grid(self, policy):
     """
-    prints a nice layout of the policy in grid
+    prints a nice table of the policy in grid
     input:
       policy    a dictionary of the optimal policy {<state, action_dist>}
     """
