@@ -233,9 +233,10 @@ class GridWorld(mdp.MDP):
   
   def display_qvalue_grid(self, qvalues):
     # qvalues_grid = np.chararray((len(self.grid), len(self.grid[0])), itemsize=25)
+    print (len(self.grid), len(self.grid[0]))
     qvalues_grid = np.empty((len(self.grid), len(self.grid[0])), dtype=object)
     for s in self.get_states():
-      if self.is_terminal((s[0], s[1])) or self.grid[s[0]][s[1]] == 'x':
+      if self.grid[s[0]][s[1]] == 'x':
         qvalues_grid[s[0]][s[1]] = '-'
       else:
         tmp_str = ""
@@ -245,9 +246,9 @@ class GridWorld(mdp.MDP):
           # print tmp_str
         qvalues_grid[s[0]][s[1]] = tmp_str
 
-    row_format = '{:>30}' * (len(qvalues_grid) + 1)
+    row_format = '{:>40}' * (len(self.grid[0]))
     for row in qvalues_grid:
-      print row_format.format(*row)                
+      print row_format.format(*row)      
 
 
   def display_value_grid(self, values):
@@ -259,7 +260,7 @@ class GridWorld(mdp.MDP):
     for k in values:
       value_grid[k[0]][k[1]] = float(values[k])
 
-    row_format = '{:>20.4}' * (len(value_grid) + 1)
+    row_format = '{:>20.4}' * (len(self.grid[0]))
     for row in value_grid:
       print row_format.format(*row)
 
@@ -278,6 +279,6 @@ class GridWorld(mdp.MDP):
         # policy_grid[k[0]][k[1]] = self.dirs[agent.get_action((k[0], k[1]))]
         policy_grid[k[0]][k[1]] = self.dirs[policy[(k[0], k[1])][0][0]]
 
-    row_format = '{:>20}' * (len(policy_grid) + 1)
+    row_format = '{:>20}' * (len(self.grid[0]))
     for row in policy_grid:
       print row_format.format(*row)
