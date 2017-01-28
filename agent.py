@@ -8,18 +8,23 @@
 
 class Agent:
 
-  def __init__(self, index=0):
+  def get_action(self):
     """
-    args
-      index     the id of the agent
-    """
-    self.index = index
-
-  def get_action(self, state):
-    """
-      args
-        state    current state
-      returns
-        an action to take given the state
+    returns
+      an action to take
     """
     abstract
+
+class RLAgent(Agent):
+
+  def learn(self, s, a, s1, r):
+    """
+    args
+      s     current state
+      a     action taken
+      s1    next state
+      r     reward
+    """
+    abstract
+
+

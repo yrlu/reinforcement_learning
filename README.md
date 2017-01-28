@@ -1,4 +1,8 @@
-## Implementations of Reinforcement Learning algorithms in Python
+## Implementations of Reinforcement Learning Algorithms in Python
+
+-Yiren Lu (luyiren [at] seas [dot] upenn [dot] edu)
+
+(Working in progress)
 
 ### Dependencies
 
@@ -16,6 +20,10 @@
 
 - `value_iteration_agent.py`: value iteration
 - `policy_iteration_agent.py`: policy iteration - policy evaluation & policy improvement
+
+##### Off-Policy TD Learning
+
+- `qleanring_agent.py`: qlearning agent
 
 ### Unit Tests
 

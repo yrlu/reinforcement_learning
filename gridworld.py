@@ -30,8 +30,8 @@ class GridWorld(mdp.MDP):
     self.grid = grid
     self.neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)]
     self.actions = [0, 1, 2, 3, 4]
-    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
-    #                   right,    left,     down,     up
+    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's', 5: 'e'}
+    #              right,    left,   down,   up ,   stay,   exit
     # self.action_nei = {0: (0,1), 1:(0,-1), 2:(1,0), 3:(-1,0)}
 
     # If the mdp is deterministic, the transition probability of taken a certain action should be 1
@@ -61,8 +61,11 @@ class GridWorld(mdp.MDP):
     returns
       a list of actions
     """
+    if self.grid[state[0]][state[1]] == 'x':
+      return [4]
+
     actions = []
-    for i in range(len(self.actions)):
+    for i in range(len(self.actions)-1):
       inc = self.neighbors[i]
       a = self.actions[i]
       nei_s = (state[0] + inc[0], state[1] + inc[1])
@@ -157,9 +160,99 @@ class GridWorld(mdp.MDP):
     else:
       return False
 
+  ##############################################
+  # Stateful Functions For Model-Free Leanring #
+  ##############################################
+
+  def reset(self, start_pos):
+    """
+    Reset the gridworld for model-free learning. It assumes only 1 agent in the gridworld.
+    args
+      start_pos     (i,j) pair of the start location
+    """
+    self._cur_state = start_pos
+
+
+  def get_current_state(self):
+    return self._cur_state
+
+  def step(self, action):
+    """
+    Step function for the agent to interact with gridworld
+    args
+      action        action taken by the agent
+    returns
+      current_state current state
+      action        input action
+      next_state    next_state
+      reward        reward on the next state
+      is_done       True/False - if the episode terminates on the next_state
+    """
+    if self.is_terminal(self._cur_state):
+      self._is_done = True
+      return self._cur_state, action, self._cur_state, self.get_reward(self._cur_state), True
+
+    st_prob = self.get_transition_states_and_probs(self._cur_state, action)
+    sampled_idx = np.random.choice(np.arange(0,len(st_prob)), p=[prob for st, prob in st_prob])
+    last_state = self._cur_state
+    next_state = st_prob[sampled_idx][0]
+    reward = self.get_reward(last_state)
+    self._cur_state = next_state
+    return last_state, action, next_state, reward, False
+  
+  ###########################################
+  # Policy Evaluation for Model-free Agents #
+  ###########################################
+
+  def get_optimal_policy(self, agent):
+    states = self.get_states()
+    policy = {}
+    for s in states:
+      policy[s] = [(agent.get_optimal_action(s), 1)]
+    return policy
+
+  def get_values(self, agent):
+    states = self.get_states()
+    values = {}
+    for s in states:
+      values[s] = agent.get_value(s)
+    return values
+
+
+  def get_qvalues(self, agent):
+    states = self.get_states()
+    q_values = {}
+    for s in states:
+      for a in self.get_actions(s):
+        q_values[(s,a)] = agent.get_qvalue(s,a)
+    return q_values
+
+  ###############
+  # For Display #
+  ###############
+  
+  def display_qvalue_grid(self, qvalues):
+    # qvalues_grid = np.chararray((len(self.grid), len(self.grid[0])), itemsize=25)
+    qvalues_grid = np.empty((len(self.grid), len(self.grid[0])), dtype=object)
+    for s in self.get_states():
+      if self.is_terminal((s[0], s[1])) or self.grid[s[0]][s[1]] == 'x':
+        qvalues_grid[s[0]][s[1]] = '-'
+      else:
+        tmp_str = ""
+        for a in self.get_actions(s):
+          tmp_str = tmp_str + self.dirs[a]
+          tmp_str = tmp_str + str(' {:.2f} '.format(qvalues[(s,a)]))
+          # print tmp_str
+        qvalues_grid[s[0]][s[1]] = tmp_str
+
+    row_format = '{:>30}' * (len(qvalues_grid) + 1)
+    for row in qvalues_grid:
+      print row_format.format(*row)                
+
+
   def display_value_grid(self, values):
     """
-    prints a nice table of the values in grid
+    Prints a nice table of the values in grid
     """
     value_grid = np.zeros((len(self.grid), len(self.grid[0])))
 
