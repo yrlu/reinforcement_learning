@@ -98,10 +98,7 @@ class QLearningAgent(agent.RLAgent):
       sample = r
     else:
       sample = r + self.gamma*max([self.get_qvalue(s1,a1) for a1 in self.legal_actions_fn(s1)])
-    # if r > 0:
-      # print r
-    # if sample > 0:
-      # print sample
+    
     q_s_a = self.get_qvalue(s,a)
     q_s_a = q_s_a + self.alpha*(sample - q_s_a)
     self._set_qvalue(s,a,q_s_a)
@@ -110,7 +107,7 @@ class QLearningAgent(agent.RLAgent):
     legal_actions = self.legal_actions_fn(s)
     s_q_values = [self.get_qvalue(s,a) for a in legal_actions]
     self.policy[s] = legal_actions[s_q_values.index(max(s_q_values))]
-    # print s_q_values, legal_actions, self.policy[s]
   
+
   def train(env, epsisodes=5000):
     pass

@@ -8,11 +8,12 @@
 # MIT License
 
 import mdp
+import env
 import numpy as np
 import unittest
 
 
-class GridWorld(mdp.MDP):
+class GridWorld(mdp.MDP, env.Env):
   """
   Grid world environment
   """
@@ -30,8 +31,8 @@ class GridWorld(mdp.MDP):
     self.grid = grid
     self.neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (0, 0)]
     self.actions = [0, 1, 2, 3, 4]
-    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's', 5: 'e'}
-    #              right,    left,   down,   up ,   stay,   exit
+    self.dirs = {0: 'r', 1: 'l', 2: 'd', 3: 'u', 4: 's'}
+    #              right,    left,   down,   up ,   stay
     # self.action_nei = {0: (0,1), 1:(0,-1), 2:(1,0), 3:(-1,0)}
 
     # If the mdp is deterministic, the transition probability of taken a certain action should be 1
@@ -232,8 +233,8 @@ class GridWorld(mdp.MDP):
   ###############
   
   def display_qvalue_grid(self, qvalues):
-    # qvalues_grid = np.chararray((len(self.grid), len(self.grid[0])), itemsize=25)
-    print (len(self.grid), len(self.grid[0]))
+    print "==Display q-value grid=="
+
     qvalues_grid = np.empty((len(self.grid), len(self.grid[0])), dtype=object)
     for s in self.get_states():
       if self.grid[s[0]][s[1]] == 'x':
@@ -255,8 +256,9 @@ class GridWorld(mdp.MDP):
     """
     Prints a nice table of the values in grid
     """
-    value_grid = np.zeros((len(self.grid), len(self.grid[0])))
+    print "==Display value grid=="
 
+    value_grid = np.zeros((len(self.grid), len(self.grid[0])))
     for k in values:
       value_grid[k[0]][k[1]] = float(values[k])
 
@@ -270,8 +272,9 @@ class GridWorld(mdp.MDP):
     input:
       policy    a dictionary of the optimal policy {<state, action_dist>}
     """
-    policy_grid = np.chararray((len(self.grid), len(self.grid[0])))
+    print "==Display policy grid=="
 
+    policy_grid = np.chararray((len(self.grid), len(self.grid[0])))
     for k in self.get_states():
       if self.is_terminal((k[0], k[1])) or self.grid[k[0]][k[1]] == 'x':
         policy_grid[k[0]][k[1]] = '-'

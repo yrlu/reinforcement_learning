@@ -31,11 +31,11 @@ class GridWorldTest(unittest.TestCase):
     self.assertEqual(len(self.gw_deterministic.get_states()), 14)
 
   def test_get_actions(self):
-    self.assertEqual(len(self.gw_deterministic.get_actions((0, 0))), 3)
-    self.assertEqual(len(self.gw_deterministic.get_actions((2, 0))), 3)
-    self.assertEqual(len(self.gw_deterministic.get_actions((2, 4))), 3)
-    self.assertEqual(len(self.gw_deterministic.get_actions((0, 4))), 3)
-    self.assertEqual(len(self.gw_deterministic.get_actions((1, 0))), 3)
+    self.assertEqual(len(self.gw_deterministic.get_actions((0, 0))), 2)
+    self.assertEqual(len(self.gw_deterministic.get_actions((2, 0))), 2)
+    self.assertEqual(len(self.gw_deterministic.get_actions((2, 4))), 2)
+    self.assertEqual(len(self.gw_deterministic.get_actions((0, 4))), 2)
+    self.assertEqual(len(self.gw_deterministic.get_actions((1, 0))), 2)
 
   def test_get_reward(self):
     self.assertEqual(self.gw_deterministic.get_reward((0, 0)), 0)

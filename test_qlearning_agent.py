@@ -9,8 +9,7 @@ class QLearningAgentTest(unittest.TestCase):
   """
 
   def test2(self):
-    # Bridge Crossing Analysis
-    print ''
+    print 'Test 1 -- Bridge Crossing Analysis'
     grid = [['x', '-100', '-100', '-100', 'x'],
             ['1', '0',    '0',    '0',   '10'],
             ['x', '-100', '-100', '-100', 'x']]
@@ -41,7 +40,7 @@ class QLearningAgentTest(unittest.TestCase):
     gw.display_qvalue_grid(gw.get_qvalues(agent))
 
   def test1(self):
-    print ''
+    print 'Test 1 -- Regular Case'
     grid = [['0', '0', '0', '1'],
             ['0', 'x', '0', '-1'],
             ['0', '0', '0', '0']]
@@ -50,7 +49,7 @@ class QLearningAgentTest(unittest.TestCase):
         grid, {(0, 3), (1, 3)}, 0.8)
 
     agent = qlearning_agent.QLearningAgent(gw.get_actions, 
-                  epsilon=0.1, alpha=0.5, gamma=0.9)
+                  epsilon=0.2, alpha=0.5, gamma=0.9)
     
     # Training
     episodes = 5000
@@ -63,6 +62,7 @@ class QLearningAgentTest(unittest.TestCase):
         last_state, action, next_state, reward, is_done = gw.step(a)
         agent.learn(last_state, action, next_state, reward, is_done)
         cur_s = next_state
+
     # show optimal policy
     opt_policy = gw.get_optimal_policy(agent)
     gw.display_policy_grid(opt_policy)
