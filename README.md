@@ -36,7 +36,7 @@
 
 - Test coverage (requires `coverage` and `nose`):
 
-`nosetests --with-coverage --cover-inclusive --cover-package=.`
+`nosetests --with-coverage --cover-package=.`
 
 ### OpenAI Gym Examples
 

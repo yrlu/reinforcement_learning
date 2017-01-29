@@ -13,7 +13,7 @@ EPSILON_DECAY = 0.99
 LEARNING_RATE = 0.05
 DISCOUNT_FACTOR = 0.9
 
-RECORD = True
+RECORD = False
 
 MIN_VALUES = [-0.5, -2.0, -0.5, -3.0]
 MAX_VALUES = [0.5, 2.0, 0.5, 3.0]
@@ -29,77 +29,72 @@ def train(agent, env, history, num_episodes=NUM_EPISODES):
   for i in xrange(NUM_EPISODES):
     if i % 100:
       print "Episode {}".format(i + 1)
-
     obs = env.reset()
     cur_state = discretize(obs)
-
     for t in xrange(MAX_STEPS):
       action = agent.get_action(cur_state)
       observation, reward, done, info = env.step(action)
       next_state = discretize(observation)
-
       if done:
         reward = FAIL_PENALTY
         agent.learn(cur_state, action, next_state, reward, done)
         print("Episode finished after {} timesteps".format(t + 1))
         history.append(t + 1)
         break
-
       agent.learn(cur_state, action, next_state, reward, done)
       cur_state = next_state
-
       if t == MAX_STEPS - 1:
         history.append(t + 1)
         print("Episode finished after {} timesteps".format(t + 1))
-
   return agent, history
 
 
-env = gym.make('CartPole-v0')
-if RECORD:
-  env = wrappers.Monitor(env, '/tmp/cartpole-experiment-1', force=True)
+if __name__ == '__main__':
+  env = gym.make('CartPole-v0')
+  if RECORD:
+    env = wrappers.Monitor(env, '/tmp/cartpole-experiment-1', force=True)
+  def get_actions(state):
+    return [0, 1]
 
-
-def get_actions(state):
-  return [0, 1]
-
-agent = qlearning_agent.QLearningAgent(get_actions,
+  agent = qlearning_agent.QLearningAgent(get_actions,
                                        epsilon=EPSILON,
                                        alpha=LEARNING_RATE,
                                        gamma=DISCOUNT_FACTOR,
                                        epsilon_decay=EPSILON_DECAY)
 
-history = []
+  history = []
 
-agent, history = train(agent, env, history)
+  agent, history = train(agent, env, history)
 
-if RECORD:
-  env.monitor.close()
+  if RECORD:
+    env.monitor.close()
 
 
-plt.plot(history)
-plt.ylabel('Rewards')
-plt.show()
+  avg_reward = [numpy.mean(history[i*100:(i+1)*100]) for i in xrange(int(len(history)/100))]
+  print avg_reward
+  plt.plot(numpy.linspace(0, len(history), len(avg_reward)), avg_reward)
+  plt.ylabel('Rewards')
+  plt.show()
 
-# # Display:
-#
-# while True:
-#   obs = env.reset()
-#   cur_state = discretize(obs)
-#   done = False
+  # # Display:
 
-#   t = 0
-#   while not done:
-#     env.render()
-#     t = t+1
-#     action = agent.get_action(cur_state)
-#     observation, reward, done, info = env.step(action)
-#     next_state = discretize(observation)
-#     if done:
-#       reward = FAIL_PENALTY
-#       agent.learn(cur_state, action, next_state, reward, done)
-#       print("Episode finished after {} timesteps".format(t+1))
-#       history.append(t+1)
-#       break
-#     agent.learn(cur_state, action, next_state, reward, done)
-#     cur_state = next_state
+  # while True:
+  #   obs = env.reset()
+  #   cur_state = discretize(obs)
+  #   done = False
+
+  #   t = 0
+  #   while not done:
+  #     env.render()
+  #     t = t+1
+  #     action = agent.get_action(cur_state)
+  #     observation, reward, done, info = env.step(action)
+  #     next_state = discretize(observation)
+  #     if done:
+  #       reward = FAIL_PENALTY
+  #       agent.learn(cur_state, action, next_state, reward, done)
+  #       print("Episode finished after {} timesteps".format(t+1))
+  #       history.append(t+1)
+  #       break
+  #     agent.learn(cur_state, action, next_state, reward, done)
+  #     cur_state = next_state
