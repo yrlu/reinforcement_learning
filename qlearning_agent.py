@@ -8,12 +8,12 @@
 # MIT License
 
 import agent
-import numpy as np
+import numpy
 
-class QLearningAgent(agent.RLAgent):
+class QLearningAgent:
 
 
-  def __init__(self, legal_actions_fn, epsilon=0.5, alpha=0.5, gamma=0.9):
+  def __init__(self, legal_actions_fn, epsilon=0.5, alpha=0.5, gamma=0.9, epsilon_decay=1):
     """
     args
       legal_actions_fn    takes a state and returns a list of legal actions
@@ -24,6 +24,7 @@ class QLearningAgent(agent.RLAgent):
     self.epsilon = epsilon
     self.alpha = alpha
     self.gamma = gamma
+    self.epsilon_decay=epsilon_decay
     self.legal_actions_fn = legal_actions_fn
 
     # map: {(state, action): q-value}
@@ -55,9 +56,9 @@ class QLearningAgent(agent.RLAgent):
     if state in self.policy:
       return self.policy[state]
     else:
-      # set the first action in the list to default and return
-      self.policy[state] = legal_actions[0]
-      return legal_actions[0]
+      # randomly select an action as default and return
+      self.policy[state] = legal_actions[numpy.random.randint(0, len(legal_actions))]
+      return self.policy[state]
 
   def get_action(self, state):
     """
@@ -71,9 +72,10 @@ class QLearningAgent(agent.RLAgent):
 
     assert len(legal_actions) > 0, "no legal actions on state {}".format(state)
 
-    if np.random.random() < self.epsilon:
+    if numpy.random.random() < self.epsilon:
       # act randomly
-      return legal_actions[np.random.randint(0, len(legal_actions))]
+      self.epsilon = self.epsilon*self.epsilon_decay
+      return legal_actions[numpy.random.randint(0, len(legal_actions))]
     else:
       if state in self.policy:
         return self.policy[state]
@@ -107,7 +109,3 @@ class QLearningAgent(agent.RLAgent):
     legal_actions = self.legal_actions_fn(s)
     s_q_values = [self.get_qvalue(s,a) for a in legal_actions]
     self.policy[s] = legal_actions[s_q_values.index(max(s_q_values))]
-  
-
-  def train(env, epsisodes=5000):
-    pass

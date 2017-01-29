@@ -8,11 +8,13 @@
 
 - OpenAI Gym
 - Numpy
+- matplotlib
 
 ### Implemented Environments
 
-- `mdp.py`: Abstract class of the environments
-- `gridworld.py`: Gridworld based on mdp
+- `mdp.py`: Abstract class of markov decision process
+- `env.py`: Abstract class of environments
+- `gridworld.py`: Gridworld based on mdp.MDP and env.Env
 
 ### Implemented Algorithms
 
@@ -35,6 +37,11 @@
 - Test coverage (requires `coverage` and `nose`):
 
 `nosetests --with-coverage --cover-inclusive --cover-package=.`
+
+### OpenAI Gym Examples
+
+- Cartpole-v0
+  - `cartpole_qlearning.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
 
 ### Math
 
