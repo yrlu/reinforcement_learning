@@ -47,13 +47,14 @@ class MonteCarloAgent(qlearning_agent.QLearningAgent):
     
     rewards = [r for c, a, n, r in episode]
     G_t = MonteCarloAgent.compute_G_t(rewards, self.gamma)
-    # print G_t/
     for i in xrange(len(episode)):
       c, a, n, r = episode[i]
       # q-state count++
       self.n_s_a.add((c,a))
-      # update q-value
-      q_values[(c,a)] = self.get_qvalue(c,a) + 1/self.n_s_a.get((c,a)) * (G_t[i] - self.get_qvalue(c,a))
+      # update q-value 
+      # notices here I took the max of the weights and self.alpha to ensure it actually 
+      # learns some thing from each episode of experience
+      q_values[(c,a)] = self.get_qvalue(c,a) + max(1/self.n_s_a.get((c,a)), self.alpha) * (G_t[i] - self.get_qvalue(c,a))
 
     self.q_values = q_values
 

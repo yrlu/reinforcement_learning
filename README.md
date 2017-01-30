@@ -23,9 +23,13 @@
 - `value_iteration_agent.py`: value iteration
 - `policy_iteration_agent.py`: policy iteration - policy evaluation & policy improvement
 
-##### Off-Policy TD Learning
+##### TD Learning
 
-- `qleanring_agent.py`: qlearning agent
+- `qleanring_agent.py`: epsilon greedy qlearning agent
+
+##### Monte Carlo Methods
+
+- `monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
 
 ### Unit Tests
 

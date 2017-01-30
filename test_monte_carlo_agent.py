@@ -19,12 +19,10 @@ class MonteCarloAgentTest(unittest.TestCase):
         grid, {(0, 3), (1, 3)}, 0.8)
 
     agent = monte_carlo.MonteCarloAgent(gw.get_actions, 
-                  epsilon=0.5, gamma=0.9, epsilon_decay=1)
-    
+                  epsilon=0.4, gamma=0.9, alpha=0.01, epsilon_decay=1)
     # Training
-    episodes = 20000
+    episodes = 1000
     for i in range(episodes):
-
       episode = []
       gw.reset((2,0))
       cur_s = gw.get_current_state()
@@ -35,16 +33,10 @@ class MonteCarloAgentTest(unittest.TestCase):
         episode.append((last_state, action, next_state, reward))
         # agent.learn(last_state, action, next_state, reward, is_done)
         cur_s = next_state
-
         if is_done:
           agent.learn(episode)
-          if i % 1000==0:
-            print i
-          
-    # show optimal policy
+    
     opt_policy = gw.get_optimal_policy(agent)
-    # print agent.policy
-    # print opt_policy
     gw.display_policy_grid(opt_policy)
     gw.display_value_grid(gw.get_values(agent))
     gw.display_qvalue_grid(gw.get_qvalues(agent))

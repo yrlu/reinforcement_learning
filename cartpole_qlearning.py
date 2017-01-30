@@ -4,7 +4,7 @@ import qlearning_agent
 import numpy
 import matplotlib.pyplot as plt
 
-NUM_EPISODES = 1000
+NUM_EPISODES = 2000
 N_BINS = [8, 8, 8, 8]
 MAX_STEPS = 200
 FAIL_PENALTY = -100
