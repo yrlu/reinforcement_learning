@@ -5,7 +5,7 @@ import qlearning_agent
 
 class QLearningAgentTest(unittest.TestCase):
   """
-  Unit test for value iteration agent
+  Unit test for q-learning agent
   """
 
   def test2(self):

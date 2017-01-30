@@ -6,7 +6,7 @@
 # MIT License
 
 
-class Agent:
+class Agent(object):
 
   def get_action(self):
     """

@@ -5,7 +5,7 @@ import policy_iteration_agent
 
 class PolicyIterationAgentTest(unittest.TestCase):
   """
-  Unit test for value iteration agent
+  Unit test for policy iteration agent
   """
 
   def setUp(self):

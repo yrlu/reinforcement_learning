@@ -10,7 +10,7 @@
 import agent
 import numpy
 
-class QLearningAgent:
+class QLearningAgent(agent.RLAgent):
 
 
   def __init__(self, legal_actions_fn, epsilon=0.5, alpha=0.5, gamma=0.9, epsilon_decay=1):
@@ -74,7 +74,6 @@ class QLearningAgent:
 
     if numpy.random.random() < self.epsilon:
       # act randomly
-      self.epsilon = self.epsilon*self.epsilon_decay
       return legal_actions[numpy.random.randint(0, len(legal_actions))]
     else:
       if state in self.policy:
@@ -109,3 +108,5 @@ class QLearningAgent:
     legal_actions = self.legal_actions_fn(s)
     s_q_values = [self.get_qvalue(s,a) for a in legal_actions]
     self.policy[s] = legal_actions[s_q_values.index(max(s_q_values))]
+
+    self.epsilon = self.epsilon*self.epsilon_decay

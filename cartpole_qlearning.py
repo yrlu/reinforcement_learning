@@ -55,6 +55,7 @@ if RECORD:
 def get_actions(state):
   return [0, 1]
 
+
 agent = qlearning_agent.QLearningAgent(get_actions,
                                      epsilon=EPSILON,
                                      alpha=LEARNING_RATE,
@@ -68,10 +69,7 @@ agent, history = train(agent, env, history)
 if RECORD:
   env.monitor.close()
 
-print agent.policy
-
 avg_reward = [numpy.mean(history[i*100:(i+1)*100]) for i in xrange(int(len(history)/100))]
-print avg_reward
 f_reward = plt.figure(1)
 plt.plot(numpy.linspace(0, len(history), len(avg_reward)), avg_reward)
 plt.ylabel('Rewards')
