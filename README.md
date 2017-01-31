@@ -10,12 +10,6 @@
 - Numpy
 - matplotlib
 
-### Implemented Environments
-
-- `mdp.py`: Abstract class of markov decision process
-- `env.py`: Abstract class of environments
-- `gridworld.py`: Gridworld based on mdp.MDP and env.Env
-
 ### Implemented Algorithms
 
 ##### Dynamic Programming MDP Solver
@@ -30,6 +24,12 @@
 ##### Monte Carlo Methods
 
 - `monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
+
+### Implemented Environments
+
+- `mdp.py`: Abstract class of markov decision process
+- `env.py`: Abstract class of environments
+- `gridworld.py`: Gridworld based on mdp.MDP and env.Env
 
 ### Unit Tests
 
