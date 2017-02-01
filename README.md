@@ -6,7 +6,7 @@
 
 ### Dependencies
 
-- OpenAI Gym
+- OpenAI Gym (with Atari)
 - Numpy
 - matplotlib
 
