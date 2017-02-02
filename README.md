@@ -1,14 +1,16 @@
 ## Implementations of Reinforcement Learning Algorithms in Python
 
--Yiren Lu (luyiren [at] seas [dot] upenn [dot] edu)
+Implementations of selected reinforcement learning algorithms with tensorflow and openai gym. (Working in progress)
 
-(Working in progress)
+-Yiren Lu (luyiren [at] seas [dot] upenn [dot] edu)
 
 ### Dependencies
 
-- OpenAI Gym (with Atari)
+
 - Numpy
-- matplotlib
+- OpenAI Gym (with Atari)
+- Tensorflow
+- matplotlib (optional)
 
 ### Implemented Algorithms
 
