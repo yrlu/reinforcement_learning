@@ -31,6 +31,7 @@ def train(agent, env, history, num_episodes=NUM_EPISODES):
       print "Episode {}".format(i + 1)
     obs = env.reset()
     cur_state = discretize(obs)
+    
     for t in xrange(MAX_STEPS):
       action = agent.get_action(cur_state)
       observation, reward, done, info = env.step(action)

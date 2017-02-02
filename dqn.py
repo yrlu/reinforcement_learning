@@ -66,8 +66,8 @@ class DQNAgent():
     # 2 hidden layers
     # network: [state_size] - 50 - 50 - [action_size]
 
-    n_hidden_1 = 10
-    n_hidden_2 = 10
+    n_hidden_1 = 20
+    n_hidden_2 = 20
 
     self.weights = {
       'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
@@ -154,8 +154,8 @@ class DQNAgent():
       self.mem.append(step)
 
     while len(self.mem) > self.mem_size:
-      # randomly drop 20% of the memory
-      self.mem = self.mem[int(len(self.mem)/2):]
+      # drop 20% of the memory
+      self.mem = self.mem[int(len(self.mem)/5):]
       # np.random.shuffle(self.mem)
       # for i in xrange(int(self.mem_size*0.2)):
         # self.mem.pop()
@@ -208,7 +208,7 @@ class DQNAgent():
                                           feed_dict=feed_dict)
 
         # Write summary for TensorBoard
-        if self.total_steps % 100 == 0:
+        if self.total_steps % 1000 == 0:
           print l
           # self.summary_writer.add_summary(summary, self.total_steps)
 
