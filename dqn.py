@@ -6,7 +6,7 @@ import tensorflow as tf
 
 class DQNAgent():
   """
-  DQN Agent owns a 2-hidden-layer fully-connected q-network and acts epsilon-greedily.
+  DQN Agent with a 2-hidden-layer fully-connected q-network that acts epsilon-greedily.
   """
 
   def __init__(self,
@@ -57,9 +57,6 @@ class DQNAgent():
   def _build_qnet(self):
     """
     Build q-network
-
-    returns
-      q-network
     """
 
     # input state

@@ -20,7 +20,7 @@ class DQNAgentTest(unittest.TestCase):
     agent = dqn.DQNAgent(epsilon=1, epsilon_anneal=0.001, end_epsilon=0.1, 
       lr=0.001, gamma=0.9, batch_size=32, state_size=2, action_size=5, mem_size=1e4,
       n_hidden_1=10, n_hidden_2=10)
-    episodes = 10000
+    episodes = 5000
     for i in range(episodes):
       if i % 200 == 0:
         print '-------',i,'-------'
