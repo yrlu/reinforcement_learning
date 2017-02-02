@@ -20,7 +20,7 @@
 ##### TD Learning
 
 - `qleanring_agent.py`: standard epsilon greedy qlearning agent
-- `dqn.py`: Deep Q-network agent
+- `dqn.py`: Deep Q-network agent - vanilla network
 
 ##### Monte Carlo Methods
 
@@ -28,9 +28,7 @@
 
 ### Environments
 
-- `mdp.py`: Abstract class of markov decision process
-- `env.py`: Abstract class of environments
-- `gridworld.py`: Gridworld based on mdp.MDP and env.Env
+- `gridworld.py`: minimium gridworld implementation for testings
 
 ### Unit Tests
 
@@ -48,10 +46,6 @@
 - Cartpole-v0
   - `cartpole_qlearning.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
   - `cartpole_dqn.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
-
-### Math
-
-Check out my [blog post: Learn Reinforcement Learning by Coding (in progress)](http://blog.luyiren.me/posts/reinforcement-learning-notes.html)
 
 ### MIT License
 
