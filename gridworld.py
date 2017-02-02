@@ -128,9 +128,10 @@ class GridWorld(mdp.MDP, env.Env):
       inc = self.neighbors[action]
       nei_s = (state[0] + inc[0], state[1] + inc[1])
       if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[
-              1] >= 0 and nei_s[1] < self.width:
+              1] >= 0 and nei_s[1] < self.width and self.grid[nei_s[0]][nei_s[1]] != 'x':
         return [(nei_s, 1)]
       else:
+        # if the state is invalid, stay in the current state
         return [(state, 1)]
     else:
       action_states = self.__get_action_states(state)
@@ -139,7 +140,7 @@ class GridWorld(mdp.MDP, env.Env):
       res = []
 
       if nei_s[0] >= 0 and nei_s[0] < self.height and nei_s[
-              1] >= 0 and nei_s[1] < self.width:
+              1] >= 0 and nei_s[1] < self.width and self.grid[nei_s[0]][nei_s[1]] != 'x':
         for i in range(len(action_states)):
           if action_states[i][0] == action:
             res.append((action_states[i][1], self.trans_prob))
@@ -147,8 +148,9 @@ class GridWorld(mdp.MDP, env.Env):
             res.append(
                 (action_states[i][1], (1 - self.trans_prob) / (len(action_states) - 1)))
       else:
+        # if the action is not valid, then return uniform distribution of the valid moves.
         for i in range(len(action_states)):
-          res.append((action_states[i][1], 1 / len(action_states)))
+          res.append((action_states[i][1], 1.0 / len(action_states)))
       return res
 
   def is_terminal(self, state):
@@ -194,6 +196,7 @@ class GridWorld(mdp.MDP, env.Env):
       return self._cur_state, action, self._cur_state, self.get_reward(self._cur_state), True
 
     st_prob = self.get_transition_states_and_probs(self._cur_state, action)
+    
     sampled_idx = np.random.choice(np.arange(0,len(st_prob)), p=[prob for st, prob in st_prob])
     last_state = self._cur_state
     next_state = st_prob[sampled_idx][0]
