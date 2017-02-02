@@ -19,14 +19,14 @@
 
 ##### TD Learning
 
-- `qleanring_agent.py`: epsilon greedy qlearning agent
+- `qleanring_agent.py`: standard epsilon greedy qlearning agent
 - `dqn.py`: Deep Q-network agent
 
 ##### Monte Carlo Methods
 
 - `monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
 
-### Implemented Environments
+### Environments
 
 - `mdp.py`: Abstract class of markov decision process
 - `env.py`: Abstract class of environments

@@ -50,9 +50,11 @@ agent = dqn.DQNAgent(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=4, 
       action_size=2, mem_size=MEM_SIZE, n_hidden_1=10, n_hidden_2=10)
 
+
 history = []
 agent, history = train(agent, env, history)
 print history
+
 
 if RECORD:
   env.monitor.close()

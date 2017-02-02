@@ -4,9 +4,6 @@ import random
 import tensorflow as tf
 
 
-LOG_DIR = '/tmp/dqn'
-
-
 class DQNAgent():
   """
   DQN Agent owns a 2-hidden-layer fully-connected q-network and acts epsilon-greedily.
@@ -65,10 +62,15 @@ class DQNAgent():
       q-network
     """
 
+    # input state
     self.state_input = tf.placeholder(tf.float32, [None, self.state_size])
+    # input action to generate output mask
+    self.action = tf.placeholder(tf.int32, [None])
+    # target_q = tf.add(reward + gamma * max(q(s,a)))
+    self.target_q = tf.placeholder(tf.float32, [None])
 
     # 2 hidden layers
-    # network: [state_size] - n_hidden_1 - n_hidden_2 - [action_size]
+    # network: [state_size] - [n_hidden_1] - [n_hidden_2] - [action_size]
 
     n_hidden_1 = self.n_hidden_1
     n_hidden_2 = self.n_hidden_2
@@ -91,22 +93,16 @@ class DQNAgent():
     layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
     layer_2 = tf.nn.relu(layer_2)
 
-    self.qnet = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
+    self.q_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
 
-    # TBD
-    self.reward = tf.placeholder(tf.float32, [None])
-    self.action = tf.placeholder(tf.int32, [None])
+    action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
+    # predicted q(s,a)
+    q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
 
-    # target_q = tf.add(self.reward + self.gamma * tf.reduce_max(self.qnet, 1))
-    self.target_q = tf.placeholder(tf.float32, [None])
-    action_one_hot = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
-    pred_action_value = tf.reduce_sum(self.qnet * action_one_hot, 1)
-
-    self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, pred_action_value)))
+    self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
     self.optimizer = tf.train.AdamOptimizer(self.lr)
     self.global_step = tf.Variable(0, name='global_step', trainable=False)
     self.train_op = self.optimizer.minimize(self.loss, global_step=self.global_step)
-    
 
 
   def get_value(self, s):
@@ -115,14 +111,12 @@ class DQNAgent():
 
 
   def get_qvalue(self, s, a):
-    q_values = self.sess.run(self.qnet, feed_dict={self.state_input: [s]})
+    q_values = self.sess.run(self.q_values, feed_dict={self.state_input: [s]})
     return q_values[0][a]
 
 
   def get_optimal_action(self, state):
-    # return np.random.randint(0, self.action_size)
-    # st = [state[i] for i in xrange(len(state))]
-    actions = self.sess.run(self.qnet, feed_dict={self.state_input: [state]})
+    actions = self.sess.run(self.q_values, feed_dict={self.state_input: [state]})
     return actions.argmax()
 
 
@@ -146,7 +140,7 @@ class DQNAgent():
   def _add_episode(self, episode):
     """
     Store episode to memory and check if it reaches the mem_size. 
-    If so, randomly drop 20% of the memory
+    If so, drop 20% of the oldest memory
 
     args
       episode       a list of (current state, action, next state, reward, done)
@@ -158,11 +152,8 @@ class DQNAgent():
       self.mem.append(step)
 
     while len(self.mem) > self.mem_size:
-      # drop 20% of the memory
+      # If memory reaches limit, then drop 20% of the oldest memory
       self.mem = self.mem[int(len(self.mem)/5):]
-      # np.random.shuffle(self.mem)
-      # for i in xrange(int(self.mem_size*0.2)):
-        # self.mem.pop()
 
 
   def learn(self, episode, train_steps):
@@ -174,45 +165,35 @@ class DQNAgent():
 
     args
       episode       a list of (current state, action, next state, reward, done)
+      train_steps   number of training steps per calling learn()
     """
     self._add_episode(episode)
 
-
     if len(self.mem) > self.batch_size:
       
-
       for i in xrange(train_steps):
         self.total_steps = self.total_steps + 1
-
-        # tf.summary.scalar('loss', self.loss)
-        # self.summary = tf.summary.merge_all()
-        # self.summary_writer = tf.summary.FileWriter(LOG_DIR, self.sess.graph)
-
-        step_count = []
-
         target_weights = self.sess.run(self.weights)
 
         sampled_idx = np.random.choice(len(self.mem), self.batch_size)
         samples = random.sample(self.mem, self.batch_size)
 
-        q_values = self.sess.run(self.qnet, feed_dict={self.state_input: [s[2] for s in samples]})
-        
+        # s[2] is next state
+        q_values = self.sess.run(self.q_values, feed_dict={self.state_input: [s[2] for s in samples]})
         max_q_values = q_values.max(axis=1)
 
+        # compute target q value
         target_q = np.array([samples[i][3] + self.gamma*max_q_values[i]*(1-samples[i][4]) for i in xrange(len(samples))])
-        # print samples[0], target_q[0]
         target_q = target_q.reshape([self.batch_size])
-        # print len(target_q), target_q
-        feed_dict = {
-          self.state_input: [s[0] for s in samples],
-          self.target_q: target_q,
-          self.action: [s[1] for s in samples]
-        }
-        l, _, = self.sess.run([self.loss, self.train_op], 
-                                          feed_dict=feed_dict)
 
-        # Write summary for TensorBoard
+        # minimize the TD-error
+        l, _, = self.sess.run([self.loss, self.train_op], feed_dict={
+                                                            self.state_input: [s[0] for s in samples],
+                                                            self.target_q: target_q,
+                                                            self.action: [s[1] for s in samples]
+                                                          })
+
         if self.total_steps % 1000 == 0:
+          # print loss
           print l
-          # self.summary_writer.add_summary(summary, self.total_steps)
 
