@@ -34,7 +34,7 @@ class QLearningAgent(agent.RLAgent):
     
 
   def get_value(self, s):
-    a = self.get_action(s)
+    a = self.get_optimal_action(s)
     return self.get_qvalue(s, a)
 
 
