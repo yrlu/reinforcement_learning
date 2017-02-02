@@ -20,6 +20,7 @@
 ##### TD Learning
 
 - `qleanring_agent.py`: epsilon greedy qlearning agent
+- `dqn.py`: Deep Q-network agent
 
 ##### Monte Carlo Methods
 
