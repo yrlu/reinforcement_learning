@@ -26,11 +26,17 @@
 
 - `monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
 
+### OpenAI Gym Examples
+
+- Cartpole-v0
+  - `cartpole_qlearning.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
+  - `cartpole_dqn.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
+
 ### Environments
 
 - `gridworld.py`: minimium gridworld implementation for testings
 
-### Unit Tests
+### Tests
 
 - Files: `test_*.py`
 - Run unit test for [class]:
@@ -41,11 +47,6 @@
 
 `nosetests --with-coverage --cover-package=.`
 
-### OpenAI Gym Examples
-
-- Cartpole-v0
-  - `cartpole_qlearning.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
-  - `cartpole_dqn.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
 
 ### MIT License
 
