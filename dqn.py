@@ -9,7 +9,7 @@ LOG_DIR = '/tmp/dqn'
 
 class DQNAgent():
   """
-  DQN Agent owns a fully-connected q-network and acts epsilon-greedily.
+  DQN Agent owns a 2-hidden-layer fully-connected q-network and acts epsilon-greedily.
   """
 
   def __init__(self,
@@ -21,7 +21,9 @@ class DQNAgent():
     batch_size=64, 
     state_size=4,
     action_size=2,
-    mem_size=1e4
+    mem_size=1e4,
+    n_hidden_1=20,
+    n_hidden_2=20
     ):
     """
     args
@@ -45,6 +47,8 @@ class DQNAgent():
     self.action_size = action_size
     self.mem_size = mem_size
     self.total_steps = 0
+    self.n_hidden_1 = n_hidden_1
+    self.n_hidden_2 = n_hidden_2
 
     self.mem = []
     
@@ -64,10 +68,10 @@ class DQNAgent():
     self.state_input = tf.placeholder(tf.float32, [None, self.state_size])
 
     # 2 hidden layers
-    # network: [state_size] - 50 - 50 - [action_size]
+    # network: [state_size] - n_hidden_1 - n_hidden_2 - [action_size]
 
-    n_hidden_1 = 20
-    n_hidden_2 = 20
+    n_hidden_1 = self.n_hidden_1
+    n_hidden_2 = self.n_hidden_2
 
     self.weights = {
       'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),

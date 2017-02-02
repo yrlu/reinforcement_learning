@@ -17,8 +17,9 @@ class DQNAgentTest(unittest.TestCase):
     gw = gridworld.GridWorld(grid, {(0, 3), (1, 3)}, 0.6)
     def valid_actions():
       return [0, 1, 2, 3, 4]
-    agent = dqn.DQNAgent(epsilon=1, epsilon_anneal=0.0001, end_epsilon=0.1, 
-      lr=0.001, gamma=0.9, batch_size=64, state_size=2, action_size=5, mem_size=1e4)
+    agent = dqn.DQNAgent(epsilon=1, epsilon_anneal=0.001, end_epsilon=0.1, 
+      lr=0.001, gamma=0.9, batch_size=32, state_size=2, action_size=5, mem_size=1e4,
+      n_hidden_1=4, n_hidden_2=4)
     episodes = 10000
     for i in range(episodes):
       if i % 200 == 0:
