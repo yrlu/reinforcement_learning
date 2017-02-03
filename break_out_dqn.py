@@ -9,7 +9,7 @@ from skimage.color import rgb2gray
 
 
 
-NUM_EPISODES = 300
+NUM_EPISODES = 3000
 MAX_STEPS = 300
 FAIL_PENALTY = -1
 EPSILON = 1
