@@ -1,15 +1,16 @@
 ## Implementations of Reinforcement Learning Algorithms in Python
 
-Implementations of selected reinforcement learning algorithms with tensorflow and openai gym. (Working in progress)
+(Working in progress) Implementations of selected reinforcement learning algorithms with tensorflow and openai gym. Trying to make each algorithm standalone and easy to read and run. 
 
 -Yiren Lu (luyiren [at] seas [dot] upenn [dot] edu)
 
 ### Dependencies
 
-
 - Numpy
 - OpenAI Gym (with Atari)
 - Tensorflow
+- scikit-image
+- scipy
 - matplotlib (optional)
 
 ### Implemented Algorithms
@@ -48,7 +49,6 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 - Test coverage (requires `coverage` and `nose`):
 
 `nosetests --with-coverage --cover-package=.`
-
 
 ### MIT License
 
