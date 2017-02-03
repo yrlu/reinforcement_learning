@@ -13,14 +13,14 @@ NUM_EPISODES = 100
 MAX_STEPS = 300
 FAIL_PENALTY = -1
 EPSILON = 1
-EPSILON_DECAY = 0.05
+EPSILON_DECAY = 0.01
 END_EPSILON = 0.1
 LEARNING_RATE = 1e-3
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
 MEM_SIZE = 1e6
 ENV_NAME = 'Breakout-v0'
-STEP_PER_EPOCH = 50
+STEP_PER_EPOCH = 100
 RECORD = False
 KTH_FRAME = 4
 
@@ -68,9 +68,6 @@ def train(agent, env, history, num_episodes=NUM_EPISODES):
       if t % KTH_FRAME == 0:
         episode.append([cur_state, action, next_state, reward, done])
       cur_state = next_state
-      if t == MAX_STEPS - 1:
-        history.append(t + 1)
-        print("Episode finished after {} timesteps".format(t + 1))
     agent.learn(episode, STEP_PER_EPOCH)
   return agent, history
 
