@@ -46,8 +46,7 @@ class DQNAgent_CNN():
     self.state_size = state_size
     self.action_size = action_size
     self.mem_size = mem_size
-    self.total_steps = 0
-
+    self.total_steps = 0 
     self.mem = []
     
     self._build_qnet()
@@ -59,7 +58,9 @@ class DQNAgent_CNN():
     """
     Build q-network
     """
-    with tf.device('/cpu:0'):
+    
+    self.global_step = tf.Variable(0, name='global_step', trainable=False)
+    with tf.device('/gpu:0'):
       # input state
       self.state_input = tf.placeholder(shape=[None]+self.state_size, dtype=tf.uint8)
       # input action to generate output mask
@@ -67,6 +68,7 @@ class DQNAgent_CNN():
       # target_q = tf.add(reward + gamma * max(q(s,a)))
       self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
 
+      
       state = tf.to_float(self.state_input) / 255.0
 
 
@@ -110,7 +112,6 @@ class DQNAgent_CNN():
 
       self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
       self.optimizer = tf.train.AdamOptimizer(self.lr)
-      self.global_step = tf.Variable(0, name='global_step', trainable=False)
       self.train_op = self.optimizer.minimize(self.loss, global_step=self.global_step)
 
 
