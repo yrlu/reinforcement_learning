@@ -95,59 +95,59 @@ agent, history = train(agent, env, history)
 print history
 
 
-avg_reward = [np.mean(history[i*10:(i+1)*10]) for i in xrange(int(len(history)/10))]
-f_reward = plt.figure(1)
-plt.plot(np.linspace(0, len(history), len(avg_reward)), avg_reward)
-plt.ylabel('Rewards')
-f_reward.show()
-print 'press enter to continue'
-raw_input()
-plt.close()
+# avg_reward = [np.mean(history[i*10:(i+1)*10]) for i in xrange(int(len(history)/10))]
+# f_reward = plt.figure(1)
+# plt.plot(np.linspace(0, len(history), len(avg_reward)), avg_reward)
+# plt.ylabel('Rewards')
+# f_reward.show()
+# print 'press enter to continue'
+# raw_input()
+# plt.close()
 
-plt.ion()
-plt.figure()
+# plt.ion()
+# plt.figure()
 
-env = gym.make('Breakout-v0')
-for i_episode in range(20):
-  observation = env.reset()
-  cur_state = preprocess_frame(observation)
-  done = False
-  t = 0
-  last_life = 5
+# env = gym.make('Breakout-v0')
+# for i_episode in range(20):
+#   observation = env.reset()
+#   cur_state = preprocess_frame(observation)
+#   done = False
+#   t = 0
+#   last_life = 5
 
-  while not done:
-    t = t + 1
-    # if t % 4 == 0:
-    #   img = preprocess_frame(observation)
-    #   plt.imshow(img)
-    #   plt.show()
-    #   plt.pause(0.0001)
+#   while not done:
+#     t = t + 1
+#     # if t % 4 == 0:
+#     #   img = preprocess_frame(observation)
+#     #   plt.imshow(img)
+#     #   plt.show()
+#     #   plt.pause(0.0001)
 
-    # raw_input()
-    # viewer = ImageViewer(img)
-    # viewer.show()
-    env.render()
+#     # raw_input()
+#     # viewer = ImageViewer(img)
+#     # viewer.show()
+#     env.render()
 
-    action = agent.get_action(cur_state)
-    obs, reward, done, info = env.step(action)
-    next_state = preprocess_frame(obs)
+#     action = agent.get_action(cur_state)
+#     obs, reward, done, info = env.step(action)
+#     next_state = preprocess_frame(obs)
 
-    # action = agent.get_optimal_action(cur_state)
-    # observation, reward, done, info = env.step(action)
-    if reward == 0:
-      reward = info['ale.lives'] - last_life
-      last_life = info['ale.lives']
+#     # action = agent.get_optimal_action(cur_state)
+#     # observation, reward, done, info = env.step(action)
+#     if reward == 0:
+#       reward = info['ale.lives'] - last_life
+#       last_life = info['ale.lives']
 
-    if reward > 0:
-      reward = 1
-    elif reward < 0:
-      reward = -1
+#     if reward > 0:
+#       reward = 1
+#     elif reward < 0:
+#       reward = -1
 
-    if reward != 0:
-      print reward, info
-    # print info
-    # print len(observation),len(observation[0]),len(observation[0][0])
-    if done:
-      print reward, info
-      print("Episode finished after {} timesteps".format(t+1))
-      break
+#     if reward != 0:
+#       print reward, info
+#     # print info
+#     # print len(observation),len(observation[0]),len(observation[0][0])
+#     if done:
+#       print reward, info
+#       print("Episode finished after {} timesteps".format(t+1))
+#       break
