@@ -3,3 +3,4 @@
 *.pyc
 run_tests.sh
 run_format.sh
+push.sh

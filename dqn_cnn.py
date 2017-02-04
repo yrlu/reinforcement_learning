@@ -58,61 +58,60 @@ class DQNAgent_CNN():
     """
     Build q-network
     """
-    
     self.global_step = tf.Variable(0, name='global_step', trainable=False)
-    # with tf.device('/gpu:0'):
-    # input state
-    self.state_input = tf.placeholder(shape=[None]+self.state_size, dtype=tf.uint8)
-    # input action to generate output mask
-    self.action = tf.placeholder(shape=[None], dtype=tf.int32)
-    # target_q = tf.add(reward + gamma * max(q(s,a)))
-    self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
+    with tf.device('/cpu:0'):
+      # input state
+      self.state_input = tf.placeholder(shape=[None]+self.state_size, dtype=tf.uint8)
+      # input action to generate output mask
+      self.action = tf.placeholder(shape=[None], dtype=tf.int32)
+      # target_q = tf.add(reward + gamma * max(q(s,a)))
+      self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
 
-    
-    state = tf.to_float(self.state_input) / 255.0
+      
+      state = tf.to_float(self.state_input) / 255.0
 
 
-    # Three convolutional layers
-    conv1 = tf.contrib.layers.conv2d(
-        state, 32, 8, 4, activation_fn=tf.nn.relu)
-    conv2 = tf.contrib.layers.conv2d(
-        conv1, 64, 4, 2, activation_fn=tf.nn.relu)
-    conv3 = tf.contrib.layers.conv2d(
-        conv2, 64, 3, 1, activation_fn=tf.nn.relu)
+      # Three convolutional layers
+      conv1 = tf.contrib.layers.conv2d(
+          state, 32, 8, 4, activation_fn=tf.nn.relu)
+      conv2 = tf.contrib.layers.conv2d(
+          conv1, 64, 4, 2, activation_fn=tf.nn.relu)
+      conv3 = tf.contrib.layers.conv2d(
+          conv2, 64, 3, 1, activation_fn=tf.nn.relu)
 
-    # Fully connected layers
-    flattened = tf.contrib.layers.flatten(conv3)
-    fc1 = tf.contrib.layers.fully_connected(flattened, 512)
-    self.q_values = tf.contrib.layers.fully_connected(fc1, self.action_size)
-    # conv1 = tf.layers.conv2d(
-    #   inputs=state,
-    #   filters=16,
-    #   kernel_size=[8, 8],
-    #   padding="same",
-    #   activation=tf.nn.relu)
+      # Fully connected layers
+      flattened = tf.contrib.layers.flatten(conv3)
+      fc1 = tf.contrib.layers.fully_connected(flattened, 512)
+      self.q_values = tf.contrib.layers.fully_connected(fc1, self.action_size)
+      # conv1 = tf.layers.conv2d(
+      #   inputs=state,
+      #   filters=16,
+      #   kernel_size=[8, 8],
+      #   padding="same",
+      #   activation=tf.nn.relu)
 
-    # pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], strides=4)
+      # pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], strides=4)
 
-    # conv2 = tf.layers.conv2d(
-    #   inputs=pool1,
-    #   filters=32,
-    #   kernel_size=[4, 4],
-    #   padding="same",
-    #   activation=tf.nn.relu)
+      # conv2 = tf.layers.conv2d(
+      #   inputs=pool1,
+      #   filters=32,
+      #   kernel_size=[4, 4],
+      #   padding="same",
+      #   activation=tf.nn.relu)
 
-    # pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
+      # pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], strides=2)
 
-    # flat = tf.reshape(pool2, [self.batch_size, -1])
-    # # print flat.shape()
-    # dense = tf.layers.dense(inputs=flat, units=256, activation=tf.nn.relu)
-    # self.q_values = tf.layers.dense(inputs=dense, units=self.action_size)
+      # flat = tf.reshape(pool2, [self.batch_size, -1])
+      # # print flat.shape()
+      # dense = tf.layers.dense(inputs=flat, units=256, activation=tf.nn.relu)
+      # self.q_values = tf.layers.dense(inputs=dense, units=self.action_size)
 
-    action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
-    q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
+      action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
+      q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
 
-    self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
-    self.optimizer = tf.train.AdamOptimizer(self.lr)
-    self.train_op = self.optimizer.minimize(self.loss, global_step=self.global_step)
+      self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
+      self.optimizer = tf.train.AdamOptimizer(self.lr)
+      self.train_op = self.optimizer.minimize(self.loss, global_step=self.global_step)
 
 
   def get_value(self, s):
