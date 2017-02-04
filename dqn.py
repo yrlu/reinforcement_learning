@@ -58,48 +58,48 @@ class DQNAgent():
     """
     Build q-network
     """
-
-    # input state
-    self.state_input = tf.placeholder(tf.float32, [None, self.state_size])
-    # input action to generate output mask
-    self.action = tf.placeholder(tf.int32, [None])
-    # target_q = tf.add(reward + gamma * max(q(s,a)))
-    self.target_q = tf.placeholder(tf.float32, [None])
-
-    # 2 hidden layers
-    # network: [state_size] - [n_hidden_1] - [n_hidden_2] - [action_size]
-
-    n_hidden_1 = self.n_hidden_1
-    n_hidden_2 = self.n_hidden_2
-
-    self.weights = {
-      'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
-      'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
-      'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size]))
-    }
-
-    self.biases = {
-      'b1': tf.Variable(tf.random_normal([n_hidden_1])),
-      'b2': tf.Variable(tf.random_normal([n_hidden_2])),
-      'out': tf.Variable(tf.random_normal([self.action_size]))
-    }
-
-    layer_1 = tf.add(tf.matmul(self.state_input, self.weights['h1']), self.biases['b1'])
-    layer_1 = tf.nn.relu(layer_1)
-
-    layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
-    layer_2 = tf.nn.relu(layer_2)
-
-    self.q_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
-
-    action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
-    # predicted q(s,a)
-    q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
-
-    self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
-    self.optimizer = tf.train.AdamOptimizer(self.lr)
     self.global_step = tf.Variable(0, name='global_step', trainable=False)
-    self.train_op = self.optimizer.minimize(self.loss, global_step=self.global_step)
+    with tf.device('/cpu:0'):
+      # input state
+      self.state_input = tf.placeholder(tf.float32, [None, self.state_size])
+      # input action to generate output mask
+      self.action = tf.placeholder(tf.int32, [None])
+      # target_q = tf.add(reward + gamma * max(q(s,a)))
+      self.target_q = tf.placeholder(tf.float32, [None])
+
+      # 2 hidden layers
+      # network: [state_size] - [n_hidden_1] - [n_hidden_2] - [action_size]
+
+      n_hidden_1 = self.n_hidden_1
+      n_hidden_2 = self.n_hidden_2
+
+      self.weights = {
+        'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
+        'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
+        'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size]))
+      }
+
+      self.biases = {
+        'b1': tf.Variable(tf.random_normal([n_hidden_1])),
+        'b2': tf.Variable(tf.random_normal([n_hidden_2])),
+        'out': tf.Variable(tf.random_normal([self.action_size]))
+      }
+
+      layer_1 = tf.add(tf.matmul(self.state_input, self.weights['h1']), self.biases['b1'])
+      layer_1 = tf.nn.relu(layer_1)
+
+      layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
+      layer_2 = tf.nn.relu(layer_2)
+
+      self.q_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
+
+      action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
+      # predicted q(s,a)
+      q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
+
+      self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
+      self.optimizer = tf.train.AdamOptimizer(self.lr)
+      self.train_op = self.optimizer.minimize(self.loss, global_step=self.global_step)
 
 
   def get_value(self, s):
