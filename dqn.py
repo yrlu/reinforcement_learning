@@ -50,7 +50,7 @@ class DQNAgent():
     self.mem = []
     
     self._build_qnet()
-    self.sess = tf.Session()
+    self.sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
     self.sess.run(tf.global_variables_initializer())
 
 
