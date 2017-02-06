@@ -25,12 +25,12 @@ RECORD = False
 KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
 TEST_EVERY_NUM_EPISODES = 40
-TEST_N_EPISODES = 5
+TEST_N_EPISODES = 10
 
 BATCH_SIZE = 64
 IMAGE_SIZE = [84, 84]
 
-DISPLAY = True
+DISPLAY = False
 
 MODEL_DIR = '/tmp/breakout-experiment-1'
 MODEL_PATH = '/tmp/breakout-experiment-1/model'
@@ -100,6 +100,7 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
       t = t + 1
       # action = env.action_space.sample()
       action = agent.get_action(cur_state,sess)
+      # print action
       if DISPLAY:
         # action = agent.get_optimal_action(cur_state, sess)
         # print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
@@ -114,14 +115,18 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       # next_state = sp.process(sess, obs)
+	
+
       if reward == 0:
         reward = info['ale.lives'] - last_life
         last_life = info['ale.lives']
-
-      if reward > 0:
-        reward = 1
-      elif reward < 0:
-        reward = -1
+	if reward == 0:
+	  reward = 1
+      else:
+        if reward > 0:
+          reward = 2
+        elif reward < 0:
+          reward = -1
 
       if done:
         reward = FAIL_PENALTY
@@ -131,11 +136,13 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
         break
       if t % KTH_FRAME == 0:
         next_state = sp.process(sess, obs)
+        # print action, reward
         episode.append([cur_state, action, next_state, reward, done])
         cur_state = next_state
 
     # print len(episode)
     print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
+    # print episode
     agent.add_episode(episode)
     if i % TRAIN_EVERY_NUM_EPISODES == 0:
       print 'train at episode {}'.format(i)
@@ -152,7 +159,7 @@ sp = StateProcessor()
 
 
 with tf.Session() as sess:
-  with tf.device('/cpu:0'):
+  with tf.device('/gpu:0'):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=2, mem_size=MEM_SIZE)

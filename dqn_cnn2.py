@@ -95,6 +95,7 @@ class DQNAgent_CNN():
         'wc1': tf.Variable(tf.random_normal([8, 8, 1, 16])),
         # 4x4 conv, 16 inputs, 32 outputs
         'wc2': tf.Variable(tf.random_normal([4, 4, 16, 32])),
+	# 'wc3': tf.Variable(tf.random_normal([3, 3, 32, 32])),
         # # fully connected, 7*7*64 inputs, 1024 outputs
         # 'wf1': tf.Variable(tf.random_normal([-1, 256])),
         # # 1024 inputs, 10 outputs (class prediction)
@@ -104,6 +105,7 @@ class DQNAgent_CNN():
       biases = {
         'bc1': tf.Variable(tf.random_normal([16])),
         'bc2': tf.Variable(tf.random_normal([32])),
+	# 'bc3': tf.Variable(tf.random_normal([32])),
         # 'bf1': tf.Variable(tf.random_normal([1024])),
         # 'out': tf.Variable(tf.random_normal([n_output]))
       }
@@ -114,6 +116,7 @@ class DQNAgent_CNN():
       conv2 = conv_layer(conv1, weights['wc2'], biases['bc2'], 2)
       # conv2 = max_pooling(conv2, k_sz=2)
 
+      # conv3 = conv_layer(conv2, weights['wc3'], biases['bc3'], 1)
 
       # convolutional layers
       # Three convolutional layers
