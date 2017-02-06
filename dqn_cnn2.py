@@ -236,4 +236,4 @@ class DQNAgent_CNN():
 
         if self.total_steps % 1000 == 0:
           # print loss
-          print l
+          print 'loss: {}'.format(l)
