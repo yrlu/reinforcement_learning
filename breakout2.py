@@ -9,23 +9,23 @@ import os
 
 # import matplotlib.pyplot as plt
 
-# ACTIONS = {0:1, 1:4, 2:5}
+ACTIONS = {0:1, 1:4, 2:5}
 NUM_EPISODES = 1000
 FAIL_PENALTY = -1
 EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 1e-5
 DISCOUNT_FACTOR = 0.99
-BATCH_SIZE = 256
+BATCH_SIZE = 32
 MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
-STEP_PER_EPOCH = 100
+STEP_PER_EPOCH = 200
 RECORD = False
 KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
-TEST_EVERY_NUM_EPISODES = 50
-TEST_N_EPISODES = 10
+TEST_EVERY_NUM_EPISODES = 80
+TEST_N_EPISODES = 20
 
 BATCH_SIZE = 64
 IMAGE_SIZE = [84, 84]
@@ -73,12 +73,14 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
     done = False
     while not done:
       action = agent.get_optimal_action(cur_state, sess)
-      obs, reward, done, info = env.step(action)
+      obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
-
+      # print reward, done, info
       if done:
         rewards.append(cum_reward)
-  print rewards
+	# print 'test episode {}, reward: {}'.format(i, cum_reward)
+  	break
+  # print rewards
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
 
 
@@ -107,7 +109,7 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
       # else:
         # action = agent.get_action(cur_state,sess)
       # print len(cur_state), len(cur_state[0]), cur_state[15:-15][15:-15], action
-      obs, reward, done, info = env.step(action)
+      obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       # next_state = sp.process(sess, obs)
       if reward == 0:
@@ -148,10 +150,10 @@ sp = StateProcessor()
 
 
 with tf.Session() as sess:
-  with tf.device('/cpu:0'):
+  with tf.device('/gpu:0'):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
-      action_size=6, mem_size=MEM_SIZE)
+      action_size=5, mem_size=MEM_SIZE)
   sess.run(tf.global_variables_initializer())
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
