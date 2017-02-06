@@ -9,7 +9,7 @@ import os
 
 # import matplotlib.pyplot as plt
 
-ACTIONS = {0:1, 1:4, 2:5}
+ACTIONS = {0:4, 1:5}
 NUM_EPISODES = 1000
 FAIL_PENALTY = -1
 EPSILON = 1
@@ -17,14 +17,14 @@ EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 1e-5
 DISCOUNT_FACTOR = 0.99
-BATCH_SIZE = 32
+BATCH_SIZE = 64
 MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
-STEP_PER_EPOCH = 200
+STEP_PER_EPOCH = 100
 RECORD = False
 KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
-TEST_EVERY_NUM_EPISODES = 80
+TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 20
 
 BATCH_SIZE = 64
@@ -78,7 +78,7 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
       # print reward, done, info
       if done:
         rewards.append(cum_reward)
-	# print 'test episode {}, reward: {}'.format(i, cum_reward)
+	print 'test episode {}, reward: {}'.format(i, cum_reward)
   	break
   # print rewards
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
@@ -153,7 +153,7 @@ with tf.Session() as sess:
   with tf.device('/gpu:0'):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
-      action_size=5, mem_size=MEM_SIZE)
+      action_size=2, mem_size=MEM_SIZE)
   sess.run(tf.global_variables_initializer())
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
