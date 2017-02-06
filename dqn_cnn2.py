@@ -4,6 +4,27 @@ import random
 import tensorflow as tf
 
 
+def conv_layer(x, W, b, stride=1):
+  # https://www.tensorflow.org/api_docs/python/nn/convolution#conv2d
+  # 
+  # - x: 4d tensor [batch, height, width, channels]
+  # - W, b: weights
+  # - strides[0] and strides[1] must be 1
+  # - padding can be 'VALID'(without padding) or 'SAME'(zero padding)
+  #     - http://stackoverflow.com/questions/37674306/what-is-the-difference-between-same-and-valid-padding-in-tf-nn-max-pool-of-t
+
+  x = tf.nn.conv2d(x, W, strides=[1, stride, stride, 1], padding='SAME')
+  x = tf.nn.bias_add(x, b) # add bias term
+  return tf.nn.relu(x) # rectified linear unit: https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
+
+def max_pooling(x, k_sz=2):
+  # https://www.tensorflow.org/api_docs/python/nn/pooling#max_pool
+  # 
+  # - x: 4d tensor [batch, height, width, channels]
+  # - ksize: The size of the window for each dimension of the input tensor
+  return tf.nn.max_pool(x, ksize=[1, k_sz, k_sz, 1], strides=[1, k_sz, k_sz, 1], padding='SAME')
+
+
 class DQNAgent_CNN():
   """
   DQN Agent with 3 convolution layers q-network that acts epsilon-greedily.
@@ -51,6 +72,9 @@ class DQNAgent_CNN():
     self._build_qnet()
 
 
+  
+
+
   def _build_qnet(self):
     """
     Build q-network
@@ -63,13 +87,47 @@ class DQNAgent_CNN():
       # target_q = tf.add(reward + gamma * max(q(s,a)))
       self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
 
-      state = tf.to_float(self.state_input) / 255.0
+      state = tf.reshape(tf.to_float(self.state_input) / 255.0, [-1, self.state_size[0], self.state_size[1], 1])
+      # state.reshape()
+      # initialize layers weight & bias
+      weights = {
+        # 8x8 conv, 1 input, 16 outputs
+        'wc1': tf.Variable(tf.random_normal([8, 8, 1, 16])),
+        # 4x4 conv, 16 inputs, 32 outputs
+        'wc2': tf.Variable(tf.random_normal([4, 4, 16, 32])),
+        # # fully connected, 7*7*64 inputs, 1024 outputs
+        # 'wf1': tf.Variable(tf.random_normal([-1, 256])),
+        # # 1024 inputs, 10 outputs (class prediction)
+        # 'out': tf.Variable(tf.random_normal([256, self.action_size]))
+      }
+
+      biases = {
+        'bc1': tf.Variable(tf.random_normal([16])),
+        'bc2': tf.Variable(tf.random_normal([32])),
+        # 'bf1': tf.Variable(tf.random_normal([1024])),
+        # 'out': tf.Variable(tf.random_normal([n_output]))
+      }
+
+      conv1 = conv_layer(state, weights['wc1'], biases['bc1'], 4)
+      # conv1 = max_pooling(conv1, k_sz=2)
+
+      conv2 = conv_layer(conv1, weights['wc2'], biases['bc2'], 2)
+      # conv2 = max_pooling(conv2, k_sz=2)
+
 
       # convolutional layers
-      conv1 = tf.contrib.layers.conv2d(
-          state, 16, 8, 4, activation_fn=tf.nn.relu)
-      conv2 = tf.contrib.layers.conv2d(
-          conv1, 32, 4, 2, activation_fn=tf.nn.relu)
+      # Three convolutional layers
+      # conv1 = tf.contrib.layers.conv2d(
+      #     state, 32, 8, 4, activation_fn=tf.nn.relu)
+      # conv2 = tf.contrib.layers.conv2d(
+      #     conv1, 64, 4, 2, activation_fn=tf.nn.relu)
+      # conv3 = tf.contrib.layers.conv2d(
+      #     conv2, 64, 3, 1, activation_fn=tf.nn.relu)
+
+      # conv1 = tf.contrib.layers.conv2d(
+          # state, 16, 8, 4, activation_fn=tf.nn.relu)
+      # conv2 = tf.contrib.layers.conv2d(
+          # conv1, 32, 4, 2, activation_fn=tf.nn.relu)
       # conv3 = tf.contrib.layers.conv2d(
           # conv2, 64, 3, 1, activation_fn=tf.nn.relu)
 
@@ -96,6 +154,10 @@ class DQNAgent_CNN():
     return q_values[0][a]
 
 
+  def get_action_dist(self, state, sess):
+    actions = sess.run(self.q_values, feed_dict={self.state_input: [state]})
+    return actions
+
 
   def get_optimal_action(self, state, sess):
     actions = sess.run(self.q_values, feed_dict={self.state_input: [state]})
@@ -120,7 +182,7 @@ class DQNAgent_CNN():
       return self.get_optimal_action(state, sess)
 
 
-  def _add_episode(self, episode):
+  def add_episode(self, episode):
     """
     Store episode to memory and check if it reaches the mem_size. 
     If so, drop 20% of the oldest memory
@@ -139,7 +201,7 @@ class DQNAgent_CNN():
       self.mem = self.mem[int(len(self.mem)/5):]
 
 
-  def learn(self, episode, train_steps, sess):
+  def learn(self, train_steps, sess):
     """
     Deep Q-learing:
       - Store episode to the memory
@@ -147,10 +209,8 @@ class DQNAgent_CNN():
       - Train q-network (s->{a}) by the sampled transitions
 
     args
-      episode       a list of (current state, action, next state, reward, done)
       train_steps   number of training steps per calling learn()
     """
-    self._add_episode(episode)
 
     if len(self.mem) > self.batch_size:
       

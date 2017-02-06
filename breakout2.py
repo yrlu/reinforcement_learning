@@ -10,28 +10,29 @@ import os
 # import matplotlib.pyplot as plt
 
 # ACTIONS = {0:1, 1:4, 2:5}
-NUM_EPISODES = 2000
-MAX_STEPS = 300
+NUM_EPISODES = 100
 FAIL_PENALTY = -1
 EPSILON = 1
-EPSILON_DECAY = 0.001
+EPSILON_DECAY = 0.01
 END_EPSILON = 0.1
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 DISCOUNT_FACTOR = 0.99
-BATCH_SIZE = 64
-MEM_SIZE = 1e4
+BATCH_SIZE = 256
+MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
-STEP_PER_EPOCH = 200
+STEP_PER_EPOCH = 100
 RECORD = False
 KTH_FRAME = 4
+TRAIN_EVERY_NUM_EPISODES = 1
 
 BATCH_SIZE = 64
 IMAGE_SIZE = [84, 84]
 
+DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-0'
-MODEL_PATH = '/tmp/breakout-experiment-0/model'
-  
+MODEL_DIR = '/tmp/breakout-experiment-1'
+MODEL_PATH = '/tmp/breakout-experiment-1/model'
+
 
 
 class StateProcessor():
@@ -62,10 +63,10 @@ class StateProcessor():
 
 def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
   for i in xrange(NUM_EPISODES):
-    if i % 100:
-      print "Episode {}".format(i + 1)
     obs = env.reset()
     cur_state = sp.process(sess, obs)
+
+    action = 0
     episode = []
     done = False
     t = 0
@@ -73,7 +74,18 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
     cum_reward = 0
     while not done:
       t = t + 1
+      # action = env.action_space.sample()
       action = agent.get_action(cur_state,sess)
+      if DISPLAY:
+        print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
+        env.render()
+        # if action != 0:
+          # print '~0'
+        # while action==0:
+          # action = env.action_space.sample()
+      # else:
+        # action = agent.get_action(cur_state,sess)
+      # print len(cur_state), len(cur_state[0]), cur_state[15:-15][15:-15], action
       obs, reward, done, info = env.step(action)
       cum_reward = cum_reward + reward
       # next_state = sp.process(sess, obs)
@@ -96,7 +108,13 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
         next_state = sp.process(sess, obs)
         episode.append([cur_state, action, next_state, reward, done])
         cur_state = next_state
-    agent.learn(episode, STEP_PER_EPOCH, sess)
+
+    # print len(episode)
+    print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
+    agent.add_episode(episode)
+    if i % TRAIN_EVERY_NUM_EPISODES == 0:
+      print 'train at episode {}'.format(i)
+      agent.learn(STEP_PER_EPOCH, sess)
   return agent, history
 
 
@@ -107,7 +125,7 @@ sp = StateProcessor()
 
 
 with tf.Session() as sess:
-  with tf.device('/gpu:0'):
+  with tf.device('/cpu:0'):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=6, mem_size=MEM_SIZE)
