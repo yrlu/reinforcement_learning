@@ -9,7 +9,8 @@ from skimage.color import rgb2gray
 
 
 
-NUM_EPISODES = 1000
+# ACTIONS = {0:1, 1:4, 2:5}
+NUM_EPISODES = 2000
 MAX_STEPS = 300
 FAIL_PENALTY = -1
 EPSILON = 1
@@ -17,15 +18,18 @@ EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 1e-3
 DISCOUNT_FACTOR = 0.99
-BATCH_SIZE = 128
+BATCH_SIZE = 64
 MEM_SIZE = 1e4
 ENV_NAME = 'Breakout-v0'
-STEP_PER_EPOCH = 300
+STEP_PER_EPOCH = 200
 RECORD = False
 KTH_FRAME = 4
 
 BATCH_SIZE = 64
 IMAGE_SIZE = [84, 84]
+
+
+
 
 def preprocess_frame(frame, size=IMAGE_SIZE):
   # print frame[0]
@@ -108,7 +112,8 @@ plt.ion()
 plt.figure()
 
 env = gym.make('Breakout-v0')
-for i_episode in range(20):
+# for i_episode in range(20):
+while True:
   observation = env.reset()
   cur_state = preprocess_frame(observation)
   done = False
