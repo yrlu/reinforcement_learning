@@ -9,8 +9,6 @@
 - Numpy
 - OpenAI Gym (with Atari)
 - Tensorflow
-- scikit-image
-- scipy
 - matplotlib (optional)
 
 ### Implemented Algorithms
