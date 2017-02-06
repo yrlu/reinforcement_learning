@@ -25,12 +25,12 @@ RECORD = False
 KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
 TEST_EVERY_NUM_EPISODES = 40
-TEST_N_EPISODES = 20
+TEST_N_EPISODES = 5
 
 BATCH_SIZE = 64
 IMAGE_SIZE = [84, 84]
 
-DISPLAY = False
+DISPLAY = True
 
 MODEL_DIR = '/tmp/breakout-experiment-1'
 MODEL_PATH = '/tmp/breakout-experiment-1/model'
@@ -75,6 +75,7 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
       action = agent.get_optimal_action(cur_state, sess)
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
+      cur_state = sp.process(sess, obs)
       # print reward, done, info
       if done:
         rewards.append(cum_reward)
@@ -100,7 +101,8 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
       # action = env.action_space.sample()
       action = agent.get_action(cur_state,sess)
       if DISPLAY:
-        print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
+        # action = agent.get_optimal_action(cur_state, sess)
+        # print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
         env.render()
         # if action != 0:
           # print '~0'
@@ -150,7 +152,7 @@ sp = StateProcessor()
 
 
 with tf.Session() as sess:
-  with tf.device('/gpu:0'):
+  with tf.device('/cpu:0'):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=2, mem_size=MEM_SIZE)
