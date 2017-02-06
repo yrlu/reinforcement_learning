@@ -24,7 +24,7 @@ STEP_PER_EPOCH = 100
 RECORD = False
 KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
-TEST_EVERY_NUM_EPISODES = 100
+TEST_EVERY_NUM_EPISODES = 50
 TEST_N_EPISODES = 10
 
 BATCH_SIZE = 64
@@ -63,6 +63,7 @@ class StateProcessor():
 
 
 def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
+  print 'testing ...'
   rewards = []
   for i in xrange(num_episodes):
     cum_reward = 0
@@ -135,7 +136,7 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
     if i % TRAIN_EVERY_NUM_EPISODES == 0:
       print 'train at episode {}'.format(i)
       agent.learn(STEP_PER_EPOCH, sess)
-    if i % TEST_EVERY_NUM_EPISODES:
+    if i % TEST_EVERY_NUM_EPISODES == 0:
       test(agent, env, sess)
   return agent, history
 
