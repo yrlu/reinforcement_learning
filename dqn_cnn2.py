@@ -164,6 +164,23 @@ class DQNAgent_CNN():
     return actions.argmax()
 
 
+  def get_action_e(self, state, e):
+    """
+    Epsilon-greedy action with epsilon e
+
+    args
+      state           current state      
+    returns
+      an action to take given the state
+    """
+    if np.random.random() < e:
+      # act randomly
+      return np.random.randint(0, self.action_size)
+    else:
+      # return np.random.randint(0, self.action_size)
+      return self.get_optimal_action(state, sess)
+
+
   def get_action(self, state, sess):
     """
     Epsilon-greedy action
