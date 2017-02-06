@@ -15,7 +15,7 @@ FAIL_PENALTY = -1
 EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 1e-4
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 256
 MEM_SIZE = 1e5
@@ -24,6 +24,8 @@ STEP_PER_EPOCH = 100
 RECORD = False
 KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
+TEST_EVERY_NUM_EPISODES = 100
+TEST_N_EPISODES = 10
 
 BATCH_SIZE = 64
 IMAGE_SIZE = [84, 84]
@@ -60,9 +62,27 @@ class StateProcessor():
     return sess.run(self.output, { self.input_state: state })
 
 
+def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
+  rewards = []
+  for i in xrange(num_episodes):
+    cum_reward = 0
+    obs = env.reset()
+    cur_state = sp.process(sess, obs)
+    action = 0
+    done = False
+    while not done:
+      action = agent.get_optimal_action(cur_state, sess)
+      obs, reward, done, info = env.step(action)
+      cum_reward = cum_reward + reward
+
+      if done:
+        rewards.append(cum_reward)
+  print rewards
+  print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
+
 
 def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
-  for i in xrange(NUM_EPISODES):
+  for i in xrange(num_episodes):
     obs = env.reset()
     cur_state = sp.process(sess, obs)
 
@@ -115,6 +135,8 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
     if i % TRAIN_EVERY_NUM_EPISODES == 0:
       print 'train at episode {}'.format(i)
       agent.learn(STEP_PER_EPOCH, sess)
+    if i % TEST_EVERY_NUM_EPISODES:
+      test(agent, env, sess)
   return agent, history
 
 
