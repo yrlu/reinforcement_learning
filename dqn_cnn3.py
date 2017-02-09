@@ -27,7 +27,7 @@ def max_pooling(x, k_sz=2):
 
 class DQNAgent_CNN():
   """
-  DQN Agent with 2 convolution layers q-network that acts epsilon-greedily.
+  DQN Agent with 3 convolution layers q-network that acts epsilon-greedily.
   """
 
 
@@ -91,32 +91,25 @@ class DQNAgent_CNN():
       # state.reshape()
       # initialize layers weight & bias
       weights = {
-        # 8x8 conv, 1 input, 16 outputs
-        'wc1': tf.Variable(tf.random_normal([8, 8, 1, 16])),
-        # 4x4 conv, 16 inputs, 32 outputs
-        'wc2': tf.Variable(tf.random_normal([4, 4, 16, 32])),
-	# 'wc3': tf.Variable(tf.random_normal([3, 3, 32, 32])),
-        # # fully connected, 7*7*64 inputs, 1024 outputs
-        # 'wf1': tf.Variable(tf.random_normal([-1, 256])),
-        # # 1024 inputs, 10 outputs (class prediction)
-        # 'out': tf.Variable(tf.random_normal([256, self.action_size]))
+        # 8x8 conv, 1 input, 32 outputs
+        'wc1': tf.Variable(tf.random_normal([8, 8, 1, 32])),
+        # 4x4 conv, 32 inputs, 64 outputs
+        'wc2': tf.Variable(tf.random_normal([4, 4, 32, 64])),
+        # 3x3 conv, 64 inputs, 64 outputs
+	      'wc3': tf.Variable(tf.random_normal([3, 3, 64, 64])),
       }
 
       biases = {
-        'bc1': tf.Variable(tf.random_normal([16])),
-        'bc2': tf.Variable(tf.random_normal([32])),
-	# 'bc3': tf.Variable(tf.random_normal([32])),
-        # 'bf1': tf.Variable(tf.random_normal([1024])),
-        # 'out': tf.Variable(tf.random_normal([n_output]))
+        'bc1': tf.Variable(tf.random_normal([32])),
+        'bc2': tf.Variable(tf.random_normal([64])),
+	      'bc3': tf.Variable(tf.random_normal([64])),
       }
 
       conv1 = conv_layer(state, weights['wc1'], biases['bc1'], 4)
       # conv1 = max_pooling(conv1, k_sz=2)
-
       conv2 = conv_layer(conv1, weights['wc2'], biases['bc2'], 2)
       # conv2 = max_pooling(conv2, k_sz=2)
-
-      # conv3 = conv_layer(conv2, weights['wc3'], biases['bc3'], 1)
+      conv3 = conv_layer(conv2, weights['wc3'], biases['bc3'], 1)
 
       # convolutional layers
       # Three convolutional layers
@@ -135,8 +128,8 @@ class DQNAgent_CNN():
           # conv2, 64, 3, 1, activation_fn=tf.nn.relu)
 
       # Fully connected layers
-      flattened = tf.contrib.layers.flatten(conv2)
-      fc1 = tf.contrib.layers.fully_connected(flattened, 256)
+      flattened = tf.contrib.layers.flatten(conv3)
+      fc1 = tf.contrib.layers.fully_connected(flattened, 512)
       self.q_values = tf.contrib.layers.fully_connected(fc1, self.action_size)
 
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
