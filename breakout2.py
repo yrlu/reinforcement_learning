@@ -3,9 +3,7 @@ import numpy as np
 import tensorflow as tf
 import dqn_cnn2
 import os
-
-# from pycallgraph import PyCallGraph
-# from pycallgraph.output import GraphvizOutput
+import sys
 
 # import matplotlib.pyplot as plt
 
@@ -159,7 +157,7 @@ sp = StateProcessor()
 
 
 with tf.Session() as sess:
-  with tf.device('/gpu:0'):
+  with tf.device('/{}:0'.format(sys.argv[1])):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=2, mem_size=MEM_SIZE)
