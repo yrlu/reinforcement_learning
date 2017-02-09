@@ -5,7 +5,6 @@ import dqn_cnn2
 import os
 import sys
 
-# import matplotlib.pyplot as plt
 # action space  0: pause, 1: stay, 2: pause, 3: pause, 4: right, 5: left
 ACTIONS = {0:1, 1:4, 2:5}
 NUM_EPISODES = 1000
@@ -13,7 +12,7 @@ FAIL_PENALTY = -1
 EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.3
-LEARNING_RATE = 1e-3
+LEARNING_RATE = 2e-4
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
 MEM_SIZE = 1e5
@@ -134,13 +133,10 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
         break
       if t % KTH_FRAME == 0:
         next_state = sp.process(sess, obs)
-        # print action, reward
         episode.append([cur_state, action, next_state, reward, done])
         cur_state = next_state
 
-    # print len(episode)
     print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
-    # print episode
     agent.add_episode(episode)
     if i % TRAIN_EVERY_NUM_EPISODES == 0:
       print 'train at episode {}'.format(i)
@@ -160,7 +156,7 @@ with tf.Session() as sess:
   with tf.device('/{}:0'.format(sys.argv[1])):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
-      action_size=2, mem_size=MEM_SIZE)
+      action_size=len(ACTIONS), mem_size=MEM_SIZE)
   sess.run(tf.global_variables_initializer())
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
@@ -168,7 +164,7 @@ with tf.Session() as sess:
     print 'restored model'
   else:
     os.makedirs(MODEL_DIR)
-      
+
   history = []
   agent, history = train(agent, env, history, sess)
   print history

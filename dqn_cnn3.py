@@ -136,7 +136,8 @@ class DQNAgent_CNN():
       q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
 
       self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
-      self.optimizer = tf.train.AdamOptimizer(self.lr)
+      # self.optimizer = tf.train.AdamOptimizer(self.lr)
+      self.optimizer = tf.train.RMSPropOptimizer(self.lr, 0.99, 0.0, 1e-6)
       self.train_op = self.optimizer.minimize(self.loss, global_step=tf.contrib.framework.get_global_step())
 
 
