@@ -1,7 +1,7 @@
 import gym
 import numpy as np
 import tensorflow as tf
-import dqn_cnn2
+import dqn_cnn3
 import os
 import sys
 
@@ -154,7 +154,7 @@ sp = StateProcessor()
 
 with tf.Session() as sess:
   with tf.device('/{}:0'.format(sys.argv[1])):
-    agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
+    agent = dqn_cnn3.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=len(ACTIONS), mem_size=MEM_SIZE)
   sess.run(tf.global_variables_initializer())
