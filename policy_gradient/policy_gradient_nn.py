@@ -10,7 +10,7 @@ import gym
 import numpy as np
 import random
 import tensorflow as tf
-
+import tensorflow.contrib.slim as slim
 
 class PolicyGradientNNAgent():
 
@@ -66,6 +66,7 @@ class PolicyGradientNNAgent():
       self.action = tf.placeholder(tf.int32, [None])
       # G_t
       self.target = tf.placeholder(tf.float32, [None])
+      self.value_got = tf.placeholder(tf.float32, [None])
 
       n_hidden_1 = self.n_hidden_1
       n_hidden_2 = self.n_hidden_2
@@ -73,13 +74,15 @@ class PolicyGradientNNAgent():
       self.weights = {
         'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
         'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size]))
+        'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size])),
+        'v_out': tf.Variable(tf.random_normal([n_hidden_2, 1])),
       }
 
       self.biases = {
         'b1': tf.Variable(tf.random_normal([n_hidden_1])),
         'b2': tf.Variable(tf.random_normal([n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([self.action_size]))
+        'out': tf.Variable(tf.random_normal([self.action_size])),
+        'v_out': tf.Variable(tf.random_normal([1])),
       }
 
       layer_1 = tf.add(tf.matmul(self.state_input, self.weights['h1']), self.biases['b1'])
@@ -88,14 +91,21 @@ class PolicyGradientNNAgent():
       layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
       layer_2 = tf.nn.relu(layer_2)
 
+      self.value = tf.add(tf.matmul(layer_2, self.weights['v_out']), self.biases['v_out'])
+      self.value = tf.nn.relu(self.value)
+
       self.action_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       self.action_value_pred = tf.reduce_sum(self.action_values * action_mask, 1)
-
+      
       # self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
-      self.loss = -tf.log(self.action_value_pred) * self.target
-      self.optimizer = tf.train.RMSPropOptimizer(self.lr, 0.99, 0.0, 1e-6)
-      # self.optimizer = tf.train.AdamOptimizer(learning_rate=self.lr)
+      self.value_loss = tf.reduce_mean(tf.square(self.target - self.value_got))
+      self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * self.target)
+      self.loss = self.pg_loss + 0.01*self.value_loss
+      # print self.target - self.value
+      # self.loss = self.pg_loss
+      # self.optimizer = tf.train.RMSPropOptimizer(self.lr, 0.99, 0.0, 1e-6)
+      self.optimizer = tf.train.AdamOptimizer(learning_rate=self.lr)
       self.train_op = self.optimizer.minimize(
       self.loss, global_step=tf.contrib.framework.get_global_step())
 
@@ -176,7 +186,6 @@ class PolicyGradientNNAgent():
     #     feed_dict = { self.state_input: states, self.target: targets, self.action: actions }
     #     _, loss = sess.run([self.train_op, self.loss], feed_dict)
 
-    
     states = []
     actions = []
     targets = []
@@ -188,6 +197,11 @@ class PolicyGradientNNAgent():
       # actions.append(action)
       # targets.append(target)
       feed_dict = { self.state_input: [state], self.target: [target], self.action: [action] }
-      _, loss = sess.run([self.train_op, self.loss], feed_dict)
+      v = sess.run([self.value], feed_dict)
+      # print v[0][0][0]
 
+
+      feed_dict = { self.state_input: [state], self.target: [target], self.value_got:[v[0][0][0]], self.action: [action] }
+      _, loss, v = sess.run([self.train_op, self.loss, self.value], feed_dict)
+      # print target, v
 

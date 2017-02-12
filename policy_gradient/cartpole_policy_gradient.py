@@ -5,13 +5,13 @@ import numpy
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-NUM_EPISODES = 3000
-MAX_STEPS = 250
-FAIL_PENALTY = -100
-EPSILON = 0.4
-EPSILON_ANNEAL = 0.01
+NUM_EPISODES = 2000
+MAX_STEPS = 200
+FAIL_PENALTY = 0
+EPSILON = 0.1
+EPSILON_ANNEAL = 0
 END_EPSILON = 0.1
-LEARNING_RATE = 0.001
+LEARNING_RATE = 0.0001
 DISCOUNT_FACTOR = 0.9
 
 RECORD = False
@@ -31,6 +31,7 @@ def train(agent, env, sess, num_episodes=NUM_EPISODES):
         reward = FAIL_PENALTY
         episode.append([cur_state, action, next_state, reward, done])
         print("Episode finished after {} timesteps".format(t + 1))
+        print agent.get_policy(cur_state, sess)
         history.append(t + 1)
         break
       episode.append([cur_state, action, next_state, 1, done])
@@ -49,8 +50,8 @@ agent = policy_gradient_nn.PolicyGradientNNAgent(epsilon=EPSILON,
                                           gamma=DISCOUNT_FACTOR,
                                           state_size=4,
                                           action_size=2,
-                                          n_hidden_1=20,
-                                          n_hidden_2=20,
+                                          n_hidden_1=10,
+                                          n_hidden_2=10,
                                           batch_size=1,
                                           mem_size=5)
 
