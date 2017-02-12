@@ -13,16 +13,16 @@
 
 ##### TD Learning
 
-- `qleanring_agent.py`: standard epsilon greedy qlearning agent
+- `TD/qleanring_agent.py`: standard epsilon greedy qlearning agent
 - `dqn.py`: Deep Q-network agent - vanilla network
 
 ##### Monte Carlo Methods
 
-- `monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
+- `MonteCarlo/monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
 
 ##### Policy Gradient Methods
 
-- `policy_gradient/policy_gradient_nn.py`: policy gradient agent with policy network
+- `PolicyGradient/policy_gradient_nn.py`: policy gradient agent with policy network
 
 ### OpenAI Gym Examples
 
