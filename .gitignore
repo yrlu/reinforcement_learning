@@ -6,3 +6,4 @@ run_format.sh
 push.sh
 *.png
 *.jpg
+visualize_history.py

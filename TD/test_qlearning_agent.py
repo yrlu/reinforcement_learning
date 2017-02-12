@@ -1,5 +1,8 @@
 import unittest
-import gridworld
+import sys
+if "../" not in sys.path:
+  sys.path.append("../") 
+from envs import gridworld
 import qlearning_agent
 
 
