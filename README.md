@@ -8,27 +8,27 @@
 
 ##### Dynamic Programming MDP Solver
 
-- `DP/value_iteration.py`: value iteration
-- `DP/policy_iteration.py`: policy iteration - policy evaluation & policy improvement
+- `dp/value_iteration.py`: value iteration
+- `dp/policy_iteration.py`: policy iteration - policy evaluation & policy improvement
 
-##### TD Learning
+##### Temporal Difference Learning
 
-- `TD/qleanring.py`: standard epsilon greedy qlearning
-- `dqn.py`: Deep Q-network agent - vanilla network
+- `td/qleanring.py`: standard epsilon greedy qlearning
+- `dqn/dqn.py`: Deep Q-network agent - vanilla network
 
 ##### Monte Carlo Methods
 
-- `MonteCarlo/monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
+- `monte_carlo/monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
 
 ##### Policy Gradient Methods
 
-- `PolicyGradient/policy_gradient_nn.py`: policy gradient agent with policy network
+- `policy_gradient/policy_gradient_nn.py`: policy gradient agent with policy network
 
 ### OpenAI Gym Examples
 
 - Cartpole-v0
-  - `TD/cartpole_qlearning.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
-  - `cartpole_dqn.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
+  - `td/cartpole_qlearning.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
+  - `dqn/cartpole_dqn.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
 
 - Breakout-v0 (code to be updated)
 
