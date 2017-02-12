@@ -231,6 +231,7 @@ class DQNAgent_CNN():
     args
       train_steps   number of training steps per calling learn()
     """
+    print len(self.mem)
     if len(self.mem) > self.mem_size/10:
       
       for i in xrange(train_steps):

@@ -25,7 +25,7 @@ KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
 TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
-SAVE_EVERY_NUM_EPISODES = 500
+SAVE_EVERY_NUM_EPISODES = 50
 
 
 BATCH_SIZE = 64
@@ -33,9 +33,9 @@ IMAGE_SIZE = [84, 84]
 
 DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-4'
-MODEL_PATH = '/tmp/breakout-experiment-4/model'
-MEMORY_PATH = '/tmp/breakout-experiment-4/memory.p'
+MODEL_DIR = '/tmp/breakout-experiment-3'
+MODEL_PATH = '/tmp/breakout-experiment-3/model'
+MEMORY_PATH = '/tmp/breakout-experiment-3/memory.p'
 
 
 class StateProcessor():
@@ -77,12 +77,10 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       cur_state = sp.process(sess, obs)
-      # print reward, done, info
       if done:
         rewards.append(cum_reward)
 	print 'test episode {}, reward: {}'.format(i, cum_reward)
   	break
-  # print rewards
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
   return np.average(rewards)
 
@@ -110,20 +108,9 @@ def train(agent, env, sess, saver, num_episodes=NUM_EPISODES):
       # print action
       if DISPLAY:
         # action = agent.get_optimal_action(cur_state, sess)
-        # print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
         env.render()
-        # if action != 0:
-          # print '~0'
-        # while action==0:
-          # action = env.action_space.sample()
-      # else:
-        # action = agent.get_action(cur_state,sess)
-      # print len(cur_state), len(cur_state[0]), cur_state[15:-15][15:-15], action
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
-      # next_state = sp.process(sess, obs)
-	
-
       if reward == 0:
         reward = info['ale.lives'] - last_life
         last_life = info['ale.lives']
@@ -174,7 +161,7 @@ with tf.Session() as sess:
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
     saver.restore(sess, MODEL_PATH)
-    agent.mem = pickle.load(open(MEMORY_PATH,"rb"))
+    # agent.mem = pickle.load(open(MEMORY_PATH,"rb"))
     print 'restored model'
   else:
     os.makedirs(MODEL_DIR)
@@ -189,30 +176,7 @@ with tf.Session() as sess:
 
 
 
-# # plt.ion()
-# plt.figure()
-# im = plt.imshow(np.zeros(IMAGE_SIZE), cmap='gist_gray_r', vmin=0, vmax=1)
 
 
 
-# graphviz = GraphvizOutput(output_file='filter_none.png')
-# with PyCallGraph(output=graphviz):
-#   # while True:
-#   with tf.Session() as sess:
-#     sess.run(tf.global_variables_initializer())
 
-#     done = False
-#     observation = env.reset()
-#     t = 0
-#     cum_reward = 0
-#     while not done:
-#       t = t + 1
-#       env.render()
-#       observation_p = sp.process(sess, observation)
-#       im.set_data(observation_p)
-
-#       action = env.action_space.sample()
-#       observation, reward, done, info = env.step(action)
-#       cum_reward = cum_reward + reward
-#       if done:
-#         print("Episode finished after {} timesteps, cumulated reward: {}".format(t+1, cum_reward))
