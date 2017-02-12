@@ -7,12 +7,12 @@ import sys
 
 # action space  0: pause, 1: stay, 2: pause, 3: pause, 4: right, 5: left
 ACTIONS = {0:1, 1:4, 2:5}
-NUM_EPISODES = 1000
+NUM_EPISODES = 3000
 FAIL_PENALTY = -1
 EPSILON = 1
-EPSILON_DECAY = 0.001
-END_EPSILON = 0.3
-LEARNING_RATE = 2e-4
+EPSILON_DECAY = 0.0005
+END_EPSILON = 0.1
+LEARNING_RATE = 1e-4
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
 MEM_SIZE = 1e5
@@ -29,8 +29,8 @@ IMAGE_SIZE = [84, 84]
 
 DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-3'
-MODEL_PATH = '/tmp/breakout-experiment-3/model'
+MODEL_DIR = '/tmp/breakout-experiment-4'
+MODEL_PATH = '/tmp/breakout-experiment-4/model'
 
 
 

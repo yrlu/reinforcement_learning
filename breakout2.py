@@ -8,12 +8,12 @@ import sys
 # import matplotlib.pyplot as plt
 
 ACTIONS = {0:4, 1:5}
-NUM_EPISODES = 1000
+NUM_EPISODES = int(sys.argv[2])
 FAIL_PENALTY = -1
 EPSILON = 0.1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
-LEARNING_RATE = 1e-5
+LEARNING_RATE = 2e-5
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
 MEM_SIZE = 1e5
@@ -30,8 +30,8 @@ IMAGE_SIZE = [84, 84]
 
 DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-1'
-MODEL_PATH = '/tmp/breakout-experiment-1/model'
+MODEL_DIR = '/tmp/breakout-experiment-3'
+MODEL_PATH = '/tmp/breakout-experiment-3/model'
 
 
 
