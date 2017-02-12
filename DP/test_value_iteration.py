@@ -3,7 +3,7 @@ import sys
 if "../" not in sys.path:
   sys.path.append("../") 
 from envs import gridworld
-import value_iteration_agent
+import value_iteration
 
 
 class ValueIterationAgentTest(unittest.TestCase):
@@ -20,7 +20,7 @@ class ValueIterationAgentTest(unittest.TestCase):
     self.gw_non_deterministic = gridworld.GridWorld(
         grid, {(0, 3), (1, 3)}, 0.8)
 
-    self.agent = value_iteration_agent.ValueIterationAgent(
+    self.agent = value_iteration.ValueIterationAgent(
         self.gw_non_deterministic, 0.9, 100)
 
   def test_eval_policy(self):

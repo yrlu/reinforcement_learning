@@ -3,7 +3,7 @@ import sys
 if "../" not in sys.path:
   sys.path.append("../") 
 from envs import gridworld
-import policy_iteration_agent
+import policy_iteration
 
 
 class PolicyIterationAgentTest(unittest.TestCase):
@@ -20,7 +20,7 @@ class PolicyIterationAgentTest(unittest.TestCase):
     self.gw_non_deterministic = gridworld.GridWorld(
         grid, {(0, 3), (1, 3)}, 0.8)
 
-    self.agent = policy_iteration_agent.PolicyIterationAgent(
+    self.agent = policy_iteration.PolicyIterationAgent(
         self.gw_non_deterministic, 0.9, 20)
 
   def test_show_policy(self):

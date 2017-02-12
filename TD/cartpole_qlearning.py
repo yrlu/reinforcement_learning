@@ -1,6 +1,6 @@
 import gym
 from gym import wrappers
-import qlearning_agent
+import qlearning
 import numpy
 import matplotlib.pyplot as plt
 
@@ -57,7 +57,7 @@ def get_actions(state):
   return [0, 1]
 
 
-agent = qlearning_agent.QLearningAgent(get_actions,
+agent = qlearning.QLearningAgent(get_actions,
                                      epsilon=EPSILON,
                                      alpha=LEARNING_RATE,
                                      gamma=DISCOUNT_FACTOR,

@@ -3,7 +3,7 @@ import sys
 if "../" not in sys.path:
   sys.path.append("../") 
 from envs import gridworld
-import qlearning_agent
+import qlearning
 
 
 class QLearningAgentTest(unittest.TestCase):
@@ -22,7 +22,7 @@ class QLearningAgentTest(unittest.TestCase):
                (0,1), (0,2), (0,3), 
                (2,1), (2,2), (2,3)}, 0.9)
 
-    agent = qlearning_agent.QLearningAgent(gw.get_actions, 
+    agent = qlearning.QLearningAgent(gw.get_actions, 
                   epsilon=0.1, alpha=0.5, gamma=0.9)
 
     # Training
@@ -51,7 +51,7 @@ class QLearningAgentTest(unittest.TestCase):
     gw = gridworld.GridWorld(
         grid, {(0, 3), (1, 3)}, 0.8)
 
-    agent = qlearning_agent.QLearningAgent(gw.get_actions, 
+    agent = qlearning.QLearningAgent(gw.get_actions, 
                   epsilon=0.2, alpha=0.5, gamma=0.9)
     
     # Training

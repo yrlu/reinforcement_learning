@@ -7,10 +7,9 @@
 #
 # MIT License
 
-import agent
 import numpy
 
-class QLearningAgent(agent.RLAgent):
+class QLearningAgent(object):
 
 
   def __init__(self, legal_actions_fn, epsilon=0.5, alpha=0.5, gamma=0.9, epsilon_decay=1):
