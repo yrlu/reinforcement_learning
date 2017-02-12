@@ -8,12 +8,12 @@
 
 ##### Dynamic Programming MDP Solver
 
-- `DP/value_iteration_agent.py`: value iteration
-- `DP/policy_iteration_agent.py`: policy iteration - policy evaluation & policy improvement
+- `DP/value_iteration.py`: value iteration
+- `DP/policy_iteration.py`: policy iteration - policy evaluation & policy improvement
 
 ##### TD Learning
 
-- `TD/qleanring_agent.py`: standard epsilon greedy qlearning agent
+- `TD/qleanring.py`: standard epsilon greedy qlearning
 - `dqn.py`: Deep Q-network agent - vanilla network
 
 ##### Monte Carlo Methods
