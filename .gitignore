@@ -7,3 +7,5 @@ push.sh
 *.png
 *.jpg
 visualize_history.py
+log.txt
+nohup.out
