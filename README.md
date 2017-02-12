@@ -4,19 +4,12 @@
 
 -Yiren Lu (luyiren [at] seas [dot] upenn [dot] edu)
 
-### Dependencies
-
-- Numpy
-- OpenAI Gym (with Atari)
-- Tensorflow
-- matplotlib (optional)
-
 ### Implemented Algorithms
 
 ##### Dynamic Programming MDP Solver
 
-- `value_iteration_agent.py`: value iteration
-- `policy_iteration_agent.py`: policy iteration - policy evaluation & policy improvement
+- `DP/value_iteration_agent.py`: value iteration
+- `DP/policy_iteration_agent.py`: policy iteration - policy evaluation & policy improvement
 
 ##### TD Learning
 
@@ -26,6 +19,10 @@
 ##### Monte Carlo Methods
 
 - `monte_carlo.py`: epsilon greedy monte carlo agent that learns episodes of experiences
+
+##### Policy Gradient Methods
+
+- `policy_gradient/policy_gradient_nn.py`: policy gradient agent with policy network
 
 ### OpenAI Gym Examples
 
@@ -39,7 +36,14 @@
 
 ### Environments
 
-- `gridworld.py`: minimium gridworld implementation for testings
+- `envs/gridworld.py`: minimium gridworld implementation for testings
+
+### Dependencies
+
+- Numpy
+- OpenAI Gym (with Atari)
+- Tensorflow
+- matplotlib (optional)
 
 ### Tests
 

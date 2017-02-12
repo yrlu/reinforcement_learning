@@ -176,7 +176,7 @@ class PolicyGradientNNAgent():
     #     feed_dict = { self.state_input: states, self.target: targets, self.action: actions }
     #     _, loss = sess.run([self.train_op, self.loss], feed_dict)
 
-
+    
     states = []
     actions = []
     targets = []
