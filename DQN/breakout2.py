@@ -10,7 +10,7 @@ import pickle
 ACTIONS = {0:1, 1:4, 2:5}
 NUM_EPISODES = int(sys.argv[2])
 FAIL_PENALTY = -1
-EPSILON = 1
+EPSILON = 0.1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 2e-5
@@ -68,16 +68,20 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
     cur_state = sp.process(sess, obs)
     action = 0
     done = False
+    t = 0
     while not done:
+      t = t + 1
       # act every frame
+      # if t % KTH_FRAME == 0:
       action = agent.get_optimal_action(cur_state, sess)
+      print action
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       cur_state = sp.process(sess, obs)
       if done:
         rewards.append(cum_reward)
-  print 'test episode {}, reward: {}'.format(i, cum_reward)
-    break
+        print 'test episode {}, reward: {}'.format(i, cum_reward)
+        break
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
   return np.average(rewards)
 
@@ -102,8 +106,8 @@ def train(agent, env, sess, saver, num_episodes=NUM_EPISODES):
     while not done:
       t = t + 1
       # select action every KTH_FRAME frames
-      if t % KTH_FRAME == 0:
-        action = agent.get_action(cur_state,sess)
+      # if t % KTH_FRAME == 0:
+      action = agent.get_action(cur_state,sess)
       if DISPLAY:
         env.render()
       obs, reward, done, info = env.step(ACTIONS[action])
