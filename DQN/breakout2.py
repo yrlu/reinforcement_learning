@@ -8,10 +8,11 @@ import pickle
 
 # import matplotlib.pyplot as plt
 
-ACTIONS = {0:4, 1:5}
+# ACTIONS = {0:4, 1:5}
+ACTIONS = {0:1, 1:4, 2:5}
 NUM_EPISODES = int(sys.argv[2])
 FAIL_PENALTY = -1
-EPSILON = 0.1
+EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 2e-5
@@ -25,7 +26,7 @@ KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
 TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
-SAVE_EVERY_NUM_EPISODES = 50
+SAVE_EVERY_NUM_EPISODES = 500
 
 
 BATCH_SIZE = 64
@@ -156,12 +157,12 @@ with tf.Session() as sess:
   with tf.device('/{}:0'.format(sys.argv[1])):
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
-      action_size=2, mem_size=MEM_SIZE)
-  sess.run(tf.global_variables_initializer())
+      action_size=len(ACTIONS), mem_size=MEM_SIZE)
+  sess.run(tf.initialize_all_variables())
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
     saver.restore(sess, MODEL_PATH)
-    # agent.mem = pickle.load(open(MEMORY_PATH,"rb"))
+    agent.mem = pickle.load(open(MEMORY_PATH,"rb"))
     print 'restored model'
   else:
     os.makedirs(MODEL_DIR)
