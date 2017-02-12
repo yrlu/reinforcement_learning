@@ -101,7 +101,8 @@ class PolicyGradientNNAgent():
       # self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
       self.value_loss = tf.reduce_mean(tf.square(self.target - self.value_got))
       self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * self.target)
-      self.loss = self.pg_loss + 0.01*self.value_loss
+      self.loss = self.pg_loss
+      # self.loss = self.pg_loss + 0.01*self.value_loss
       # print self.target - self.value
       # self.loss = self.pg_loss
       # self.optimizer = tf.train.RMSPropOptimizer(self.lr, 0.99, 0.0, 1e-6)
@@ -134,7 +135,7 @@ class PolicyGradientNNAgent():
     return pi
 
 
-  def _add_episode(self, episode):
+  def add_episode(self, episode):
     """
     Store episode to memory and check if it reaches the mem_size. 
     If so, drop 20% of the oldest memory
@@ -145,12 +146,6 @@ class PolicyGradientNNAgent():
       self.epsilon = self.epsilon - self.epsilon_anneal
 
     self.mem.append(episode)
-    # for t in xrange(len(episode)):
-    #   self.total_steps = self.total_steps + 1
-    #   target = sum([self.gamma**i * r for i, (s, a, s1, r, d) in enumerate(episode[t:])])
-    #   state, action, next_state, reward, done = episode[t]
-    #   self.mem.append([state, action, target])
-
     while len(self.mem) > self.mem_size:
       # If memory reaches limit, then drop 20% of the oldest memory
       self.mem = self.mem[int(len(self.mem)/5):]
@@ -161,47 +156,26 @@ class PolicyGradientNNAgent():
     args
       episode       a list of (current state, action, next state, reward)
     """
-    # self._add_episode(episode)
+    if len(self.mem) < batch_size:
+      return
+    for i in xrange(train_steps):
+      sampled_idx = np.random.choice(len(self.mem), self.batch_size)
+      samples = random.sample(self.mem, self.batch_size)
+    for episode in samples:
+      states = []
+      actions = []
+      targets = []
+      for t in xrange(len(episode)):
+        self.total_steps = self.total_steps + 1
+        target = sum([self.gamma**i * r for i, (s, a, s1, r, d) in enumerate(episode[t:])])
+        state, action, next_state, reward, done = episode[t]
+        # feed_dict = { self.state_input: [state], self.target: [target], self.action: [action] }
+        # v = sess.run([self.value], feed_dict)
+        # print v[0][0][0]
 
-    # if len(self.mem) > self.batch_size:
-    #   for i in xrange(train_steps):
-    #     sampled_idx = np.random.choice(len(self.mem), self.batch_size)
-    #     samples = random.sample(self.mem, self.batch_size)
+        # feed_dict = { self.state_input: [state], self.target: [target], self.value_got:[v[0][0][0]], self.action: [action] }
+        # _, loss, v = sess.run([self.train_op, self.loss, self.value], feed_dict)
+        # print target, v
 
-    #     # states = [s for s,a,t in samples]
-    #     # actions = [a for s,a,t in samples]
-    #     # targets = [t for s,a,t in samples]
-    #     states = []
-    #     actions = []
-    #     targets = []
-    #     for e in samples:
-    #       for t in xrange(len(e)):
-    #         self.total_steps = self.total_steps + 1
-    #         target = sum([self.gamma**i * r for i, (s, a, s1, r, d) in enumerate(e[t:])])
-    #         state, action, next_state, reward, done = e[t]
-    #         states.append(state)
-    #         actions.append(action)
-    #         targets.append(target)
-
-    #     feed_dict = { self.state_input: states, self.target: targets, self.action: actions }
-    #     _, loss = sess.run([self.train_op, self.loss], feed_dict)
-
-    states = []
-    actions = []
-    targets = []
-    for t in xrange(len(episode)):
-      self.total_steps = self.total_steps + 1
-      target = sum([self.gamma**i * r for i, (s, a, s1, r, d) in enumerate(episode[t:])])
-      state, action, next_state, reward, done = episode[t]
-      # states.append(state)
-      # actions.append(action)
-      # targets.append(target)
-      feed_dict = { self.state_input: [state], self.target: [target], self.action: [action] }
-      v = sess.run([self.value], feed_dict)
-      # print v[0][0][0]
-
-
-      feed_dict = { self.state_input: [state], self.target: [target], self.value_got:[v[0][0][0]], self.action: [action] }
-      _, loss, v = sess.run([self.train_op, self.loss, self.value], feed_dict)
-      # print target, v
-
+        feed_dict = { self.state_input: states, self.target: targets, self.action: actions }
+        _, loss = sess.run([self.train_op, self.loss], feed_dict)

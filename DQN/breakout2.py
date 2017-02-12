@@ -23,8 +23,8 @@ STEP_PER_EPOCH = 100
 RECORD = False
 KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
-TEST_EVERY_NUM_EPISODES = 80
-TEST_N_EPISODES = 20
+TEST_EVERY_NUM_EPISODES = 40
+TEST_N_EPISODES = 10
 SAVE_EVERY_NUM_EPISODES = 500
 
 DISPLAY = False
@@ -73,8 +73,10 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
       t = t + 1
       # act every frame
       # if t % KTH_FRAME == 0:
+      if DISPLAY:
+        env.render()
       action = agent.get_optimal_action(cur_state, sess)
-      print action
+      # print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       cur_state = sp.process(sess, obs)

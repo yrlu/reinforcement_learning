@@ -7,12 +7,13 @@ import tensorflow as tf
 
 NUM_EPISODES = 2000
 MAX_STEPS = 200
-FAIL_PENALTY = 0
-EPSILON = 0.1
-EPSILON_ANNEAL = 0
+FAIL_PENALTY = -1
+EPSILON = 1
+EPSILON_ANNEAL = 0.01
 END_EPSILON = 0.1
 LEARNING_RATE = 0.0001
 DISCOUNT_FACTOR = 0.9
+TRAIN_EVERY_NUM_EPISODES = 100
 
 RECORD = False
 
@@ -39,7 +40,10 @@ def train(agent, env, sess, num_episodes=NUM_EPISODES):
       if t == MAX_STEPS - 1:
         history.append(t + 1)
         print("Episode finished after {} timesteps".format(t + 1))
-    agent.learn(episode, sess, 1)
+    agent.add_episode(episode)
+    if i % TRAIN_EVERY_NUM_EPISODES == 0:
+      print 'train at episode {}'.format(i)
+      agent.learn(episode, sess, 100)
   return agent, history
 
 
@@ -52,8 +56,8 @@ agent = policy_gradient_nn.PolicyGradientNNAgent(epsilon=EPSILON,
                                           action_size=2,
                                           n_hidden_1=10,
                                           n_hidden_2=10,
-                                          batch_size=1,
-                                          mem_size=5)
+                                          batch_size=64,
+                                          mem_size=120)
 
 
 
