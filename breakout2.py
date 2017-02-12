@@ -4,6 +4,7 @@ import tensorflow as tf
 import dqn_cnn2
 import os
 import sys
+import pickle
 
 # import matplotlib.pyplot as plt
 
@@ -24,15 +25,17 @@ KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
 TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
+SAVE_EVERY_NUM_EPISODES = 500
+
 
 BATCH_SIZE = 64
 IMAGE_SIZE = [84, 84]
 
 DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-3'
-MODEL_PATH = '/tmp/breakout-experiment-3/model'
-
+MODEL_DIR = '/tmp/breakout-experiment-4'
+MODEL_PATH = '/tmp/breakout-experiment-4/model'
+MEMORY_PATH = '/tmp/breakout-experiment-4/memory.p'
 
 
 class StateProcessor():
@@ -81,12 +84,18 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
   	break
   # print rewards
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
+  return np.average(rewards)
 
-
-def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
+def train(agent, env, sess, saver, num_episodes=NUM_EPISODES):
+  history = []
+  test_res = []
   for i in xrange(num_episodes):
     obs = env.reset()
     cur_state = sp.process(sess, obs)
+    if (i+1) % SAVE_EVERY_NUM_EPISODES == 0:
+      saver.save(sess, MODEL_PATH)
+      pickle.dump(agent.mem, open(MEMORY_PATH, "wb"))
+      print 'saved model!'
 
     action = 0
     episode = []
@@ -146,8 +155,8 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
       print 'train at episode {}'.format(i)
       agent.learn(STEP_PER_EPOCH, sess)
     if i % TEST_EVERY_NUM_EPISODES == 0:
-      test(agent, env, sess)
-  return agent, history
+      test_res.append(test(agent, env, sess))
+  return agent, history, test_res
 
 
 env = gym.envs.make(ENV_NAME)
@@ -165,13 +174,14 @@ with tf.Session() as sess:
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
     saver.restore(sess, MODEL_PATH)
+    agent.mem = pickle.load(open(MEMORY_PATH,"rb"))
     print 'restored model'
   else:
     os.makedirs(MODEL_DIR)
       
-  history = []
-  agent, history = train(agent, env, history, sess)
+  agent, history, test_res = train(agent, env, sess, saver)
   print history
+  print test_res
 
   saver.save(sess, MODEL_PATH)
   print 'saved model'
