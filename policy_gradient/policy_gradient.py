@@ -40,7 +40,7 @@ class PolicyGradientAgent():
     self.action_size = action_size
 
     # h(s,a,\theta) = \theta.* \phi(s,a)
-    self.theta = np.ones([state_size*3 + state_size**2 + 1])
+    self.theta = np.ones([state_size + 1])
 
 
   def _h(self, state, action):
@@ -48,6 +48,7 @@ class PolicyGradientAgent():
     h(s,a,theta) is numerical preference of the (s,a) with parameter theta
     h(s,a,theta) = theta.*(s,a)
     """
+    # print np.dot(self.theta, self._get_features(state, action))
     return np.dot(self.theta, self._get_features(state, action))
 
 
@@ -85,7 +86,6 @@ class PolicyGradientAgent():
     return [f for f in s] + [abs(f) for f in s] + [f**2 for f in s] + [f1*f2 for f1 in s for f2 in s] + [a]
 
 
-
   @staticmethod
   def phi_linear(s, a):
     """
@@ -93,8 +93,9 @@ class PolicyGradientAgent():
     """
     return [f for f in s] + [a]
 
+
   def _get_features(self, s, a):
-    return PolicyGradientAgent.quadratic_features(s,a)
+    return PolicyGradientAgent.phi_linear(s,a)
 
 
   def learn(self, episode):

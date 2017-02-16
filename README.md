@@ -32,7 +32,7 @@
 
 - Breakout-v0 (code to be updated)
 
-<img src="imgs/breakout3.gif" alt="breakout" width="200">
+<img src="imgs/breakout10.gif" alt="breakout" width="200">
 
 ### Environments
 
