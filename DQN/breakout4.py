@@ -13,18 +13,18 @@ ACTIONS = {0:4, 1:5}
 NUM_EPISODES = int(sys.argv[2])
 DEVICE = sys.argv[1]
 FAIL_PENALTY = -1
-EPSILON = 0.1
+EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 2e-5
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
-IMAGE_SIZE = [84, 84, 4]
+KTH_FRAME = 2
+IMAGE_SIZE = [84, 84, KTH_FRAME]
 MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
 STEP_PER_EPOCH = 100
 RECORD = False
-KTH_FRAME = 4
 TRAIN_EVERY_NUM_EPISODES = 1
 TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
@@ -33,9 +33,9 @@ SAVE_EVERY_NUM_EPISODES = 500
 
 DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-4'
-MODEL_PATH = '/tmp/breakout-experiment-4/model'
-MEMORY_PATH = '/tmp/breakout-experiment-4/memory.p'
+MODEL_DIR = '/tmp/breakout-experiment-5'
+MODEL_PATH = '/tmp/breakout-experiment-5/model'
+MEMORY_PATH = '/tmp/breakout-experiment-5/memory.p'
 
 
 plt.ion()
@@ -82,8 +82,8 @@ def test(agent, env, sess, sp, num_episodes=TEST_N_EPISODES):
       if DISPLAY:
         env.render()
       episode.append([cur_frame, action])
-      if (t % KTH_FRAME ==0) and (t > 4):
-        last_s = [s for s, a in episode[-4:]];
+      if (t % KTH_FRAME ==0) and (t > KTH_FRAME):
+        last_s = [s for s, a in episode[-KTH_FRAME:]];
         last_s = np.reshape(last_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
         # pick an actoin every k frame
         action = agent.get_optimal_action(last_s,sess)
@@ -143,14 +143,14 @@ def train(agent, env, sess, sp, saver, num_episodes=NUM_EPISODES):
       cur_frame = next_frame
       
       
-      if (t % KTH_FRAME ==0) and (t > 8):
-        last_s = [s for s, a, s1, r, d in episode[-8:-4]];
+      if (t % KTH_FRAME ==0) and (t > KTH_FRAME*2):
+        last_s = [s for s, a, s1, r, d in episode[-KTH_FRAME*2:-KTH_FRAME]];
         last_s = np.reshape(last_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
-        next_s = [s for s, a, s1, r, d in episode[-4:]];
+        next_s = [s for s, a, s1, r, d in episode[-KTH_FRAME:]];
         next_s = np.reshape(next_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
-        last_r = sum([r for s, a, s1, r, d in episode[-8:-4]]);
-        last_a = episode[-8][1];
-        
+        last_r = sum([r for s, a, s1, r, d in episode[-KTH_FRAME*2:-KTH_FRAME]]);
+        last_a = episode[-KTH_FRAME*2][1];
+
         # record step every k frames
         episode_train.append([last_s, last_a, next_s, last_r, done])
 

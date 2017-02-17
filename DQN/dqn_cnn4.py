@@ -78,13 +78,11 @@ class DQNAgent_CNN():
       self.action = tf.placeholder(shape=[None], dtype=tf.int32)
       # target_q = tf.add(reward + gamma * max(q(s,a)))
       self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
-
       state = tf.reshape(tf.to_float(self.state_input) / 255.0, [-1, self.state_size[0], self.state_size[1], self.state_size[2]])
-      # state.reshape()
       # initialize layers weight & bias
       weights = {
         # 8x8 conv, 1 input, 16 outputs
-        'wc1': tf.Variable(tf.random_normal([8, 8, 4, 16])),
+        'wc1': tf.Variable(tf.random_normal([8, 8, self.state_size[2], 16])),
         # 4x4 conv, 16 inputs, 32 outputs
         'wc2': tf.Variable(tf.random_normal([4, 4, 16, 32])),
 	      # 'wc3': tf.Variable(tf.random_normal([3, 3, 32, 32])),
