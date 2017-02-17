@@ -5,13 +5,15 @@ import dqn_cnn4
 import os
 import sys
 import pickle
+import matplotlib.pyplot as plt
+
 
 ACTIONS = {0:4, 1:5}
 # ACTIONS = {0:1, 1:4, 2:5}
 NUM_EPISODES = int(sys.argv[2])
 DEVICE = sys.argv[1]
 FAIL_PENALTY = -1
-EPSILON = 0.1
+EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 2e-5
@@ -29,12 +31,14 @@ TEST_N_EPISODES = 10
 SAVE_EVERY_NUM_EPISODES = 500
 
 
-DISPLAY = False
+DISPLAY = True
 
 MODEL_DIR = '/tmp/breakout-experiment-4'
 MODEL_PATH = '/tmp/breakout-experiment-4/model'
 MEMORY_PATH = '/tmp/breakout-experiment-4/memory.p'
 
+
+plt.ion()
 
 class StateProcessor():
 
@@ -120,8 +124,7 @@ def train(agent, env, sess, sp, saver, num_episodes=NUM_EPISODES):
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       next_frame = sp.process(sess, obs)
-      episode.append([cur_frame, action,  next_frame, reward, done])
-
+      
       # process reward: if lost life: -1, if hit the ball: +2, if still living: +1  (avoid 0 rewards)
       if reward == 0:
         reward = info['ale.lives'] - last_life
@@ -135,6 +138,9 @@ def train(agent, env, sess, sp, saver, num_episodes=NUM_EPISODES):
           reward = -1
       if done:
         reward = FAIL_PENALTY
+
+      episode.append([cur_frame, action,  next_frame, reward, done])
+      cur_frame = next_frame
       
       
       if (t % KTH_FRAME ==0) and (t > 8):
@@ -144,6 +150,7 @@ def train(agent, env, sess, sp, saver, num_episodes=NUM_EPISODES):
         next_s = np.reshape(next_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
         last_r = sum([r for s, a, s1, r, d in episode[-8:-4]]);
         last_a = episode[-8][1];
+        
         # record step every k frames
         episode_train.append([last_s, last_a, next_s, last_r, done])
 
