@@ -1,22 +1,23 @@
 import gym
 import numpy as np
 import tensorflow as tf
-import dqn_cnn2
+import dqn_cnn4
 import os
 import sys
 import pickle
 
-# ACTIONS = {0:4, 1:5}
-ACTIONS = {0:1, 1:4, 2:5}
+ACTIONS = {0:4, 1:5}
+# ACTIONS = {0:1, 1:4, 2:5}
 NUM_EPISODES = int(sys.argv[2])
+DEVICE = sys.argv[1]
 FAIL_PENALTY = -1
-EPSILON = 0.1
+EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 2e-5
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
-IMAGE_SIZE = [84, 84]
+IMAGE_SIZE = [84, 84, 4]
 MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
 STEP_PER_EPOCH = 100
@@ -27,11 +28,12 @@ TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
 SAVE_EVERY_NUM_EPISODES = 500
 
+
 DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-3'
-MODEL_PATH = '/tmp/breakout-experiment-3/model'
-MEMORY_PATH = '/tmp/breakout-experiment-3/memory.p'
+MODEL_DIR = '/tmp/breakout-experiment-4'
+MODEL_PATH = '/tmp/breakout-experiment-4/model'
+MEMORY_PATH = '/tmp/breakout-experiment-4/memory.p'
 
 
 class StateProcessor():
@@ -59,61 +61,66 @@ class StateProcessor():
     return sess.run(self.output, { self.input_state: state })
 
 
-def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
+
+def test(agent, env, sess, sp, num_episodes=TEST_N_EPISODES):
   print 'testing ...'
   rewards = []
   for i in xrange(num_episodes):
     cum_reward = 0
     obs = env.reset()
-    cur_state = sp.process(sess, obs)
+    cur_frame = sp.process(sess, obs)
     action = 0
     done = False
-    t = 0
+    episode = [] # records all states
+    t = 1
     while not done:
-      t = t + 1
-      # act every frame
-      # if t % KTH_FRAME == 0:
+      t = t
       if DISPLAY:
         env.render()
-      action = agent.get_optimal_action(cur_state, sess)
-      # print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
+      episode.append([cur_frame, action])
+      if (t % KTH_FRAME ==0) and (t > 4):
+        last_s = [s for s, a in episode[-4:]];
+        last_s = np.reshape(last_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
+        # pick an actoin every k frame
+        action = agent.get_optimal_action(last_s,sess)
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
-      cur_state = sp.process(sess, obs)
-      if done:
-        rewards.append(cum_reward)
-        print 'test episode {}, reward: {}'.format(i, cum_reward)
-        break
+      cur_frame = sp.process(sess, obs)
+    rewards.append(cum_reward)
+    print 'test episode {}, reward: {}'.format(i, cum_reward)
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
   return np.average(rewards)
 
 
-def train(agent, env, sess, saver, num_episodes=NUM_EPISODES):
+def train(agent, env, sess, sp, saver, num_episodes=NUM_EPISODES):
   history = []
   test_res = []
   for i in xrange(num_episodes):
-    obs = env.reset()
-    cur_state = sp.process(sess, obs)
     # save model
     if (i+1) % SAVE_EVERY_NUM_EPISODES == 0:
       saver.save(sess, MODEL_PATH)
       pickle.dump(agent.mem, open(MEMORY_PATH, "wb"))
       print 'saved model!'
+
+    obs = env.reset()
+    cur_frame = sp.process(sess, obs)
+
     action = 0
-    episode = []
+    episode = [] # records all states
+    episode_train = [] # records step every k frames
     done = False
-    t = 0
+    t = 1
     last_life = 5
     cum_reward = 0
     while not done:
       t = t + 1
-      # select action every KTH_FRAME frames
-      # if t % KTH_FRAME == 0:
-      action = agent.get_action(cur_state,sess)
       if DISPLAY:
         env.render()
+
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
+      next_frame = sp.process(sess, obs)
+      episode.append([cur_frame, action,  next_frame, reward, done])
 
       # process reward: if lost life: -1, if hit the ball: +2, if still living: +1  (avoid 0 rewards)
       if reward == 0:
@@ -126,27 +133,36 @@ def train(agent, env, sess, saver, num_episodes=NUM_EPISODES):
           reward = 2
         elif reward < 0:
           reward = -1
-      # check terminal state
       if done:
         reward = FAIL_PENALTY
-        episode.append([cur_state, action, sp.process(sess, obs), reward, done])
-        print("Episode finished after {} timesteps, cumulated reward: {}".format(t+1, cum_reward))
-        history.append(t + 1)
-        break
-      # collect training steps every KTH_FRAME frames
-      if t % KTH_FRAME == 0:
-        next_state = sp.process(sess, obs)
-        episode.append([cur_state, action, next_state, reward, done])
-        cur_state = next_state
+      
+      
+      if (t % KTH_FRAME ==0) and (t > 8):
+        last_s = [s for s, a, s1, r, d in episode[-8:-4]];
+        last_s = np.reshape(last_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
+        next_s = [s for s, a, s1, r, d in episode[-4:]];
+        next_s = np.reshape(next_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
+        last_r = sum([r for s, a, s1, r, d in episode[-8:-4]]);
+        last_a = episode[-8][1];
+        # record step every k frames
+        episode_train.append([last_s, last_a, next_s, last_r, done])
+
+        # pick an actoin every k frame
+        action = agent.get_action(next_s,sess)
+
     # for monitoring use
-    print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
-    agent.add_episode(episode)
+    print("Episode finished after {} timesteps, cumulated reward: {}".format(t, cum_reward))
+    print agent.get_action_dist(episode_train[-1][0],sess), agent.get_optimal_action(episode_train[-1][0], sess)
+
+    agent.add_episode(episode_train)
+    history.append(t)
+
     # training and testing
     if i % TRAIN_EVERY_NUM_EPISODES == 0:
       print 'train at episode {}'.format(i)
       agent.learn(STEP_PER_EPOCH, sess)
     if i % TEST_EVERY_NUM_EPISODES == 0:
-      test_res.append(test(agent, env, sess))
+      test_res.append(test(agent, env, sess, sp))
   return agent, history, test_res
 
 
@@ -154,14 +170,12 @@ env = gym.envs.make(ENV_NAME)
 tf.reset_default_graph()
 sp = StateProcessor()
 
-
 with tf.Session() as sess:
-  with tf.device('/{}:0'.format(sys.argv[1])):
-    agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
+  with tf.device('/{}:0'.format(DEVICE)):
+    agent = dqn_cnn4.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=len(ACTIONS), mem_size=MEM_SIZE)
   sess.run(tf.initialize_all_variables())
-  # restore model
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
     saver.restore(sess, MODEL_PATH)
@@ -170,10 +184,9 @@ with tf.Session() as sess:
   else:
     os.makedirs(MODEL_DIR)
   # training
-  agent, history, test_res = train(agent, env, sess, saver)
+  agent, history, test_res = train(agent, env, sess, sp, saver)
   print history
   print test_res
   # save model
   saver.save(sess, MODEL_PATH)
   print 'saved model'
-
