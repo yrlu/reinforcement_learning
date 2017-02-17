@@ -11,7 +11,7 @@ ACTIONS = {0:4, 1:5}
 NUM_EPISODES = int(sys.argv[2])
 DEVICE = sys.argv[1]
 FAIL_PENALTY = -1
-EPSILON = 1
+EPSILON = 0.1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 2e-5
@@ -74,7 +74,7 @@ def test(agent, env, sess, sp, num_episodes=TEST_N_EPISODES):
     episode = [] # records all states
     t = 1
     while not done:
-      t = t
+      t = t + 1
       if DISPLAY:
         env.render()
       episode.append([cur_frame, action])
