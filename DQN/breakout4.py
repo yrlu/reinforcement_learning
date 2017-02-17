@@ -31,7 +31,7 @@ TEST_N_EPISODES = 10
 SAVE_EVERY_NUM_EPISODES = 500
 
 
-DISPLAY = True
+DISPLAY = False
 
 MODEL_DIR = '/tmp/breakout-experiment-4'
 MODEL_PATH = '/tmp/breakout-experiment-4/model'
