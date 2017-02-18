@@ -1,3 +1,14 @@
+# Deep Q-learning Agent
+# Following paper: Playing Atari with Deep Reinforcement Learning
+#     https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
+#
+# ---
+# @author Yiren Lu
+# @email luyiren [at] seas [dot] upenn [dot] edu
+#
+# MIT License
+
+
 import gym
 import numpy as np
 import random
@@ -49,16 +60,15 @@ class DQNAgent_CNN():
       self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
 
       state = tf.to_float(self.state_input)/255.0
-      conv1 = tf_utils.conv2d(state, channels=self.state_size[2], n_kernel=32, k_sz=[8,8], stride=4)
-      conv2 = tf_utils.conv2d(conv1, channels=32, n_kernel=64, k_sz=[4,4], stride=2)
-      conv3 = tf_utils.conv2d(conv2, channels=64, n_kernel=64, k_sz=[3,3], stride=1)
+      conv1 = tf_utils.conv2d(state, n_kernel=32, k_sz=[8,8], stride=4)
+      conv2 = tf_utils.conv2d(conv1, n_kernel=64, k_sz=[4,4], stride=2)
+      conv3 = tf_utils.conv2d(conv2, n_kernel=64, k_sz=[3,3], stride=1)
 
       # Fully connected layers
-      flattened = tf.contrib.layers.flatten(conv3)
-      fc1 = tf.contrib.layers.fully_connected(flattened, 512, activation_fn=None)
-      fc1 = tf.nn.relu(fc1)
+      flattened = tf_utils.flatten(conv3)
+      fc1 = tf_utils.fc(flattened, n_output=512, activation_fn=tf.nn.relu)
 
-      self.q_values = tf.contrib.layers.fully_connected(fc1, self.action_size, activation_fn=None)
+      self.q_values = tf_utils.fc(fc1, self.action_size, activation_fn=None)
       # self.q_values = tf.nn.relu(self.q_values)
       
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)

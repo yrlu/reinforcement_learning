@@ -1,3 +1,14 @@
+# Experience Replay
+# Following paper: Playing Atari with Deep Reinforcement Learning
+#     https://www.cs.toronto.edu/~vmnih/docs/dqn.pdf
+#
+# ---
+# @author Yiren Lu
+# @email luyiren [at] seas [dot] upenn [dot] edu
+#
+# MIT License
+
+
 import numpy as np
 import random
 from collections import namedtuple
