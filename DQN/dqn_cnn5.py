@@ -59,6 +59,8 @@ class DQNAgent_CNN():
       fc1 = tf.nn.relu(fc1)
 
       self.q_values = tf.contrib.layers.fully_connected(fc1, self.action_size, activation_fn=None)
+      # self.q_values = tf.nn.relu(self.q_values)
+      
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
 
