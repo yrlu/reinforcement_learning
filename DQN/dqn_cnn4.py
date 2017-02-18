@@ -196,7 +196,7 @@ class DQNAgent_CNN():
       train_steps   number of training steps per calling learn()
     """
     print len(self.mem)
-    if len(self.mem) > self.mem_size/100:
+    if len(self.mem) > self.mem_size/10:
       
       for i in xrange(train_steps):
         self.total_steps = self.total_steps + 1
