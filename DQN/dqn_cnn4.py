@@ -78,7 +78,8 @@ class DQNAgent_CNN():
       self.action = tf.placeholder(shape=[None], dtype=tf.int32)
       # target_q = tf.add(reward + gamma * max(q(s,a)))
       self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
-      state = tf.reshape(tf.to_float(self.state_input) / 255.0, [-1, self.state_size[0], self.state_size[1], self.state_size[2]])
+
+      state = tf.to_float(self.state_input)/255.0
       # initialize layers weight & bias
       weights = {
         # 8x8 conv, 1 input, 16 outputs
@@ -195,7 +196,7 @@ class DQNAgent_CNN():
       train_steps   number of training steps per calling learn()
     """
     print len(self.mem)
-    if len(self.mem) > self.mem_size/10:
+    if len(self.mem) > self.mem_size/100:
       
       for i in xrange(train_steps):
         self.total_steps = self.total_steps + 1
@@ -209,7 +210,6 @@ class DQNAgent_CNN():
         # compute target q value
         target_q = np.array([samples[i][3] + self.gamma*max_q_values[i]*(1-samples[i][4]) for i in xrange(len(samples))])
         target_q = target_q.reshape([self.batch_size])
-
         # minimize the TD-error
         l, _, = sess.run([self.loss, self.train_op], feed_dict={
                                                             self.state_input: [s[0] for s in samples],
