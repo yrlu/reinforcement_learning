@@ -13,13 +13,13 @@ ACTIONS = {0:4, 1:5}
 NUM_EPISODES = int(sys.argv[2])
 DEVICE = sys.argv[1]
 FAIL_PENALTY = -1
-EPSILON = 0.1
+EPSILON = 1
 EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
 LEARNING_RATE = 2e-5
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
-KTH_FRAME = 2
+KTH_FRAME = 4
 IMAGE_SIZE = [84, 84, KTH_FRAME]
 MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
@@ -84,7 +84,7 @@ def test(agent, env, sess, sp, num_episodes=TEST_N_EPISODES):
       episode.append([cur_frame, action])
       if (t % KTH_FRAME ==0) and (t > KTH_FRAME):
         last_s = [s for s, a in episode[-KTH_FRAME:]];
-        last_s = np.reshape(last_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
+        last_s = np.stack(last_s, axis=2)
         # pick an actoin every k frame
         action = agent.get_optimal_action(last_s,sess)
       obs, reward, done, info = env.step(ACTIONS[action])
@@ -145,9 +145,9 @@ def train(agent, env, sess, sp, saver, num_episodes=NUM_EPISODES):
       
       if (t % KTH_FRAME ==0) and (t > KTH_FRAME*2):
         last_s = [s for s, a, s1, r, d in episode[-KTH_FRAME*2:-KTH_FRAME]];
-        last_s = np.reshape(last_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
+        last_s = np.stack(last_s, axis=2)
         next_s = [s for s, a, s1, r, d in episode[-KTH_FRAME:]];
-        next_s = np.reshape(next_s, [IMAGE_SIZE[0], IMAGE_SIZE[1], IMAGE_SIZE[2]]);
+        next_s = np.stack(next_s, axis=2)
         last_r = sum([r for s, a, s1, r, d in episode[-KTH_FRAME*2:-KTH_FRAME]]);
         last_a = episode[-KTH_FRAME*2][1];
 
