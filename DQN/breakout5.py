@@ -36,7 +36,7 @@ TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
 SAVE_EVERY_NUM_EPISODES = 500
 
-DISPLAY = True
+DISPLAY = False
 
 MODEL_DIR = '/tmp/breakout-experiment-5'
 MODEL_PATH = '/tmp/breakout-experiment-5/model'
@@ -103,6 +103,7 @@ def test(agent, env, sess, exprep, sp, num_episodes=TEST_N_EPISODES):
       if DISPLAY:
         env.render()
       # main testing procedure
+      # print action
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       next_frame = sp.process(sess, obs)
