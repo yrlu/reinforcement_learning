@@ -33,9 +33,11 @@ class ExpReplay():
 
   def get_last_state(self):
     if len(self.mem) > self.kth:
-      last_state = np.stack([s.cur_step for s in self.mem[-self.kth:]], axis=len(self.state_size))
-      return last_state
+      if len(self.state_size) == 1:
+        return [s.cur_step for s in self.mem[-self.kth:]]
+      return np.stack([s.cur_step for s in self.mem[-self.kth:]], axis=len(self.state_size))
     return []
+
 
   def sample(self, num):
     """Randomly draw [num] samples"""
