@@ -2,6 +2,7 @@ import numpy as np
 import random
 from collections import namedtuple
 
+
 Step = namedtuple('Step','cur_step action next_step reward done')
 
 
@@ -32,12 +33,13 @@ class ExpReplay():
 
   def get_last_state(self):
     if len(self.mem) > self.kth:
-      return np.stack([s.cur_step for s in self.mem[-self.kth:]], axis=len(self.state_size))
+      last_state = np.stack([s.cur_step for s in self.mem[-self.kth:]], axis=len(self.state_size))
+      return last_state
     return []
 
   def sample(self, num):
     """Randomly draw [num] samples"""
-    if len(self.mem) < self.mem_size/10:
+    if len(self.mem) < self.mem_size/20:
       return []
     sampled_idx = random.sample(range(self.kth,len(self.mem)), num)
     samples = []

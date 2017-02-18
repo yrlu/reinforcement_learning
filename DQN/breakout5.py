@@ -36,12 +36,14 @@ TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
 SAVE_EVERY_NUM_EPISODES = 500
 
-DISPLAY = False
+DISPLAY = True
 
 MODEL_DIR = '/tmp/breakout-experiment-5'
 MODEL_PATH = '/tmp/breakout-experiment-5/model'
 MEMORY_PATH = '/tmp/breakout-experiment-5/memory.p'
 
+
+plt.ion()
 
 
 def save_model(sess, saver, exprep, model_dir=MODEL_DIR, model_path=MODEL_PATH, memory_path=MEMORY_PATH):
@@ -124,6 +126,8 @@ def test(agent, env, sess, exprep, sp, num_episodes=TEST_N_EPISODES):
         action = agent.get_optimal_action(exprep.get_last_state(), sess)
     rewards.append(cum_reward)
     print 'test episode {}, reward: {}'.format(i, cum_reward)
+    last_state = exprep.get_last_state()
+    print agent.get_action_values(last_state ,sess), agent.get_optimal_action(last_state, sess)
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
   return np.average(rewards)
 
@@ -175,8 +179,9 @@ def train(agent, env, sess, exprep, sp, saver, num_episodes=NUM_EPISODES):
         epsilon = epsilon - EPSILON_DECAY
 
     # for monitoring use
-    print("Episode finished after {} timesteps, cumulated reward: {}".format(t, cum_reward))
-    print agent.get_action_values(exprep.get_last_state(),sess), agent.get_optimal_action(exprep.get_last_state(), sess)
+    print("Episode {} finished after {} timesteps, cumulated reward: {}".format(i, t, cum_reward))
+    last_state = exprep.get_last_state()
+    print agent.get_action_values(last_state,sess), agent.get_optimal_action(last_state, sess)
     print len(exprep.mem)
     print epsilon
     # save model
