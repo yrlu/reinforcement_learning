@@ -47,5 +47,17 @@ class ExpReplayTest(unittest.TestCase):
     self.assertEqual(np.shape(sample[0].next_step), (2,2,4))
 
 
+  def test4(self):
+    exprep = exp_replay.ExpReplay(mem_size=100, state_size=[4], kth=1)
+    for i in xrange(120):
+      exprep.add_step(Step(cur_step=[i,i,i,i], action=0, next_step=[i+1,i+1,i+1,i+1], reward=0, done=False))
+    last_state = exprep.get_last_state()
+    self.assertEqual(np.shape(last_state),(4,))
+    self.assertTrue(np.array_equal(last_state, [119,119,119,119]))
+
+    sample = exprep.sample(5)
+    self.assertEqual(len(sample), 5)
+    self.assertEqual(np.shape(sample[0].cur_step), (4,))
+
 if __name__ == '__main__':
   unittest.main()

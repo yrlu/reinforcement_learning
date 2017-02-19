@@ -173,15 +173,13 @@ def train(agent, env, sess, exprep, sp, saver, num_episodes=NUM_EPISODES):
       # add step to exprep
       exprep.add_step(Step(cur_step=cur_frame, action=action, next_step=next_frame, reward=reward, done=done))
       cur_frame = next_frame
-      # agent.learn(exprep.sample(BATCH_SIZE), sess)
+      agent.learn(exprep.sample(BATCH_SIZE), sess)
       # choose action every kth step:
       if (t % KTH_FRAME ==0):
         action = agent.get_action_e(exprep.get_last_state(), sess, epsilon)
       # update epsilon
       if epsilon > END_EPSILON:
         epsilon = epsilon - EPSILON_DECAY
-    for j in range(100):
-      agent.learn(exprep.sample(BATCH_SIZE), sess)
     # for monitoring use
     print("Episode {} finished after {} timesteps, cumulated reward: {}".format(i, t, cum_reward))
     last_state = exprep.get_last_state()

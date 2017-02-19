@@ -15,9 +15,9 @@ import tensorflow as tf
 import tf_utils
 
 
-class DQNAgent_CNN():
+class DQNAgent():
   """
-  DQN Agent with convolutional q-network that acts epsilon-greedily.
+  DQN Agent with fully connected q-network that acts epsilon-greedily.
   """
 
 
@@ -25,9 +25,11 @@ class DQNAgent_CNN():
     lr=0.5, 
     momentum=0.95,
     gamma=0.99,
-    state_size=[84,84,4],
-    action_size=6,
+    state_size=[4],
+    action_size=2,
     scope="dqn",
+    n_hidden_1=10,
+    n_hidden_2=10
     ):
     """
     args
@@ -43,6 +45,8 @@ class DQNAgent_CNN():
     self.state_size = state_size
     self.action_size = action_size
     self.scope = scope
+    self.n_hidden_1 = n_hidden_1
+    self.n_hidden_2 = n_hidden_2
     self._build_qnet()
 
 
@@ -58,18 +62,12 @@ class DQNAgent_CNN():
       # target_q = tf.add(reward + gamma * max(q(s,a)))
       self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
 
-      state = tf.to_float(self.state_input)/255.0
-      # state = tf.reshape(tf.to_float(self.state_input) / 255.0, [-1, self.state_size[0], self.state_size[1], self.state_size[2]])
-      conv1 = tf_utils.conv2d(state, n_kernel=32, k_sz=[8,8], stride=4)
-      conv2 = tf_utils.conv2d(conv1, n_kernel=64, k_sz=[4,4], stride=2)
-      conv3 = tf_utils.conv2d(conv2, n_kernel=64, k_sz=[3,3], stride=1)
-
-      # Fully connected layers
-      flattened = tf_utils.flatten(conv1)
-      fc1 = tf_utils.fc(flattened, n_output=512, activation_fn=tf.nn.relu)
-      self.q_values = tf_utils.fc(fc1, self.action_size, activation_fn=None)
+      state = tf.to_float(self.state_input)
+      fc1 = tf_utils.fc(state, n_output=self.n_hidden_1, activation_fn=tf.nn.relu)
+      fc2 = tf_utils.fc(fc1, n_output=self.n_hidden_2, activation_fn=tf.nn.relu)
+      self.q_values = tf_utils.fc(fc2, self.action_size, activation_fn=None)
       # self.q_values = tf.nn.relu(self.q_values)
-      
+
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
 

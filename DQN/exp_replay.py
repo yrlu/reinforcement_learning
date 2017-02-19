@@ -21,11 +21,15 @@ class ExpReplay():
   """Experience replay"""
 
 
-  def __init__(self, mem_size, state_size=[84, 84], kth=4, drop_rate=0.2):
+  def __init__(self, mem_size, start_mem=None, state_size=[84, 84], kth=4, drop_rate=0.2, batch_size=32):
     self.state_size = state_size
     self.drop_rate = drop_rate
     self.mem_size = mem_size
+    self.start_mem = start_mem
+    if start_mem == None:
+      self.start_mem = mem_size/20
     self.kth = kth
+    self.batch_size = batch_size
     self.mem = []
 
 
@@ -44,26 +48,36 @@ class ExpReplay():
 
   def get_last_state(self):
     if len(self.mem) > self.kth:
+      if self.kth == 1:
+        return self.mem[-1].cur_step
       if len(self.state_size) == 1:
         return [s.cur_step for s in self.mem[-self.kth:]]
       return np.stack([s.cur_step for s in self.mem[-self.kth:]], axis=len(self.state_size))
     return []
 
 
-  def sample(self, num):
+  def sample(self, num=None):
     """Randomly draw [num] samples"""
-    if len(self.mem) < self.mem_size/20:
+    if num == None:
+      num = self.batch_size
+    if len(self.mem) < self.start_mem:
       return []
     sampled_idx = random.sample(range(self.kth,len(self.mem)), num)
     samples = []
     for idx in sampled_idx:
-      # found the last kth steps
       steps = self.mem[idx-self.kth:idx]
       cur_state = np.stack([s.cur_step for s in steps], axis=len(self.state_size))
       next_state = np.stack([s.next_step for s in steps], axis=len(self.state_size))
+      # handle special cases
+      if self.kth == 1:
+        cur_state = steps[0].cur_step
+        next_state = steps[0].next_step
+      elif len(self.state_size) == 1:
+        cur_state = [steps[0].cur_step]
+        next_state = [steps[0].next_step]
       reward = steps[-1].reward
       action = steps[-1].action
-      done = steps[-1].action
+      done = steps[-1].done
       samples.append(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
     return samples
 

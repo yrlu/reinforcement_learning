@@ -5,12 +5,12 @@ import numpy
 import matplotlib.pyplot as plt
 
 
-NUM_EPISODES = 100
+NUM_EPISODES = 200
 MAX_STEPS = 300
 FAIL_PENALTY = -100
 EPSILON = 1
 EPSILON_DECAY = 0.01
-END_EPSILON = 0.1
+END_EPSILON = 0.05
 LEARNING_RATE = 0.001
 DISCOUNT_FACTOR = 0.9
 BATCH_SIZE = 32
@@ -19,7 +19,7 @@ MEM_SIZE = 1e4
 RECORD = False
 
 def train(agent, env, history, num_episodes=NUM_EPISODES):
-  for i in xrange(NUM_EPISODES):
+  for i in xrange(num_episodes):
     if i % 100:
       print "Episode {}".format(i + 1)
     cur_state = env.reset()
@@ -63,7 +63,8 @@ if RECORD:
 avg_reward = [numpy.mean(history[i*10:(i+1)*10]) for i in xrange(int(len(history)/10))]
 f_reward = plt.figure(1)
 plt.plot(numpy.linspace(0, len(history), len(avg_reward)), avg_reward)
-plt.ylabel('Rewards')
+plt.ylabel('Episode length')
+plt.xlabel('Training episodes')
 f_reward.show()
 print 'press enter to continue'
 raw_input()
