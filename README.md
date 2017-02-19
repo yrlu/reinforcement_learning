@@ -13,7 +13,7 @@
 
 ##### Temporal Difference Learning
 
-- `td/qleanring.py`: standard epsilon greedy qlearning
+- `td/qlearning.py`: standard epsilon greedy qlearning
 - `dqn/dqn.py`: Deep Q-network agent - vanilla network
 
 ##### Monte Carlo Methods
@@ -27,10 +27,10 @@
 ### OpenAI Gym Examples
 
 - Cartpole-v0
-  - `td/cartpole_qlearning.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
-  - `dqn/cartpole_dqn.py`: [solved cartpole-v0](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
+  - `td/cartpole_qlearning.py`: [solved cartpole-v0 after 1598 episodes of training](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
+  - `dqn/cartpole_dqn.py`: [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
 
-- Breakout-v0 (code to be updated)
+- Breakout-v0 (Refactoring.., code to be updated)
 
 <img src="imgs/breakout10.gif" alt="breakout" width="200">
 
