@@ -21,11 +21,11 @@ FAIL_PENALTY = -1
 EPSILON = 1
 EPSILON_DECAY = 1e-6
 END_EPSILON = 0.1
-# LEARNING_RATE = 2e-5
-LEARNING_RATE = 0.00025
+LEARNING_RATE = 2e-5
+# LEARNING_RATE = 0.00025
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 32
-KTH_FRAME = 4
+KTH_FRAME = 1
 IMAGE_SIZE = [84, 84, KTH_FRAME]
 MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
@@ -42,6 +42,7 @@ MODEL_DIR = '/tmp/breakout-experiment-5'
 MODEL_PATH = '/tmp/breakout-experiment-5/model'
 MEMORY_PATH = '/tmp/breakout-experiment-5/memory.p'
 
+LOG_PATH = '/tmp/breakout-experiment-log-5'
 
 plt.ion()
 
@@ -152,6 +153,7 @@ def train(agent, env, sess, exprep, sp, saver, num_episodes=NUM_EPISODES):
       if DISPLAY:
         env.render()
       # main training procedure
+      # print action
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       next_frame = sp.process(sess, obs)
@@ -171,14 +173,15 @@ def train(agent, env, sess, exprep, sp, saver, num_episodes=NUM_EPISODES):
       # add step to exprep
       exprep.add_step(Step(cur_step=cur_frame, action=action, next_step=next_frame, reward=reward, done=done))
       cur_frame = next_frame
-      agent.learn(exprep.sample(BATCH_SIZE), sess)
+      # agent.learn(exprep.sample(BATCH_SIZE), sess)
       # choose action every kth step:
       if (t % KTH_FRAME ==0):
         action = agent.get_action_e(exprep.get_last_state(), sess, epsilon)
       # update epsilon
       if epsilon > END_EPSILON:
         epsilon = epsilon - EPSILON_DECAY
-
+    for j in range(100):
+      agent.learn(exprep.sample(BATCH_SIZE), sess)
     # for monitoring use
     print("Episode {} finished after {} timesteps, cumulated reward: {}".format(i, t, cum_reward))
     last_state = exprep.get_last_state()
@@ -204,6 +207,7 @@ with tf.Session() as sess:
                                   state_size=IMAGE_SIZE,
                                   action_size=len(ACTIONS),
                                   scope="dqn")
+    summary_writer = tf.summary.FileWriter(LOG_PATH, graph=tf.get_default_graph())
   sess.run(tf.initialize_all_variables())
   saver = tf.train.Saver()
   restore_model(sess, saver, exprep)

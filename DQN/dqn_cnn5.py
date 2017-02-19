@@ -16,6 +16,22 @@ import tensorflow as tf
 import tf_utils
 
 
+def conv_layer(x, W, b, stride=1):
+  # https://www.tensorflow.org/api_docs/python/nn/convolution#conv2d
+  # 
+  # - x: 4d tensor [batch, height, width, channels]
+  # - W, b: weights
+  # - strides[0] and strides[1] must be 1
+  # - padding can be 'VALID'(without padding) or 'SAME'(zero padding)
+  #     - http://stackoverflow.com/questions/37674306/what-is-the-difference-between-same-and-valid-padding-in-tf-nn-max-pool-of-t
+
+  x = tf.nn.conv2d(x, W, strides=[1, stride, stride, 1], padding='SAME')
+  x = tf.nn.bias_add(x, b) # add bias term
+  return tf.nn.relu(x) # rectified linear unit: https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
+
+
+
+
 class DQNAgent_CNN():
   """
   DQN Agent with convolutional q-network that acts epsilon-greedily.
@@ -60,14 +76,14 @@ class DQNAgent_CNN():
       self.target_q = tf.placeholder(shape=[None], dtype=tf.float32)
 
       state = tf.to_float(self.state_input)/255.0
+      # state = tf.reshape(tf.to_float(self.state_input) / 255.0, [-1, self.state_size[0], self.state_size[1], self.state_size[2]])
       conv1 = tf_utils.conv2d(state, n_kernel=32, k_sz=[8,8], stride=4)
       conv2 = tf_utils.conv2d(conv1, n_kernel=64, k_sz=[4,4], stride=2)
       conv3 = tf_utils.conv2d(conv2, n_kernel=64, k_sz=[3,3], stride=1)
 
       # Fully connected layers
-      flattened = tf_utils.flatten(conv3)
+      flattened = tf_utils.flatten(conv1)
       fc1 = tf_utils.fc(flattened, n_output=512, activation_fn=tf.nn.relu)
-
       self.q_values = tf_utils.fc(fc1, self.action_size, activation_fn=None)
       # self.q_values = tf.nn.relu(self.q_values)
       
@@ -75,8 +91,8 @@ class DQNAgent_CNN():
       q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
 
       self.loss = tf.reduce_mean(tf.square(tf.subtract(self.target_q, q_value_pred)))
-      # self.optimizer = tf.train.AdamOptimizer(self.lr)
-      self.optimizer = tf.train.RMSPropOptimizer(self.lr, momentum=self.momentum)
+      self.optimizer = tf.train.AdamOptimizer(self.lr)
+      # self.optimizer = tf.train.RMSPropOptimizer(self.lr, momentum=self.momentum)
       self.train_op = self.optimizer.minimize(self.loss, global_step=tf.contrib.framework.get_global_step())
 
 
@@ -99,6 +115,7 @@ class DQNAgent_CNN():
     max_q_values = q_values.max(axis=1)
     target_q = np.array([s.reward + self.gamma*max_q_values[i]*(1-s.done) for i,s in enumerate(batch_steps)])
     target_q = target_q.reshape([len(batch_steps)])
+    # print target_q
     # minimize TD-error
     cur_state_batch = [s.cur_step for s in batch_steps]
     actions = [s.action for s in batch_steps]
@@ -108,7 +125,8 @@ class DQNAgent_CNN():
     return l
 
   def get_optimal_action(self, state, sess):
-    return self.get_action_e(state, sess, 0)
+    actions = sess.run(self.q_values, feed_dict={self.state_input: [state]})
+    return actions.argmax()
 
   def get_action_e(self, state, sess, epsilon):
     """

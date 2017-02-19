@@ -6,8 +6,8 @@ import os
 import sys
 import pickle
 
-# ACTIONS = {0:4, 1:5}
-ACTIONS = {0:1, 1:4, 2:5}
+ACTIONS = {0:4, 1:5}
+# ACTIONS = {0:1, 1:4, 2:5}
 NUM_EPISODES = int(sys.argv[2])
 FAIL_PENALTY = -1
 EPSILON = 0.1
@@ -33,6 +33,7 @@ MODEL_DIR = '/tmp/breakout-experiment-3'
 MODEL_PATH = '/tmp/breakout-experiment-3/model'
 MEMORY_PATH = '/tmp/breakout-experiment-3/memory.p'
 
+LOG_PATH = '/tmp/breakout-experiment-log-3'
 
 class StateProcessor():
 
@@ -160,6 +161,7 @@ with tf.Session() as sess:
     agent = dqn_cnn2.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=len(ACTIONS), mem_size=MEM_SIZE)
+  summary_writer = tf.summary.FileWriter(LOG_PATH, graph=tf.get_default_graph())
   sess.run(tf.initialize_all_variables())
   # restore model
   saver = tf.train.Saver()
