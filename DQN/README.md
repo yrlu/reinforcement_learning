@@ -4,7 +4,7 @@
 
 #### Usage:
 
-`$ python cartpole_dqn.py`
+`$ python cartpole_dqn.py cpu 150`
 
 #### Reproducible Results
 
