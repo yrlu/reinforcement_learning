@@ -10,7 +10,7 @@ from exp_replay import Step
 DEVICE = sys.argv[1]
 NUM_EPISODES = int(sys.argv[2])
 ACTIONS = {0:0, 1:1}
-MAX_STEPS = 400
+MAX_STEPS = 300
 FAIL_PENALTY = -100
 EPSILON = 1
 EPSILON_DECAY = 0.01
@@ -21,6 +21,7 @@ BATCH_SIZE = 32
 MEM_SIZE = 1e4
 START_MEM = 1e2
 STATE_SIZE = [4]
+EPOCH_SIZE = 100
 
 
 def train(agent, exprep, env):
