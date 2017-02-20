@@ -55,6 +55,7 @@ class ExpReplay():
         return self.mem[-1].cur_step
       if len(self.state_size) == 1:
         return [s.cur_step for s in self.mem[-abs(self.kth):]]
+      last_state = np.stack([s.cur_step for s in self.mem[-abs(self.kth):]], axis=len(self.state_size))
       return np.stack([s.cur_step for s in self.mem[-abs(self.kth):]], axis=len(self.state_size))
     return []
 
