@@ -1,7 +1,7 @@
 import unittest
 import sys
 if "../" not in sys.path:
-  sys.path.append("../") 
+  sys.path.append("../")
 from envs import gridworld
 import monte_carlo
 

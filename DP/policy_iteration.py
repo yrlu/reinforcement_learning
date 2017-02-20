@@ -7,11 +7,10 @@
 #
 # MIT License
 
-import agent
 import math
 
 
-class PolicyIterationAgent(agent.Agent):
+class PolicyIterationAgent(object):
 
   def __init__(self, mdp, gamma, iterations=100):
     """

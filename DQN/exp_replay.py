@@ -22,6 +22,7 @@ class ExpReplay():
 
 
   def __init__(self, mem_size, start_mem=None, state_size=[84, 84], kth=4, drop_rate=0.2, batch_size=32):
+    # k = -1 for sending raw state
     self.state_size = state_size
     self.drop_rate = drop_rate
     self.mem_size = mem_size
@@ -31,6 +32,7 @@ class ExpReplay():
     self.kth = kth
     self.batch_size = batch_size
     self.mem = []
+    self.total_steps = 0
 
 
   def add_step(self, step):
@@ -42,17 +44,18 @@ class ExpReplay():
       step      namedtuple Step, where step.cur_step and step.next_step are of size {state_size}
     """
     self.mem.append(step)
+    self.total_steps = self.total_steps + 1
     while len(self.mem) > self.mem_size:
       self.mem = self.mem[int(len(self.mem)*self.drop_rate):]
 
 
   def get_last_state(self):
-    if len(self.mem) > self.kth:
-      if self.kth == 1:
+    if len(self.mem) > abs(self.kth):
+      if self.kth == -1:
         return self.mem[-1].cur_step
       if len(self.state_size) == 1:
-        return [s.cur_step for s in self.mem[-self.kth:]]
-      return np.stack([s.cur_step for s in self.mem[-self.kth:]], axis=len(self.state_size))
+        return [s.cur_step for s in self.mem[-abs(self.kth):]]
+      return np.stack([s.cur_step for s in self.mem[-abs(self.kth):]], axis=len(self.state_size))
     return []
 
 
@@ -62,14 +65,14 @@ class ExpReplay():
       num = self.batch_size
     if len(self.mem) < self.start_mem:
       return []
-    sampled_idx = random.sample(range(self.kth,len(self.mem)), num)
+    sampled_idx = random.sample(range(abs(self.kth),len(self.mem)), num)
     samples = []
     for idx in sampled_idx:
-      steps = self.mem[idx-self.kth:idx]
+      steps = self.mem[idx-abs(self.kth):idx]
       cur_state = np.stack([s.cur_step for s in steps], axis=len(self.state_size))
       next_state = np.stack([s.next_step for s in steps], axis=len(self.state_size))
       # handle special cases
-      if self.kth == 1:
+      if self.kth == -1:
         cur_state = steps[0].cur_step
         next_state = steps[0].next_step
       elif len(self.state_size) == 1:

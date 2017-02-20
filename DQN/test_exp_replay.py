@@ -48,7 +48,8 @@ class ExpReplayTest(unittest.TestCase):
 
 
   def test4(self):
-    exprep = exp_replay.ExpReplay(mem_size=100, state_size=[4], kth=1)
+    # -1 for sending raw state
+    exprep = exp_replay.ExpReplay(mem_size=100, state_size=[4], kth=-1)
     for i in xrange(120):
       exprep.add_step(Step(cur_step=[i,i,i,i], action=0, next_step=[i+1,i+1,i+1,i+1], reward=0, done=False))
     last_state = exprep.get_last_state()

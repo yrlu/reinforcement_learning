@@ -7,15 +7,37 @@
 #
 # MIT License
 
-import qlearning_agent
+import sys
+if "../" not in sys.path:
+  sys.path.append("../")
+from TD import qlearning
 import numpy
-import utils
+
+class Counter:
+  """
+  Counter class 
+  """
+
+  def __init__(self):
+    self.counter = {}
+
+  def add(self, key):
+    if key in self.counter:
+      self.counter[key] = self.counter[key] + 1
+    else:
+      self.counter[key] = 1
+
+  def get(self, key):
+    if key in self.counter:
+      return self.counter[key]
+    else:
+      return 0
 
 
-class MonteCarloAgent(qlearning_agent.QLearningAgent):
+class MonteCarloAgent(qlearning.QLearningAgent):
 
   def __init__(self, legal_actions_fn, epsilon=0.5, alpha=0.5, gamma=0.9, epsilon_decay=1):
-    self.n_s_a = utils.Counter()
+    self.n_s_a = Counter()
     super(MonteCarloAgent, self).__init__(legal_actions_fn, epsilon, alpha, gamma, epsilon_decay)
 
 
