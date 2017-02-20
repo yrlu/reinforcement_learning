@@ -93,7 +93,7 @@ def test(agent, exprep, sp, env, sess):
     print 'test episode {}, reward: {}'.format(i, cum_reward)
     last_state = exprep.get_last_state()
     print agent.get_action_values(last_state), agent.get_optimal_action(last_state)
-  print '{} episodes average rewards with optimal policy: {}, cumulative rewards: {}'.format(TEST_N_EPISODES, np.average(rewards), cum_reward)
+  print '{} episodes average rewards with optimal policy: {}'.format(TEST_N_EPISODES, np.average(rewards))
   return np.average(rewards)
 
 
