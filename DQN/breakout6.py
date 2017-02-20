@@ -36,7 +36,7 @@ TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
 # SAVE_EVERY_NUM_EPISODES = 500
 
-# DISPLAY = False
+DISPLAY = True
 
 # MODEL_DIR = '/tmp/breakout-experiment-6'
 # MODEL_PATH = '/tmp/breakout-experiment-6/model'
@@ -80,6 +80,8 @@ def test(agent, exprep, sp, env, sess):
     t = 1
     while not done:
       t = t + 1
+      if DISPLAY:
+        env.render()
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       next_frame = sp.process(sess, obs)
@@ -105,9 +107,11 @@ def train(agent, exprep, sp, env, sess):
     cum_reward = 0
     while not done:
       t = t + 1
+      if DISPLAY:
+        env.render()
       if exprep.total_steps % 10000 == 0:
         print '--total_steps: {}--'.format(exprep.total_steps)
-      obs, reward, done, info = env.step(action)
+      obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       next_state = sp.process(sess, obs)
       if done:
