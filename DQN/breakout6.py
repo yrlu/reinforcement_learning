@@ -32,7 +32,7 @@ START_MEM = MEM_SIZE/20
 ENV_NAME = 'Breakout-v0'
 EPOCH_SIZE = 1
 
-TEST_EVERY_NUM_EPISODES = 25
+TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
 # SAVE_EVERY_NUM_EPISODES = 500
 
@@ -91,7 +91,7 @@ def test(agent, exprep, sp, env, sess):
     print 'test episode {}, reward: {}'.format(i, cum_reward)
     last_state = exprep.get_last_state()
     print agent.get_action_values(last_state), agent.get_optimal_action(last_state)
-  print '{} episodes average rewards with optimal policy: {}'.format(TEST_N_EPISODES, np.average(rewards))
+  print '{} episodes average rewards with optimal policy: {}, cumulative rewards: {}'.format(TEST_N_EPISODES, np.average(rewards), cum_reward)
   return np.average(rewards)
 
 
@@ -113,7 +113,7 @@ def train(agent, exprep, sp, env, sess):
       if done:
         reward = FAIL_PENALTY
         exprep.add_step(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
-        print("Episode {} finished after {} timesteps".format(i, t + 1))
+        print("Episode {} finished after {} timesteps, cumulative rewards: {} ".format(i, t + 1, cum_reward))
         break
       exprep.add_step(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
       cur_state = next_state
