@@ -77,6 +77,7 @@ def test(agent, exprep, sp, env, sess):
     cur_frame = sp.process(sess, obs)
     action = 0
     done = False
+    last_life = 5
     t = 1
     while not done:
       t = t + 1
@@ -85,6 +86,21 @@ def test(agent, exprep, sp, env, sess):
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       next_frame = sp.process(sess, obs)
+
+      # process reward: if lost life: -1, if hit the ball: +2, if still living: +1  (avoid 0 rewards)
+      if reward == 0:
+        reward = info['ale.lives'] - last_life
+        last_life = info['ale.lives']
+      if reward == 0:
+        reward = 1
+      else:
+        if reward > 0:
+          reward = 2
+        elif reward < 0:
+          reward = -1
+      if done:
+        reward = FAIL_PENALTY
+
       exprep.add_step(Step(cur_step=cur_frame, action=action, next_step=next_frame, reward=reward, done=done))
       cur_frame = next_frame
       if (t % KTH_FRAME ==0):
@@ -92,7 +108,7 @@ def test(agent, exprep, sp, env, sess):
     rewards.append(cum_reward)
     print 'test episode {}, reward: {}'.format(i, cum_reward)
     last_state = exprep.get_last_state()
-    print agent.get_action_values(last_state), agent.get_optimal_action(last_state)
+    # print agent.get_action_values(last_state), agent.get_optimal_action(last_state)
   print '{} episodes average rewards with optimal policy: {}'.format(TEST_N_EPISODES, np.average(rewards))
   return np.average(rewards)
 
@@ -103,6 +119,7 @@ def train(agent, exprep, sp, env, sess):
     cur_state = sp.process(sess, obs)
     action = 0
     done = False
+    last_life = 5
     t = 1
     cum_reward = 0
     while not done:
@@ -114,17 +131,28 @@ def train(agent, exprep, sp, env, sess):
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       next_state = sp.process(sess, obs)
+
+      # process reward: if lost life: -1, if hit the ball: +2, if still living: +1  (avoid 0 rewards)
+      if reward == 0:
+        reward = info['ale.lives'] - last_life
+        last_life = info['ale.lives']
+      if reward == 0:
+        reward = 1
+      else:
+        if reward > 0:
+          reward = 2
+        elif reward < 0:
+          reward = -1
       if done:
         reward = FAIL_PENALTY
-        exprep.add_step(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
-        print("Episode {} finished after {} timesteps, cumulative rewards: {} ".format(i, t + 1, cum_reward))
-        break
+
       exprep.add_step(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
-      cur_state = next_state
       agent.epsilon_decay()
       agent.learn_epoch(exprep, EPOCH_SIZE)
+      cur_state = next_state      
       if (t % KTH_FRAME ==0):
         action = agent.get_action(exprep.get_last_state())
+    print("Episode {} finished after {} timesteps, cumulative rewards: {} ".format(i, t + 1, cum_reward))
     print agent.get_action_values(exprep.get_last_state()), agent.get_optimal_action(exprep.get_last_state())
     print 'epsilon: {}'.format(agent.epsilon)
 
