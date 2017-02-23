@@ -48,7 +48,7 @@ def train(agent, exprep, env):
 
 
 env = gym.make('CartPole-v0')
-exprep = exp_replay.ExpReplay(mem_size=MEM_SIZE, start_mem=START_MEM, state_size=STATE_SIZE, kth=1, batch_size=BATCH_SIZE)
+exprep = exp_replay.ExpReplay(mem_size=MEM_SIZE, start_mem=START_MEM, state_size=STATE_SIZE, kth=-1, batch_size=BATCH_SIZE)
 
 
 
