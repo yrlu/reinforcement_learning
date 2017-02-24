@@ -9,3 +9,5 @@ push.sh
 visualize_history.py
 log.txt
 nohup.out
+*log.txt
+*log*.txt
