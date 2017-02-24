@@ -66,21 +66,21 @@ class DQNAgent_CNN():
 
       state = tf.reshape(tf.to_float(self.state_input) / 255.0, [-1, self.state_size[0], self.state_size[1], self.state_size[2]])
 
-      conv1 = tf_utils.conv2d(state, n_kernel=32, k_sz=[8,8], stride=4)
-      conv2 = tf_utils.conv2d(conv1, n_kernel=64, k_sz=[4,4], stride=2)
-      conv3 = tf_utils.conv2d(conv2, n_kernel=64, k_sz=[3,3], stride=1)
+      conv1 = tf_utils.conv2d(state, n_kernel=16, k_sz=[8,8], stride=4)
+      conv2 = tf_utils.conv2d(conv1, n_kernel=32, k_sz=[4,4], stride=2)
+      # conv3 = tf_utils.conv2d(conv2, n_kernel=64, k_sz=[3,3], stride=1)
 
       # Fully connected layers
-      flattened = tf_utils.flatten(conv3)
-      fc1 = tf_utils.fc(flattened, n_output=512, activation_fn=tf.nn.relu)
+      flattened = tf_utils.flatten(conv2)
+      fc1 = tf_utils.fc(flattened, n_output=256, activation_fn=tf.nn.relu)
       self.q_values = tf_utils.fc(fc1, self.action_size, activation_fn=None)
 
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       q_value_pred = tf.reduce_sum(self.q_values * action_mask, 1)
 
       self.loss = tf.reduce_mean(tf.square(tf.subtract(self.target_q, q_value_pred)))
-      # self.optimizer = tf.train.AdamOptimizer(self.lr)
-      self.optimizer = tf.train.RMSPropOptimizer(self.lr, momentum=self.momentum)
+      self.optimizer = tf.train.AdamOptimizer(self.lr)
+      # self.optimizer = tf.train.RMSPropOptimizer(self.lr, momentum=self.momentum)
       self.train_op = self.optimizer.minimize(self.loss, global_step=tf.contrib.framework.get_global_step())
 
   def get_action_values(self, state):

@@ -18,10 +18,10 @@ NUM_EPISODES = int(sys.argv[2])
 DEVICE = sys.argv[1]
 FAIL_PENALTY = -1
 EPSILON = 1
-EPSILON_DECAY = 1e-6
+EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
-# LEARNING_RATE = 2e-5
-LEARNING_RATE = 0.00025
+LEARNING_RATE = 2e-5
+# LEARNING_RATE = 0.00025
 MOMENTUM=0.95
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 32
@@ -30,7 +30,7 @@ IMAGE_SIZE = [84, 84, KTH_FRAME]
 MEM_SIZE = 1e5
 START_MEM = MEM_SIZE/20
 ENV_NAME = 'Breakout-v0'
-EPOCH_SIZE = 1
+EPOCH_SIZE = 100
 
 TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
@@ -147,11 +147,13 @@ def train(agent, exprep, sp, env, sess):
         reward = FAIL_PENALTY
 
       exprep.add_step(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
-      agent.epsilon_decay()
-      agent.learn_epoch(exprep, EPOCH_SIZE)
-      cur_state = next_state      
+      
+      
+      cur_state = next_state
       if (t % KTH_FRAME ==0):
         action = agent.get_action(exprep.get_last_state())
+    agent.epsilon_decay()
+    agent.learn_epoch(exprep, EPOCH_SIZE)
     print("Episode {} finished after {} timesteps, cumulative rewards: {} ".format(i, t + 1, cum_reward))
     print agent.get_action_values(exprep.get_last_state()), agent.get_optimal_action(exprep.get_last_state())
     print 'epsilon: {}'.format(agent.epsilon)
@@ -161,7 +163,7 @@ def train(agent, exprep, sp, env, sess):
 
 
 env = gym.make(ENV_NAME)
-exprep = exp_replay.ExpReplay(mem_size=MEM_SIZE, start_mem=START_MEM, state_size=IMAGE_SIZE[:2], kth=1, batch_size=BATCH_SIZE)
+exprep = exp_replay.ExpReplay(mem_size=MEM_SIZE, start_mem=START_MEM, state_size=IMAGE_SIZE[:2], kth=KTH_FRAME, batch_size=BATCH_SIZE)
 tf.reset_default_graph()
 sp = StateProcessor()
 
