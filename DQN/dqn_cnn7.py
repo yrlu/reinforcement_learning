@@ -201,6 +201,11 @@ class DQNAgent_CNN():
       return self.get_optimal_action(state, sess)
 
 
+  def update_epsilon(self):
+    if self.epsilon > self.end_epsilon:
+      self.epsilon = self.epsilon - self.epsilon_anneal
+
+
   def add_episode(self, episode):
     """
     Store episode to memory and check if it reaches the mem_size. 
@@ -209,8 +214,6 @@ class DQNAgent_CNN():
     args
       episode       a list of (current state, action, next state, reward, done)
     """
-    if self.epsilon > self.end_epsilon:
-      self.epsilon = self.epsilon - self.epsilon_anneal
 
     for step in episode:
       self.mem.append(step)

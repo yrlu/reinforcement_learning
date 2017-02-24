@@ -11,9 +11,9 @@ ACTIONS = {0:4, 1:5}
 NUM_EPISODES = int(sys.argv[2])
 FAIL_PENALTY = -1
 EPSILON = 1
-EPSILON_DECAY = 0.001
+EPSILON_DECAY = 1e-6
 END_EPSILON = 0.1
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 2e-5
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
 KTH_FRAME = 2
@@ -113,6 +113,7 @@ def train(agent, env, sess, saver, num_episodes=NUM_EPISODES):
     cum_reward = 0
     while not done:
       t = t + 1
+      agent.update_epsilon()
       # select action every KTH_FRAME frames
       if t % KTH_FRAME == 0:
         action = agent.get_action(np.stack([last_state, cur_state],axis=2),sess)
