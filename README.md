@@ -29,6 +29,7 @@
 - Cartpole-v0
   - `td/cartpole_qlearning.py`: [solved cartpole-v0 after 1598 episodes of training](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
   - `dqn/cartpole_dqn.py`: [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
+  - `policy_gradient/cartpole_policy_gradient.py`: REINFORCE with function approximation
 
 - Breakout-v0 (refactoring.., code to be updated)
 
