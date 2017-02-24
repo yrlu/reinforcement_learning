@@ -1,11 +1,11 @@
 import gym
 from gym import wrappers
-import policy_gradient_nn2
+import policy_gradient_nn
 import numpy
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-NUM_EPISODES = 2000
+NUM_EPISODES = 500
 MAX_STEPS = 200
 FAIL_PENALTY = -100
 LEARNING_RATE = 0.0001
@@ -46,7 +46,7 @@ def train(agent, env, sess, num_episodes=NUM_EPISODES):
   return agent, history
 
 
-agent = policy_gradient_nn2.PolicyGradientNNAgent(lr=LEARNING_RATE,
+agent = policy_gradient_nn.PolicyGradientNNAgent(lr=LEARNING_RATE,
                                           gamma=DISCOUNT_FACTOR,
                                           state_size=4,
                                           action_size=2,

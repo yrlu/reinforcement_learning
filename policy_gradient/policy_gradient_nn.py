@@ -11,21 +11,18 @@ import numpy as np
 import random
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+import tf_utils
+
 
 class PolicyGradientNNAgent():
 
   def __init__(self,
-    epsilon=0.5, 
-    epsilon_anneal = 0.01,
-    end_epsilon=0.1,
     lr=0.5, 
     gamma=0.99, 
     state_size=4,
     action_size=2,
     n_hidden_1=20,
     n_hidden_2=20,
-    batch_size=64,
-    mem_size=1e4,
     scope="pg"
     ):
     """
@@ -38,9 +35,6 @@ class PolicyGradientNNAgent():
       state_size        network input size
       action_size       network output size
     """
-    self.epsilon = epsilon
-    self.epsilon_anneal = epsilon_anneal
-    self.end_epsilon = end_epsilon
     self.lr = lr
     self.gamma = gamma
     self.state_size = state_size
@@ -49,9 +43,6 @@ class PolicyGradientNNAgent():
     self.n_hidden_1 = n_hidden_1
     self.n_hidden_2 = n_hidden_2
     self.scope = scope
-    self.mem_size = mem_size
-    self.mem = []
-    self.batch_size = batch_size
 
     self._build_policy_net()
 
@@ -66,45 +57,43 @@ class PolicyGradientNNAgent():
       self.action = tf.placeholder(tf.int32, [None])
       # G_t
       self.target = tf.placeholder(tf.float32, [None])
-      self.value_got = tf.placeholder(tf.float32, [None])
 
       n_hidden_1 = self.n_hidden_1
       n_hidden_2 = self.n_hidden_2
 
-      self.weights = {
-        'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
-        'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size])),
-        'v_out': tf.Variable(tf.random_normal([n_hidden_2, 1])),
-      }
+      # self.weights = {
+      #   'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
+      #   'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
+      #   'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size])),
+      #   'v_out': tf.Variable(tf.random_normal([n_hidden_2, 1])),
+      # }
 
-      self.biases = {
-        'b1': tf.Variable(tf.random_normal([n_hidden_1])),
-        'b2': tf.Variable(tf.random_normal([n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([self.action_size])),
-        'v_out': tf.Variable(tf.random_normal([1])),
-      }
+      # self.biases = {
+      #   'b1': tf.Variable(tf.random_normal([n_hidden_1])),
+      #   'b2': tf.Variable(tf.random_normal([n_hidden_2])),
+      #   'out': tf.Variable(tf.random_normal([self.action_size])),
+      #   'v_out': tf.Variable(tf.random_normal([1])),
+      # }
 
-      layer_1 = tf.add(tf.matmul(self.state_input, self.weights['h1']), self.biases['b1'])
-      layer_1 = tf.nn.relu(layer_1)
+      # layer_1 = tf.add(tf.matmul(self.state_input, self.weights['h1']), self.biases['b1'])
+      # layer_1 = tf.nn.relu(layer_1)
 
-      layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
-      layer_2 = tf.nn.relu(layer_2)
+      # layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
+      # layer_2 = tf.nn.relu(layer_2)
+      layer_1 = tf_utils.fc(self.state_input, n_hidden_1, tf.nn.relu)
+      layer_2 = tf_utils.fc(layer_1, n_hidden_2, tf.nn.relu)
 
-      self.value = tf.add(tf.matmul(layer_2, self.weights['v_out']), self.biases['v_out'])
-      self.value = tf.nn.relu(self.value)
+      self.value = tf_utils.fc(layer_2, 1)
+      # self.value = tf.add(tf.matmul(layer_2, self.weights['v_out']), self.biases['v_out'])
+      # self.value = tf.nn.relu(self.value)
 
-      self.action_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
+      self.action_values = tf_utils.fc(layer_2, self.action_size)
+      # self.action_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       self.action_value_pred = tf.reduce_sum(self.action_values * action_mask, 1)
       
-      # self.loss = tf.reduce_mean(tf.square(tf.sub(self.target_q, q_value_pred)))
-      self.value_loss = tf.reduce_mean(tf.square(self.target - self.value_got))
       self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * self.target)
       self.loss = self.pg_loss
-      # self.loss = self.pg_loss + 0.01*self.value_loss
-      # print self.target - self.value
-      # self.loss = self.pg_loss
       # self.optimizer = tf.train.RMSPropOptimizer(self.lr, 0.99, 0.0, 1e-6)
       self.optimizer = tf.train.AdamOptimizer(learning_rate=self.lr)
       self.train_op = self.optimizer.minimize(
@@ -119,11 +108,10 @@ class PolicyGradientNNAgent():
     returns
       an action to take given the state
     """
-    if np.random.random() < self.epsilon:
-      return np.random.randint(0, self.action_size)
-    else:
-      pi = self.get_policy(state, sess)
-      return np.random.choice(range(self.action_size), p=pi)
+    # pi = self.get_policy(state, sess)
+    # return np.random.choice(range(self.action_size), p=pi)
+    pi = sess.run(self.action_values, feed_dict={self.state_input: [state]})    
+    return pi.argmax()
 
 
   def get_policy(self, state, sess):
@@ -135,62 +123,10 @@ class PolicyGradientNNAgent():
     return pi
 
 
-  def add_episode(self, episode):
-    """
-    Store episode to memory and check if it reaches the mem_size. 
-    If so, drop 20% of the oldest memory
-    args
-      episode       a list of (current state, action, next state, reward, done)
-    """
-    if self.epsilon > self.end_epsilon:
-      self.epsilon = self.epsilon - self.epsilon_anneal
-
-    self.mem.append(episode)
-    while len(self.mem) > self.mem_size:
-      # If memory reaches limit, then drop 20% of the oldest memory
-      self.mem = self.mem[int(len(self.mem)/5):]
-
-
-
-  def learn_episode(self, episode, seas):
+  def learn(self, episode, sess, train_epoch = 1):
     for t in xrange(len(episode)):
       self.total_steps = self.total_steps + 1
       target = sum([self.gamma**i * r for i, (s, a, s1, r, d) in enumerate(episode[t:])])
       state, action, next_state, reward, done = episode[t]
       feed_dict = { self.state_input: [state], self.target: [target], self.action: [action] }
       _, loss = sess.run([self.train_op, self.loss], feed_dict)
-
-
-  def learn(self, episode, sess, train_steps=100):
-    """
-    args
-      episode       a list of (current state, action, next state, reward)
-    """
-    if len(self.mem) < self.batch_size:
-      return
-    for i in xrange(train_steps):
-      sampled_idx = np.random.choice(len(self.mem), self.batch_size)
-      samples = random.sample(self.mem, self.batch_size)
-      if i % 10 == 0:
-        print i
-      for episode in samples:
-        # states = []
-        # actions = []
-        # targets = []
-        for t in xrange(len(episode)):
-          self.total_steps = self.total_steps + 1
-          target = sum([self.gamma**i * r for i, (s, a, s1, r, d) in enumerate(episode[t:])])
-          state, action, next_state, reward, done = episode[t]
-          # feed_dict = { self.state_input: [state], self.target: [target], self.action: [action] }
-          # v = sess.run([self.value], feed_dict)
-          # print v[0][0][0]
-          # states.append(state)
-          # actions.append(action)
-          # targets.append(targets)
-          # feed_dict = { self.state_input: [state], self.target: [target], self.value_got:[v[0][0][0]], self.action: [action] }
-          # _, loss, v = sess.run([self.train_op, self.loss, self.value], feed_dict)
-          # print target, v
-          feed_dict = { self.state_input: [state], self.target: [target], self.action: [action] }
-          _, loss = sess.run([self.train_op, self.loss], feed_dict)
-        # feed_dict = { self.state_input: states, self.target: targets, self.action: actions }
-        # _, loss = sess.run([self.train_op, self.loss], feed_dict)
