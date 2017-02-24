@@ -1,5 +1,5 @@
 # Policy Gradient Agent 
-#   - policy approximation with fully connected neural network
+#   - REINFORCE with policy approximation
 #
 # ---
 # @author Yiren Lu
@@ -55,26 +55,22 @@ class PolicyGradientNNAgent():
       self.state_input = tf.placeholder(tf.float32, [None, self.state_size])
       # input action to generate output mask
       self.action = tf.placeholder(tf.int32, [None])
-      # G_t
-      self.target = tf.placeholder(tf.float32, [None])
-      self.target_v = tf.placeholder(tf.float32, [None])
-      
-      n_hidden_1 = self.n_hidden_1
-      n_hidden_2 = self.n_hidden_2
 
-      layer_1 = tf_utils.fc(self.state_input, n_hidden_1, tf.nn.relu)
-      layer_2 = tf_utils.fc(layer_1, n_hidden_2, tf.nn.relu)
+      self.target = tf.placeholder(tf.float32, [None])
+
+      layer_1 = tf_utils.fc(self.state_input, self.n_hidden_1, tf.nn.relu)
+      layer_2 = tf_utils.fc(layer_1, self.n_hidden_2, tf.nn.relu)
 
       self.value = tf_utils.fc(layer_2, 1)
 
       self.action_values = tf_utils.fc(layer_2, self.action_size)
-      # self.action_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
+
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       self.action_value_pred = tf.reduce_sum(self.action_values * action_mask, 1)
       
       self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * self.target)
       self.loss = self.pg_loss
-      # self.optimizer = tf.train.RMSPropOptimizer(self.lr, 0.99, 0.0, 1e-6)
+
       self.optimizer = tf.train.AdamOptimizer(learning_rate=self.lr)
       self.train_op = self.optimizer.minimize(
       self.loss, global_step=tf.contrib.framework.get_global_step())

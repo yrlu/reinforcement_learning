@@ -5,10 +5,12 @@ import numpy
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-NUM_EPISODES = 500
-MAX_STEPS = 200
+NUM_EPISODES = 1000
+MAX_STEPS = 300
 FAIL_PENALTY = -100
-LEARNING_RATE = 0.0001
+# LEARNING_RATE = 0.0001 # hidden layer 10/20
+LEARNING_RATE = 0.005 # hidden layer 5
+# LEARNING_RATE = 0.1 # hidden layer 3
 DISCOUNT_FACTOR = 0.9
 TRAIN_EVERY_NUM_EPISODES = 1
 EPOCH_SIZE = 1
@@ -50,8 +52,8 @@ agent = policy_gradient_nn.PolicyGradientNNAgent(lr=LEARNING_RATE,
                                           gamma=DISCOUNT_FACTOR,
                                           state_size=4,
                                           action_size=2,
-                                          n_hidden_1=20,
-                                          n_hidden_2=20)
+                                          n_hidden_1=5,
+                                          n_hidden_2=5)
 
 
 env = gym.make('CartPole-v0')
