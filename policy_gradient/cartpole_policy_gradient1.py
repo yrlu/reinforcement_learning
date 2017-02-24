@@ -5,7 +5,7 @@ import numpy
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-NUM_EPISODES = 5000
+NUM_EPISODES = 10000
 MAX_STEPS = 200
 FAIL_PENALTY = -1
 EPSILON=0.5
@@ -57,7 +57,8 @@ agent = policy_gradient.PolicyGradientAgent(epsilon=EPSILON,
                                           action_size=2)
 
 
-env = gym.make('MountainCar-v0')
+# env = gym.make('MountainCar-v0')
+env = gym.make('CartPole-v0')
 
 agent, history = train(agent, env)
 

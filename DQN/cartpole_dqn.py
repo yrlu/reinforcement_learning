@@ -12,7 +12,7 @@ DEVICE = sys.argv[1]
 NUM_EPISODES = int(sys.argv[2])
 ACTIONS = {0:0, 1:1}
 MAX_STEPS = 300
-FAIL_PENALTY = -100
+FAIL_PENALTY = 0
 EPSILON = 1
 EPSILON_DECAY = 0.01
 END_EPSILON = 0.1
@@ -48,7 +48,7 @@ def train(agent, exprep, env):
 
 
 env = gym.make('CartPole-v0')
-exprep = exp_replay.ExpReplay(mem_size=MEM_SIZE, start_mem=START_MEM, state_size=STATE_SIZE, kth=1, batch_size=BATCH_SIZE)
+exprep = exp_replay.ExpReplay(mem_size=MEM_SIZE, start_mem=START_MEM, state_size=STATE_SIZE, kth=-1, batch_size=BATCH_SIZE)
 
 
 
