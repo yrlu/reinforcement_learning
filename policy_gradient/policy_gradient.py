@@ -64,7 +64,9 @@ class PolicyGradientAgent():
       return np.random.randint(0, self.action_size)
     else:
       pi = self.get_policy(state)
-      return np.random.choice(range(self.action_size), p=pi)
+      action = int(pi[0] < pi[1])
+      return action
+      # return np.random.choice(range(self.action_size), p=pi)
 
 
   def get_policy(self, state):
@@ -111,7 +113,10 @@ class PolicyGradientAgent():
 
       state, action, next_state, reward, done = episode[t]
       pi = self.get_policy(state);
-      sum_b = np.sum([np.multiply(p, self._get_features(state, b)) for b,p in enumerate(pi)])
+      sum_b = np.sum([np.multiply(p, self._get_features(state, b)) for b,p in enumerate(pi)], axis=0)
+      # print np.sum([np.multiply(p, self._get_features(state, b)) for b,p in enumerate(pi)], axis=0)
+      # print 'sum_b {}'.format(sum_b)
+      # print len(self.theta)
       grad_log_pi = np.subtract(self._get_features(state, action), sum_b)
       self.theta = np.subtract(self.theta, np.multiply(self.lr, grad_log_pi))
 

@@ -11,6 +11,8 @@ import numpy as np
 import random
 import tensorflow as tf
 import tensorflow.contrib.slim as slim
+import tf_utils
+
 
 class PolicyGradientNNAgent():
 
@@ -59,30 +61,34 @@ class PolicyGradientNNAgent():
       n_hidden_1 = self.n_hidden_1
       n_hidden_2 = self.n_hidden_2
 
-      self.weights = {
-        'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
-        'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size])),
-        'v_out': tf.Variable(tf.random_normal([n_hidden_2, 1])),
-      }
+      # self.weights = {
+      #   'h1': tf.Variable(tf.random_normal([self.state_size, n_hidden_1])),
+      #   'h2': tf.Variable(tf.random_normal([n_hidden_1, n_hidden_2])),
+      #   'out': tf.Variable(tf.random_normal([n_hidden_2, self.action_size])),
+      #   'v_out': tf.Variable(tf.random_normal([n_hidden_2, 1])),
+      # }
 
-      self.biases = {
-        'b1': tf.Variable(tf.random_normal([n_hidden_1])),
-        'b2': tf.Variable(tf.random_normal([n_hidden_2])),
-        'out': tf.Variable(tf.random_normal([self.action_size])),
-        'v_out': tf.Variable(tf.random_normal([1])),
-      }
+      # self.biases = {
+      #   'b1': tf.Variable(tf.random_normal([n_hidden_1])),
+      #   'b2': tf.Variable(tf.random_normal([n_hidden_2])),
+      #   'out': tf.Variable(tf.random_normal([self.action_size])),
+      #   'v_out': tf.Variable(tf.random_normal([1])),
+      # }
 
-      layer_1 = tf.add(tf.matmul(self.state_input, self.weights['h1']), self.biases['b1'])
-      layer_1 = tf.nn.relu(layer_1)
+      # layer_1 = tf.add(tf.matmul(self.state_input, self.weights['h1']), self.biases['b1'])
+      # layer_1 = tf.nn.relu(layer_1)
 
-      layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
-      layer_2 = tf.nn.relu(layer_2)
+      # layer_2 = tf.add(tf.matmul(layer_1, self.weights['h2']), self.biases['b2'])
+      # layer_2 = tf.nn.relu(layer_2)
+      layer_1 = tf_utils.fc(self.state_input, n_hidden_1, tf.nn.relu)
+      layer_2 = tf_utils.fc(layer_1, n_hidden_2, tf.nn.relu)
 
-      self.value = tf.add(tf.matmul(layer_2, self.weights['v_out']), self.biases['v_out'])
-      self.value = tf.nn.relu(self.value)
+      self.value = tf_utils.fc(layer_2, 1)
+      # self.value = tf.add(tf.matmul(layer_2, self.weights['v_out']), self.biases['v_out'])
+      # self.value = tf.nn.relu(self.value)
 
-      self.action_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
+      self.action_values = tf_utils.fc(layer_2, self.action_size)
+      # self.action_values = tf.add(tf.matmul(layer_2, self.weights['out']), self.biases['out'])
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       self.action_value_pred = tf.reduce_sum(self.action_values * action_mask, 1)
       
