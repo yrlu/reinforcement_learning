@@ -75,13 +75,7 @@ class PolicyGradientNNAgent():
 
 
   def get_action(self, state, sess):
-    """
-    Epsilon-greedy action
-    args
-      state           current state      
-    returns
-      an action to take given the state
-    """
+    """Returns stochastic policy"""
     pi = self.get_policy(state, sess)
     return np.random.choice(range(self.action_size), p=pi)
 
