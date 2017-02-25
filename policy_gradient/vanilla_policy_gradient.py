@@ -21,7 +21,6 @@ def _phi(s, a):
   return [v for v in s] + [a]
 
 def _h(s, a):
-  # print len(_phi(s,a))
   return np.dot(theta, _phi(s,a))
 
 def _policy(s):
@@ -32,7 +31,6 @@ def _policy(s):
   return pi
 
 def _R(episode, t):
-  # t = range(len(episode))
   R_t = sum([GAMMA**i * s.reward for i, s in enumerate(episode[t:])])
   return R_t
 
@@ -58,14 +56,7 @@ for i in range(50000):
     # action = env.action_space.sample()
     action_probs = _policy(cur_state)
     action = int(action_probs[0] < action_probs[1])
-    # action = np.random.choice(np.arange(len(action_probs)), p=action_probs)
-    # print cur_state, theta, action_probs, action
     next_state, reward, done, info = env.step(action)
-    # print '-------'
-    # print 'phi:{}'.format(_phi(cur_state, action))
-    # print 'h:{}'.format(_h(cur_state, action))
-    # print 'policy:{}'.format(_policy(cur_state))
-    # print 'log pi:{}'.format(_log_pi(cur_state, action))
     episode.append(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
     cur_state = next_state
     if done:
@@ -77,11 +68,6 @@ for i in range(50000):
     print np.average(grad, axis=0)
     theta[:4] = theta[:4] + LEARNING_RATE * np.average(grad, axis=0)[:4]
     print theta
-  # print episode
-  # print 'R_t:{}'.format([_R(episode, t) for t, step in enumerate(episode)])
-  # print 'grad_eta:{}'.format(grad_eta(episode))
-
-
 
 
 import matplotlib.pyplot as plt
