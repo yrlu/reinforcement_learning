@@ -11,3 +11,4 @@ log.txt
 nohup.out
 *log.txt
 *log*.txt
+tmp/*
