@@ -47,7 +47,6 @@ class PolicyGradientNNAgent():
     self._build_policy_net()
 
 
-
   def _build_policy_net(self):
     """Build policy network"""
     with tf.variable_scope(self.scope):
@@ -89,11 +88,8 @@ class PolicyGradientNNAgent():
 
   def get_policy(self, state, sess):
     """returns policy as probability distribution of actions"""
-    pi = sess.run(self.action_values, feed_dict={self.state_input: [state]})    
-    pi = [np.exp(p) for p in pi[0]]
-    z = sum(pi)
-    pi = [p/z for p in pi]
-    return pi
+    pi = sess.run(self.action_probs, feed_dict={self.state_input: [state]})
+    return pi[0]
 
 
   def learn(self, episode, sess, train_epoch = 1):

@@ -1,16 +1,14 @@
 import gym
 from gym import wrappers
-import policy_gradient_nn
+import reinforce_w_baseline
 import numpy
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-NUM_EPISODES = 1000
+NUM_EPISODES = 200
 MAX_STEPS = 300
 FAIL_PENALTY = -100
-# LEARNING_RATE = 0.0001 # hidden layer 10/20
-LEARNING_RATE = 0.002 # hidden layer 5
-# LEARNING_RATE = 0.1 # hidden layer 3
+LEARNING_RATE = 0.002 
 DISCOUNT_FACTOR = 0.9
 TRAIN_EVERY_NUM_EPISODES = 1
 EPOCH_SIZE = 1
@@ -41,19 +39,18 @@ def train(agent, env, sess, num_episodes=NUM_EPISODES):
       if t == MAX_STEPS - 1:
         history.append(t + 1)
         print("Episode finished after {} timesteps".format(t + 1))
-    # agent.add_episode(episode)
     if i % TRAIN_EVERY_NUM_EPISODES == 0:
       print 'train at episode {}'.format(i)
       agent.learn(episode, sess, EPOCH_SIZE)
   return agent, history
 
 
-agent = policy_gradient_nn.PolicyGradientNNAgent(lr=LEARNING_RATE,
+agent = reinforce_w_baseline.PolicyGradientNNAgent(lr=LEARNING_RATE,
                                           gamma=DISCOUNT_FACTOR,
                                           state_size=4,
                                           action_size=2,
-                                          n_hidden_1=5,
-                                          n_hidden_2=5)
+                                          n_hidden_1=10,
+                                          n_hidden_2=10)
 
 
 env = gym.make('CartPole-v0')
@@ -64,10 +61,12 @@ with tf.Session() as sess:
   agent, history = train(agent, env, sess)
 
 
-avg_reward = [numpy.mean(history[i*100:(i+1)*100]) for i in xrange(int(len(history)/100))]
+window = 10
+avg_reward = [numpy.mean(history[i*window:(i+1)*window]) for i in xrange(int(len(history)/window))]
 f_reward = plt.figure(1)
 plt.plot(numpy.linspace(0, len(history), len(avg_reward)), avg_reward)
 plt.ylabel('Rewards')
+plt.xlabel('Episodes')
 f_reward.show()
 print 'press enter to continue'
 raw_input()
