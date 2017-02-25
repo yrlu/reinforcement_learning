@@ -19,7 +19,7 @@ The policy function is approximated by a 4-layer fully connected network with l2
 
 ### REINFORCE with Baseline
 
-Here the code shows REINFORCE algorithm with baseline, the policy and value function share the same network regularized by l2. Have not been tuning the hyperparameters too much. Sometimes the model quickly converges to a local optimal (degenerate policy), but a few attempts (<5) should be sufficient.
+Here the code shows REINFORCE algorithm with baseline. The policy and value function share the same network regularized by l2. Have not been tuning the hyperparameters too much. Sometimes the model quickly converges to a local optimal (degenerate policy) due to random initialization, but a few attempts (<5) should be sufficient.
 
 - `reinforce_w_baseline.py`: REINFORCE with baseline
 - `cartpole_policy_gradient_reinforce_baseline.py`: working example on cartpole-v0
