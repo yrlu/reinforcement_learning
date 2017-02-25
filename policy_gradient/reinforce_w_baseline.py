@@ -1,5 +1,6 @@
 # Policy Gradient Agent 
-#   - policy approximation with fully connected neural network
+#   - REINFORCE algorithm with baseline
+#   - Policy/value function approximation
 #
 # ---
 # @author Yiren Lu
@@ -51,8 +52,11 @@ class PolicyGradientNNAgent():
   def _build_policy_net(self):
     """Build policy network"""
     with tf.variable_scope(self.scope):
+      # input state
       self.state_input = tf.placeholder(tf.float32, [None, self.state_size])
+      # input action to generate output mask
       self.action = tf.placeholder(tf.int32, [None])
+      # G_t
       self.target = tf.placeholder(tf.float32, [None])
       
       n_hidden_1 = self.n_hidden_1
@@ -61,16 +65,24 @@ class PolicyGradientNNAgent():
       layer_1 = tf_utils.fc(self.state_input, n_hidden_1, tf.nn.relu)
       layer_2 = tf_utils.fc(layer_1, n_hidden_2, tf.nn.relu)
 
+      self.value = tf_utils.fc(layer_2, 1)
+
       self.action_values = tf_utils.fc(layer_2, self.action_size)
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
-      self.action_prob = tf.nn.softmax(self.action_values)
-      self.action_value_pred = tf.reduce_sum(self.action_prob * action_mask, 1)
+      self.action_value_pred = tf.reduce_sum(tf.nn.softmax(self.action_values) * action_mask, 1)
       
-      # l2 regularization
-      self.l2_loss = tf.add_n([ tf.nn.l2_loss(v) for v in tf.trainable_variables()  ]) 
-      self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * self.target)
+      # action_probs = tf.nn.softmax(self.action_values)
+      action_log_prob = tf.nn.log_softmax(self.action_values)
+      self.entropy_loss = - 0.2*tf.reduce_sum(action_log_prob*tf.exp(action_log_prob))
 
-      self.loss = self.pg_loss + 0.002 * self.l2_loss
+      # self.action_value_pred = tf.reduce_sum(action_log_prob * action_mask, 1)
+      self.value_loss = tf.reduce_mean(tf.square(self.target - self.value))
+      # self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * (self.target - self.value))
+      self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * self.target)
+      # self.loss = self.pg_loss - self.entropy_loss
+      # self.loss = self.pg_loss + 10*self.value_loss
+      self.loss = self.pg_loss
+      # self.optimizer = tf.train.RMSPropOptimizer(self.lr, 0.99, 0.0, 1e-6)
       self.optimizer = tf.train.AdamOptimizer(learning_rate=self.lr)
       self.train_op = self.optimizer.minimize(self.loss, global_step=tf.contrib.framework.get_global_step())
 
@@ -85,6 +97,8 @@ class PolicyGradientNNAgent():
     """
     pi = self.get_policy(state, sess)
     return np.random.choice(range(self.action_size), p=pi)
+    # pi = sess.run(self.action_values, feed_dict={self.state_input: [state]})    
+    # return pi.argmax()
 
 
   def get_policy(self, state, sess):
@@ -102,4 +116,6 @@ class PolicyGradientNNAgent():
       target = sum([self.gamma**i * r for i, (s, a, s1, r, d) in enumerate(episode[t:])])
       state, action, next_state, reward, done = episode[t]
       feed_dict = { self.state_input: [state], self.target: [target], self.action: [action] }
-      _, loss = sess.run([self.train_op, self.loss], feed_dict)
+      _, loss, v, pg_loss, entr_loss, v_a = sess.run([self.train_op, self.loss, self.value, self.pg_loss, self.entropy_loss, self.action_value_pred], feed_dict)
+      # print target, v
+      # print pg_loss, entr_loss, v, v_a, target, -np.log(v_a) * target

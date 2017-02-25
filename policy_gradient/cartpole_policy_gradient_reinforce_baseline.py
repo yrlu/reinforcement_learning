@@ -5,7 +5,7 @@ import numpy
 import matplotlib.pyplot as plt
 import tensorflow as tf
 
-NUM_EPISODES = 400
+NUM_EPISODES = 1000
 MAX_STEPS = 300
 FAIL_PENALTY = -100
 # LEARNING_RATE = 0.0001 # hidden layer 10/20
@@ -57,8 +57,6 @@ agent = policy_gradient_nn.PolicyGradientNNAgent(lr=LEARNING_RATE,
 
 
 env = gym.make('CartPole-v0')
-if RECORD:
-  env = wrappers.Monitor(env, '/tmp/cartpole-experiment-2', force=True)
 
 
 with tf.Session() as sess:
@@ -66,11 +64,7 @@ with tf.Session() as sess:
   agent, history = train(agent, env, sess)
 
 
-if RECORD:
-  env.monitor.close()
-
-window = 10
-avg_reward = [numpy.mean(history[i*window:(i+1)*window]) for i in xrange(int(len(history)/window))]
+avg_reward = [numpy.mean(history[i*100:(i+1)*100]) for i in xrange(int(len(history)/100))]
 f_reward = plt.figure(1)
 plt.plot(numpy.linspace(0, len(history), len(avg_reward)), avg_reward)
 plt.ylabel('Rewards')

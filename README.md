@@ -8,13 +8,13 @@
 
 ##### Dynamic Programming MDP Solver
 
-- `dp/value_iteration.py`: value iteration
-- `dp/policy_iteration.py`: policy iteration - policy evaluation & policy improvement
+- `DP/value_iteration.py`: value iteration
+- `DP/policy_iteration.py`: policy iteration - policy evaluation & policy improvement
 
 ##### Temporal Difference Learning
 
-- `td/qlearning.py`: standard epsilon greedy qlearning
-- `dqn/dqn.py`: Deep Q-network agent - vanilla network
+- `TD/qlearning.py`: standard epsilon greedy qlearning
+- `DQN/dqn.py`: Deep Q-network agent - vanilla network
 
 ##### Monte Carlo Methods
 
@@ -29,7 +29,7 @@
 - Cartpole-v0
   - `td/cartpole_qlearning.py`: [solved cartpole-v0 after 1598 episodes of training](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
   - `dqn/cartpole_dqn.py`: [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
-  - `policy_gradient/cartpole_policy_gradient.py`: REINFORCE algorithm
+  - `policy_gradient/cartpole_policy_gradient.py`: REINFORCE [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
 
 - Breakout-v0 (refactoring.., code to be updated)
 
@@ -57,6 +57,9 @@
 
 `nosetests --with-coverage --cover-package=.`
 
+
 ### MIT License
 
 
+------
+If you find some code useful, please give it a star <3
