@@ -1,38 +1,39 @@
 import gym
 import numpy as np
 import tensorflow as tf
-import dqn_cnn3
+import dqn_cnn
 import os
 import sys
+import pickle
 
-# action space  0: pause, 1: stay, 2: pause, 3: pause, 4: right, 5: left
-ACTIONS = {0:1, 1:4, 2:5}
-NUM_EPISODES = 3000
+ACTIONS = {0:4, 1:5}
+# ACTIONS = {0:1, 1:4, 2:5}
+NUM_EPISODES = int(sys.argv[2])
 FAIL_PENALTY = -1
-EPSILON = 1
-EPSILON_DECAY = 0.0005
+EPSILON = 0.1
+EPSILON_DECAY = 0.001
 END_EPSILON = 0.1
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 2e-5
 DISCOUNT_FACTOR = 0.99
 BATCH_SIZE = 64
+IMAGE_SIZE = [84, 84]
 MEM_SIZE = 1e5
 ENV_NAME = 'Breakout-v0'
 STEP_PER_EPOCH = 100
 RECORD = False
-KTH_FRAME = 4
+KTH_FRAME = 1
 TRAIN_EVERY_NUM_EPISODES = 1
 TEST_EVERY_NUM_EPISODES = 40
 TEST_N_EPISODES = 10
-
-BATCH_SIZE = 64
-IMAGE_SIZE = [84, 84]
+SAVE_EVERY_NUM_EPISODES = 500
 
 DISPLAY = False
 
-MODEL_DIR = '/tmp/breakout-experiment-4'
-MODEL_PATH = '/tmp/breakout-experiment-4/model'
+MODEL_DIR = '/tmp/breakout-experiment-3'
+MODEL_PATH = '/tmp/breakout-experiment-3/model'
+MEMORY_PATH = '/tmp/breakout-experiment-3/memory.p'
 
-
+LOG_PATH = '/tmp/breakout-experiment-log-3'
 
 class StateProcessor():
 
@@ -66,27 +67,40 @@ def test(agent, env, sess, num_episodes=TEST_N_EPISODES):
     cum_reward = 0
     obs = env.reset()
     cur_state = sp.process(sess, obs)
+    last_state = cur_state
     action = 0
     done = False
+    t = 0
     while not done:
+      t = t + 1
+      # act every frame
+      # if t % KTH_FRAME == 0:
+      if DISPLAY:
+        env.render()
       action = agent.get_optimal_action(cur_state, sess)
+      # print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
       cur_state = sp.process(sess, obs)
-      # print reward, done, info
       if done:
         rewards.append(cum_reward)
-	print 'test episode {}, reward: {}'.format(i, cum_reward)
-  	break
-  # print rewards
+        print 'test episode {}, reward: {}'.format(i, cum_reward)
+        break
   print '{} episodes average rewards with optimal policy: {}'.format(num_episodes, np.average(rewards))
+  return np.average(rewards)
 
 
-def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
+def train(agent, env, sess, saver, num_episodes=NUM_EPISODES):
+  history = []
+  test_res = []
   for i in xrange(num_episodes):
     obs = env.reset()
     cur_state = sp.process(sess, obs)
-
+    # save model
+    if (i+1) % SAVE_EVERY_NUM_EPISODES == 0:
+      saver.save(sess, MODEL_PATH)
+      pickle.dump(agent.mem, open(MEMORY_PATH, "wb"))
+      print 'saved model!'
     action = 0
     episode = []
     done = False
@@ -95,79 +109,74 @@ def train(agent, env, history, sess, num_episodes=NUM_EPISODES):
     cum_reward = 0
     while not done:
       t = t + 1
-      # action = env.action_space.sample()
+      # select action every KTH_FRAME frames
+      # if t % KTH_FRAME == 0:
       action = agent.get_action(cur_state,sess)
-      # print action
       if DISPLAY:
-        # action = agent.get_optimal_action(cur_state, sess)
-        # print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
         env.render()
-        # if action != 0:
-          # print '~0'
-        # while action==0:
-          # action = env.action_space.sample()
-      # else:
-        # action = agent.get_action(cur_state,sess)
-      # print len(cur_state), len(cur_state[0]), cur_state[15:-15][15:-15], action
       obs, reward, done, info = env.step(ACTIONS[action])
       cum_reward = cum_reward + reward
-      # next_state = sp.process(sess, obs)
-	
 
+      # process reward: if lost life: -1, if hit the ball: +2, if still living: +1  (avoid 0 rewards)
       if reward == 0:
         reward = info['ale.lives'] - last_life
         last_life = info['ale.lives']
-	if reward == 0:
-	  reward = 1
+      if reward == 0:
+        reward = 1
       else:
         if reward > 0:
           reward = 2
         elif reward < 0:
           reward = -1
-
+      # check terminal state
       if done:
         reward = FAIL_PENALTY
         episode.append([cur_state, action, sp.process(sess, obs), reward, done])
         print("Episode finished after {} timesteps, cumulated reward: {}".format(t+1, cum_reward))
         history.append(t + 1)
         break
+      # collect training steps every KTH_FRAME frames
       if t % KTH_FRAME == 0:
         next_state = sp.process(sess, obs)
         episode.append([cur_state, action, next_state, reward, done])
         cur_state = next_state
-
+    # for monitoring use
     print agent.get_action_dist(cur_state,sess), agent.get_optimal_action(cur_state, sess)
     agent.add_episode(episode)
+    # training and testing
     if i % TRAIN_EVERY_NUM_EPISODES == 0:
       print 'train at episode {}'.format(i)
       agent.learn(STEP_PER_EPOCH, sess)
     if i % TEST_EVERY_NUM_EPISODES == 0:
-      test(agent, env, sess)
-  return agent, history
+      test_res.append(test(agent, env, sess))
+  return agent, history, test_res
 
 
 env = gym.envs.make(ENV_NAME)
-
 tf.reset_default_graph()
 sp = StateProcessor()
 
 
 with tf.Session() as sess:
   with tf.device('/{}:0'.format(sys.argv[1])):
-    agent = dqn_cnn3.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
+    agent = dqn_cnn.DQNAgent_CNN(epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
       lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, batch_size=BATCH_SIZE, state_size=IMAGE_SIZE, 
       action_size=len(ACTIONS), mem_size=MEM_SIZE)
-  sess.run(tf.global_variables_initializer())
+  summary_writer = tf.summary.FileWriter(LOG_PATH, graph=tf.get_default_graph())
+  sess.run(tf.initialize_all_variables())
+  # restore model
   saver = tf.train.Saver()
   if os.path.isdir(MODEL_DIR):
     saver.restore(sess, MODEL_PATH)
+    agent.mem = pickle.load(open(MEMORY_PATH,"rb"))
     print 'restored model'
   else:
     os.makedirs(MODEL_DIR)
-
-  history = []
-  agent, history = train(agent, env, history, sess)
+  # training
+  agent, history, test_res = train(agent, env, sess, saver)
   print history
-
+  print test_res
+  # save model
   saver.save(sess, MODEL_PATH)
   print 'saved model'
+
