@@ -31,7 +31,7 @@
   - `dqn/cartpole_dqn.py`: [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
   - `policy_gradient/cartpole_policy_gradient.py`: REINFORCE [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
 
-- Breakout-v0 (refactoring.., code to be updated)
+- Breakout-v0 (refactoring.., code coming soon)
 
 <img src="imgs/breakout10.gif" alt="breakout" width="200">
 
