@@ -62,4 +62,4 @@
 
 
 ------
-If you find some code useful, please give it a star <3
+If you find some code in this repo useful, please give it a star <3
