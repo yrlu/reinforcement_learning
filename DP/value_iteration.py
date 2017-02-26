@@ -32,13 +32,6 @@ class ValueIterationAgent(object):
       else:
         self.values[s] = 0
 
-    # useful functions of the mdp:
-    #   mdp.get_states()                                      {s}
-    #   mdp.get_actions(state)                                {a}
-    #   mdp.get_reward(state)                                 R(s, a)
-    #   mdp.get_transition_states_and_probs(state, action)    {P(s'|s, a)}
-    #   mdp.is_terminal(state)                                True/False
-
     # estimate values
     for i in range(iterations):
       values_tmp = self.values.copy()
