@@ -18,14 +18,14 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 - [`monte_carlo/monte_carlo.py`](monte_carlo/monte_carlo.py): epsilon greedy monte carlo agent that learns episodes of experiences
 
-##### Policy Gradient Methods (WIP)
+##### Policy Gradient Methods
 
 - [`policy_gradient/policy_gradient_nn.py`](policy_gradient/policy_gradient_nn.py): REINFORCE with policy function approximation
 
 ### OpenAI Gym Examples
 
 - Cartpole-v0
-  - [`TD/cartpole_qlearning.py`](TD/): [solved cartpole-v0 after 1598 episodes of training](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
+  - [`TD/cartpole_qlearning.py`](TD/cartpole_qlearning.py): [solved cartpole-v0 after 1598 episodes of training](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
   - [`DQN/cartpole_dqn.py`](DQN/): [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
   - [`policy_gradient/cartpole_policy_gradient.py`](policy_gradient/): REINFORCE [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
 

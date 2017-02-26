@@ -1,8 +1,6 @@
 ## Deep Q-Learning
 
-(Working in progress)
-
-#### Usage:
+#### Run Code
 
 `$ python cartpole_dqn.py cpu 150`
 
