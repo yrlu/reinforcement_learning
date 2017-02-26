@@ -53,18 +53,15 @@ class PolicyGradientNNAgent():
       self.state_input = tf.placeholder(tf.float32, [None, self.state_size])
       self.action = tf.placeholder(tf.int32, [None])
       self.target = tf.placeholder(tf.float32, [None])
-      
-      n_hidden_1 = self.n_hidden_1
-      n_hidden_2 = self.n_hidden_2
 
-      layer_1 = tf_utils.fc(self.state_input, n_hidden_1, tf.nn.relu)
-      layer_2 = tf_utils.fc(layer_1, n_hidden_2, tf.nn.relu)
+      layer_1 = tf_utils.fc(self.state_input, self.n_hidden_1, tf.nn.relu)
+      layer_2 = tf_utils.fc(layer_1, self.n_hidden_2, tf.nn.relu)
 
       self.action_values = tf_utils.fc(layer_2, self.action_size)
       action_mask = tf.one_hot(self.action, self.action_size, 1.0, 0.0)
       self.action_prob = tf.nn.softmax(self.action_values)
       self.action_value_pred = tf.reduce_sum(self.action_prob * action_mask, 1)
-      
+
       # l2 regularization
       self.l2_loss = tf.add_n([ tf.nn.l2_loss(v) for v in tf.trainable_variables()  ]) 
       self.pg_loss = tf.reduce_mean(-tf.log(self.action_value_pred) * self.target)
