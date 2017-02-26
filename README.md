@@ -31,10 +31,10 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
   - [`DQN/cartpole_dqn.py`](DQN/): [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
   - [`policy_gradient/cartpole_policy_gradient.py`](policy_gradient/): REINFORCE [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
 
-<!-- - Breakout-v0 (refactoring.., code coming soon)
+- Breakout-v0 (refactoring.., code coming soon)
 
 <img src="imgs/breakout10.gif" alt="breakout" width="200">
- -->
+
 ### Environments
 
 - `envs/gridworld.py`: minimium gridworld implementation for testings
