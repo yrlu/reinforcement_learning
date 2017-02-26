@@ -1,13 +1,14 @@
 ## Implementations of Reinforcement Learning Algorithms in Python
 
-Implementations of selected reinforcement learning algorithms with tensorflow and openai gym.
+Implementations of selected reinforcement learning algorithms with tensorflow and openai gym. Working examples associated with implemented algorithms.
 
 ### Implemented Algorithms
 
-##### Dynamic Programming MDP Solver
+(Reverse chronological order)
 
-- [`DP/value_iteration.py`](DP/value_iteration.py): value iteration
-- [`DP/policy_iteration.py`](DP/policy_iteration.py): policy iteration - policy evaluation & policy improvement
+##### Policy Gradient Methods
+
+- [`policy_gradient/policy_gradient_nn.py`](policy_gradient/policy_gradient_nn.py): REINFORCE with policy function approximation
 
 ##### Temporal Difference Learning
 
@@ -18,9 +19,10 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 - [`monte_carlo/monte_carlo.py`](monte_carlo/monte_carlo.py): epsilon greedy monte carlo agent that learns episodes of experiences
 
-##### Policy Gradient Methods
+##### Dynamic Programming MDP Solver
 
-- [`policy_gradient/policy_gradient_nn.py`](policy_gradient/policy_gradient_nn.py): REINFORCE with policy function approximation
+- [`DP/value_iteration.py`](DP/value_iteration.py): value iteration
+- [`DP/policy_iteration.py`](DP/policy_iteration.py): policy iteration - policy evaluation & policy improvement
 
 ### OpenAI Gym Examples
 
@@ -39,9 +41,10 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 ### Dependencies
 
+- Python 2.7
 - Numpy
-- OpenAI Gym (with Atari)
 - Tensorflow
+- OpenAI Gym (with Atari)
 - matplotlib (optional)
 
 ### Tests
@@ -54,7 +57,6 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 - Test coverage (requires `coverage` and `nose`):
 
 `nosetests --with-coverage --cover-package=.`
-
 
 ### MIT License
 
