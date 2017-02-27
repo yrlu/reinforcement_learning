@@ -11,7 +11,7 @@ The policy function is approximated by a 4-layer fully connected network with l2
 
 #### Run Code
 
-`$ python cartpole_policy_gradient.py`
+`$ python cartpole_reinforce.py`
 
 #### Cartpole-v0 Result
 
@@ -26,7 +26,7 @@ Here the code shows REINFORCE algorithm with baseline. The policy and value func
 
 #### Run Code
 
-`$ python cartpole_policy_gradient_reinforce_baseline.py`
+`$ python cartpole_reinforce_baseline.py`
 
 #### Cartpole-v0 Result
 
