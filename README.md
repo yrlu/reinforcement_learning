@@ -2,7 +2,7 @@
 
 Implementations of selected reinforcement learning algorithms with tensorflow and openai gym. Working examples associated with implemented algorithms.
 
-| Implemented Algorthms   |      Working Examples
+<!-- | Implemented Algorthms   |      Working Examples
 |-----------------|:--------------|
 | *Policy Gradient Methods* |   |
 | [REINFORCE with policy function approximation](policy_gradient/) |    [`policy_gradient/cartpole_policy_gradient.py`](policy_gradient/)   |
@@ -14,9 +14,9 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 | [Monte Carlo (MC) estimation of action values](monte_carlo/monte_carlo.py) | [`monte_carlo/test_monte_carlo.py`](monte_carlo/test_monte_carlo.py) |
 | *Dynamic Programming MDP Solver* |   |
 | [Value iteration](DP/value_iteration.py) | [`DP/test_value_iteration.py`](DP/test_value_iteration.py) |
-| [Policy iteration - policy evaluation & policy improvement](DP/policy_iteration.py) | [`DP/test_value_iteration.py`](DP/test_value_iteration.py) |
+| [Policy iteration - policy evaluation & policy improvement](DP/policy_iteration.py) | [`DP/test_value_iteration.py`](DP/test_value_iteration.py) | -->
 
-<!-- ### Implemented Algorithms
+### Implemented Algorithms
 
 (Reverse chronological order)
 
@@ -37,7 +37,7 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 ##### Dynamic Programming MDP Solver
 
 - [Value iteration](DP/value_iteration.py)
-- [Policy iteration - policy evaluation & policy improvement](DP/policy_iteration.py) -->
+- [Policy iteration - policy evaluation & policy improvement](DP/policy_iteration.py)
 
 ### OpenAI Gym Examples
 
