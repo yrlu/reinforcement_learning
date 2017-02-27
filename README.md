@@ -8,21 +8,22 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 ##### Policy Gradient Methods
 
-- [`policy_gradient/policy_gradient_nn.py`](policy_gradient/policy_gradient_nn.py): REINFORCE with policy function approximation
+- [REINFORCE with policy function approximation](policy_gradient/policy_gradient_nn.py)
+- [REINFORCE with baseline](policy_gradient/reinforce_w_baseline.py)
 
 ##### Temporal Difference Learning
 
-- [`TD/qlearning.py`](TD/qlearning.py): standard epsilon greedy qlearning
-- [`DQN/dqn.py`](DQN/dqn.py): Q-learning with action value function approximation
+- [Standard epsilon greedy Q-learning](TD/qlearning.py)
+- [Deep Q-learning](DQN/dqn.py)
 
 ##### Monte Carlo Methods
 
-- [`monte_carlo/monte_carlo.py`](monte_carlo/monte_carlo.py): epsilon greedy monte carlo agent that learns episodes of experiences
+- [Monte Carlo (MC) estimation of action values](monte_carlo/monte_carlo.py)
 
 ##### Dynamic Programming MDP Solver
 
-- [`DP/value_iteration.py`](DP/value_iteration.py): value iteration
-- [`DP/policy_iteration.py`](DP/policy_iteration.py): policy iteration - policy evaluation & policy improvement
+- [Value iteration](DP/value_iteration.py): value iteration
+- [Policy iteration - policy evaluation & policy improvement](DP/policy_iteration.py)
 
 ### OpenAI Gym Examples
 
