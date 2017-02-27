@@ -7,7 +7,7 @@
 The policy function is approximated by a 4-layer fully connected network with l2 regularization. The algorithm [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
 
 - `policy_gradient_nn.py`: REINFORCE with policy function approximation
-- `cartpole_policy_gradient.py`: working example on cartpole-v0
+- `cartpole_reinforce.py`: working example on cartpole-v0
 
 #### Run Code
 
@@ -22,7 +22,7 @@ The policy function is approximated by a 4-layer fully connected network with l2
 Here the code shows REINFORCE algorithm with baseline. The policy and value function share the same network regularized by l2. Have not been tuning the hyperparameters too much. Sometimes the model quickly converges to a local optimal (degenerate policy) due to random initialization, but a few attempts (<5) should be sufficient.
 
 - `reinforce_w_baseline.py`: REINFORCE with baseline
-- `cartpole_policy_gradient_reinforce_baseline.py`: working example on cartpole-v0
+- `cartpole_reinforce_baseline.py`: working example on cartpole-v0
 
 #### Run Code
 
