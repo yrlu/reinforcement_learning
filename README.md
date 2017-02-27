@@ -8,13 +8,13 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 ##### Policy Gradient Methods
 
-- [REINFORCE with policy function approximation](policy_gradient/policy_gradient_nn.py)
+- [REINFORCE with policy function approximation](policy_gradient/)
 - [REINFORCE with baseline](policy_gradient/reinforce_w_baseline.py)
 
 ##### Temporal Difference Learning
 
 - [Standard epsilon greedy Q-learning](TD/qlearning.py)
-- [Deep Q-learning](DQN/dqn.py)
+- [Deep Q-learning](DQN/)
 
 ##### Monte Carlo Methods
 
