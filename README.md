@@ -22,7 +22,7 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 ##### Dynamic Programming MDP Solver
 
-- [Value iteration](DP/value_iteration.py): value iteration
+- [Value iteration](DP/value_iteration.py)
 - [Policy iteration - policy evaluation & policy improvement](DP/policy_iteration.py)
 
 ### OpenAI Gym Examples
