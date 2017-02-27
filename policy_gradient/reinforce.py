@@ -79,7 +79,7 @@ class PolicyGradientNNAgent():
 
   def get_policy(self, state, sess):
     """returns policy as probability distribution of actions"""
-    pi = sess.run(self.action_probs, feed_dict={self.state_input: [state]})
+    pi = sess.run(self.action_prob, feed_dict={self.state_input: [state]})
     return pi[0]
 
 
