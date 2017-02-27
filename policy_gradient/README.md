@@ -6,7 +6,7 @@
 
 The policy function is approximated by a 4-layer fully connected network with l2 regularization. The algorithm [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
 
-- `policy_gradient_nn.py`: REINFORCE with policy function approximation
+- `reinforce.py`: REINFORCE with policy function approximation
 - `cartpole_reinforce.py`: working example on cartpole-v0
 
 #### Run Code
