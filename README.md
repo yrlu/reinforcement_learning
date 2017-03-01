@@ -68,10 +68,10 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 - Run unit test for [class]:
 
 `python test_[class].py`
-
+<!-- 
 - Test coverage (requires `coverage` and `nose`):
 
 `nosetests --with-coverage --cover-package=.`
-
+ -->
 ### MIT License
 

@@ -37,7 +37,7 @@ class DQNAgent():
     """
     args
       epsilon           exploration rate
-      epsilon_anneal    linear decay rate per call of learn() function (iteration)
+      epsilon_anneal    linear decay rate per call of epsilon_decay() function
       end_epsilon       lowest exploration rate
       lr                learning rate
       gamma             discount factor
