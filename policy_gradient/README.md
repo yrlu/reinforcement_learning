@@ -1,7 +1,5 @@
 ## Policy Gradient Methods
 
-(Working in progress)
-
 ### REINFORCE 
 
 The policy function is approximated by a 4-layer fully connected network with l2 regularization. The algorithm [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
