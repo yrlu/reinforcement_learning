@@ -20,6 +20,10 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 (Reverse chronological order)
 
+##### Advanced 
+
+- [Deep Deterministic Policy Gradient](ddpg/)
+
 ##### Policy Gradient Methods
 
 - [REINFORCE with policy function approximation](policy_gradient/)
