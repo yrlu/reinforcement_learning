@@ -1,3 +1,13 @@
+# Deep Deterministic Policy Gradient
+#   following paper: Continuous control with deep reinforcement learning
+#                   (https://arxiv.org/pdf/1509.02971.pdf)
+#
+# ---
+# @author Yiren Lu
+# @email luyiren [at] seas [dot] upenn [dot] edu
+#
+# MIT License
+
 import numpy as np
 import tensorflow as tf
 

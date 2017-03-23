@@ -1,3 +1,10 @@
+# DDPG Pendulum-v0 example
+# ---
+# @author Yiren Lu
+# @email luyiren [at] seas [dot] upenn [dot] edu
+#
+# MIT License
+
 import tensorflow as tf
 import numpy as np
 from ddpg import DDPG
@@ -39,7 +46,7 @@ def train(agent, env, sess):
         env.render()
         action = agent.get_action(cur_state, sess)[0]
       else:
-        # action = agent.get_action(cur_state, sess)[0]
+        # decaying noise
         action = agent.get_action_noise(cur_state, sess, rate=(NUM_EPISODES-i)/NUM_EPISODES)[0]
       next_state, reward, done, info = env.step(action)
       if done:

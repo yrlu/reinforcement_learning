@@ -1,23 +1,6 @@
 import numpy as np
 
 
-# class OUProcess(object):
-#   """Ornstein-Uhlenbeck process"""
-
-
-#   def __init__(self, action_size, mu=0, theta=0.15, sigma=0.3):
-#     self.action_size = action_size
-#     self.mu = mu
-#     self.theta = theta
-#     self.sigma = sigma
-#     self.x = np.ones(self.action_size) * self.mu
-
-
-#   def noise(self):
-#     self.x = self.x + self.theta * (self.mu - self.x) + self.sigma * np.random.randn(len(self.x))
-#     return self.x
-
-
 class OUProcess(object):
   """Ornstein-Uhlenbeck process"""
 
