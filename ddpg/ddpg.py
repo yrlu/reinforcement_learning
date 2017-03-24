@@ -40,7 +40,6 @@ class DDPG(object):
     state = np.reshape(state,[-1, self.actor.state_size])
     action = self.actor.get_action(state, sess) * self.action_bound
     action = action + self.noise.noise() * rate
-    # print self.ou.noise()
     return action
 
 
