@@ -16,10 +16,10 @@ import tf_utils
 class ActorNetwork(object):
 
 
-  def __init__(self, state_size, action_size, optimizer, n_h1=400, n_h2=300, tau=0.001):
+  def __init__(self, state_size, action_size, lr, n_h1=400, n_h2=300, tau=0.001):
     self.state_size = state_size
     self.action_size = action_size
-    self.optimizer = optimizer
+    self.optimizer = tf.train.AdamOptimizer(lr)
     self.tau = tau
 
     self.n_h1 = n_h1

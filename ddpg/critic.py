@@ -15,10 +15,10 @@ import tf_utils
 class CriticNetwork(object):
 
 
-  def __init__(self, state_size, action_size, optimizer, n_h1=400, n_h2=300, tau=0.001):
+  def __init__(self, state_size, action_size, lr, n_h1=400, n_h2=300, tau=0.001):
     self.state_size = state_size
     self.action_size = action_size
-    self.optimizer = optimizer
+    self.optimizer = tf.train.AdamOptimizer(lr)
     self.tau = tau
 
     self.n_h1 = n_h1
@@ -45,7 +45,6 @@ class CriticNetwork(object):
         initializer=tf.contrib.layers.variance_scaling_initializer(mode="FAN_IN"))
       q_value = tf_utils.fc(layer_2, 1, scope="out", initializer=tf.random_uniform_initializer(-3e-3, 3e-3))
     critic_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=name)
-    print q_value.get_shape()
     return input_s, action, critic_variables, tf.squeeze(q_value)
 
 
