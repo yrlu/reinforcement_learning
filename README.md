@@ -55,7 +55,7 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 <img src="imgs/breakout10.gif" alt="breakout" width="200">
 
 - Pendulum-v0
-    - [`ddpg/pendulum_ddpg.py`](ddpg/pendulum_ddpg.py): [Best 100-episode average reward was -148.19 ± 9.14](https://gym.openai.com/evaluations/eval_9kvdhHSCTMqU8mYTaPWFrQ)
+    - [`ddpg/pendulum_ddpg.py`](ddpg/): [Best 100-episode average reward was -148.19 ± 9.14](https://gym.openai.com/evaluations/eval_9kvdhHSCTMqU8mYTaPWFrQ)
 
 ### Environments
 
