@@ -1,6 +1,6 @@
 ## Implementations of Reinforcement Learning Algorithms in Python
 
-Implementations of selected reinforcement learning algorithms with tensorflow and openai gym. Working examples associated with implemented algorithms.
+Implementations of selected reinforcement learning algorithms with tensorflow and openai gym. Working examples.
 
 <!-- | Implemented Algorthms   |      Working Examples
 |-----------------|:--------------|
