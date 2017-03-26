@@ -22,7 +22,7 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 ##### Advanced 
 
-- [Deep Deterministic Policy Gradient](ddpg/)
+- [Deep Deterministic Policy Gradient (DDPG)](ddpg/)
 
 ##### Policy Gradient Methods
 
@@ -53,6 +53,9 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 - Breakout-v0 (refactoring.., code coming soon)
 
 <img src="imgs/breakout10.gif" alt="breakout" width="200">
+
+- Pendulum-v0
+    - [`ddpg/pendulum_ddpg.py`](ddpg/pendulum_ddpg.py): [Best 100-episode average reward was -148.19 ± 9.14](https://gym.openai.com/evaluations/eval_9kvdhHSCTMqU8mYTaPWFrQ)
 
 ### Environments
 
