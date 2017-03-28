@@ -12,7 +12,7 @@ class ActorNetwork(object):
     self.name = name
     self.n_h1 = n_h1
     self.n_h2 = n_h2
-    
+
     self.optimizer = tf.train.AdamOptimizer(lr)
     self.input_s, self.action, self.advantage, self.model_variables, self.action_prob, self.action_prob_pred = self._build_network(self.name)
     self.l2_loss = tf.add_n([ tf.nn.l2_loss(v) for v in self.model_variables])

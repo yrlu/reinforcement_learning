@@ -9,8 +9,8 @@ import threading
 from threading import Lock
 
 
-LOCAL_ACTOR_LEARNING_RATE = 0.001
-LOCAL_CRITIC_LEARNING_RATE = 0.01
+LOCAL_ACTOR_LEARNING_RATE = 0.0001
+LOCAL_CRITIC_LEARNING_RATE = 0.001
 
 MAX_STEPS = 300
 
@@ -61,7 +61,7 @@ class A3C(object):
       print "finished: {}".format(self.finished)
 
 
-  def train(self, num_episodes=50):
+  def train(self, num_episodes=20):
     for i in range(self.n_workers):
       t = threading.Thread(target=self._work, args=(i, num_episodes)) 
       t.start()

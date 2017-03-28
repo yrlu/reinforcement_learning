@@ -3,7 +3,7 @@ import numpy as np
 import actor
 import critic
 from collections import namedtuple
-
+import random
 
 LOCAL_ACTOR_LEARNING_RATE = 0.0001
 LOCAL_CRITIC_LEARNING_RATE = 0.001
@@ -92,6 +92,7 @@ class Worker(object):
     for t in xrange(t_max):
       # perform a_t according to policy pi(a_t|s_t; theta^prime)
       action = self.local_actor.get_action(cur_state, self.sess)
+
       # receive reward r_t and new state s_{t+1}
       next_state, reward, done, info = self.env.step(action)
       # T = T + 1
