@@ -6,6 +6,6 @@ Tested on pendulum-v0: [openai submission page](https://gym.openai.com/evaluatio
 
 `$ python pendulum_ddpg.py --device=cpu --episodes=300`
 
-#### Plots
+#### Pendulum-v0 result
 
 ![ddpg training](imgs/ddpg_plot.png "ddpg training")

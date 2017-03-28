@@ -38,6 +38,7 @@ GAMMA = 0.99
 TAU = 0.001
 MEM_SIZE = 1000000
 
+
 STATE_SIZE = 3
 ACTION_SIZE = 1
 BATCH_SIZE = 64
@@ -45,8 +46,6 @@ MAX_STEPS = 10000
 FAIL_PENALTY = 0
 ACTION_RANGE = 1
 EVALUATE_EVERY = 10
-
-
 
 
 def summarize(cum_reward, i, summary_writer):
