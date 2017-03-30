@@ -1,5 +1,7 @@
 ## Deep Deterministic Policy Gradient
 
+Following paper: Continuous control with deep reinforcement learning [(https://arxiv.org/abs/1509.02971)](https://arxiv.org/abs/1509.02971)
+
 Tested on pendulum-v0: [openai submission page](https://gym.openai.com/evaluations/eval_9kvdhHSCTMqU8mYTaPWFrQ)
 
 #### Run code
