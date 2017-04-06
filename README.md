@@ -65,8 +65,8 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 - Python 2.7
 - Numpy
-- Tensorflow
-- OpenAI Gym (with Atari)
+- Tensorflow 0.12.1
+- OpenAI Gym (with Atari) 0.8.0
 - matplotlib (optional)
 
 ### Tests
