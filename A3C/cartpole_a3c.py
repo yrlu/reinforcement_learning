@@ -25,10 +25,8 @@ N_H2 = 300
 tf.reset_default_graph()
 
 history = []
-# with tf.Graph().as_default() as g:
+
 with tf.device('/{}:0'.format(DEVICE)):
-  # g = tf.Graph()
-  # with g.as_default():
   sess = tf.Session()
   global_model = ac_net.AC_Net(STATE_SIZE, ACTION_SIZE, LEARNING_RATE, 'global', n_h1=N_H1, n_h2=N_H2)
   workers = []
