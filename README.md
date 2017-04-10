@@ -51,10 +51,10 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
     - [`DQN/cartpole_dqn.py`](DQN/): [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
     - [`policy_gradient/cartpole_policy_gradient.py`](policy_gradient/): REINFORCE [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
 
-- Breakout-v0 (refactoring.., code coming soon)
+<!-- - Breakout-v0 (refactoring.., code coming soon)
 
 <img src="imgs/breakout10.gif" alt="breakout" width="200">
-
+ -->
 - Pendulum-v0
     - [`ddpg/pendulum_ddpg.py`](ddpg/): [Best 100-episode average reward was -148.19 ± 9.14](https://gym.openai.com/evaluations/eval_9kvdhHSCTMqU8mYTaPWFrQ)
 
