@@ -14,7 +14,6 @@ import matplotlib.pyplot as plt
 # print(env.action_space)
 
 
-# # env = gym.make('MountainCar-v0')
 # env = gym.make('Acrobot-v1')
 # env._max_episode_steps = 3000
 # for i_episode in range(100):
