@@ -27,9 +27,9 @@ The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
 `> python mountaincar_a3c.py`
 
-The following graph shows the episode rewards (in progress ..) (# workers: 8, entropy loss: 1.0)
+The following graph shows the episode rewards (# workers: 8, entropy loss: 1.0, tmax=15)
 
-![A3C training](imgs/mountaincar_el1.png "A3C training")
+![A3C training](imgs/mountaincar_tmax15_el1.png "A3C training")
 
 
 #### References
