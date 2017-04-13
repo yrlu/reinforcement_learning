@@ -2,21 +2,35 @@
 
 Following paper: Asynchronous Methods for Deep Reinforcement Learning [(https://arxiv.org/pdf/1602.01783.pdf)](https://arxiv.org/pdf/1602.01783.pdf)
 
-#### Cartpole-v0 result (4 workers)
+#### Cartpole-v0 result 
 
 `> python cartpole_a3c.py`
 
-The following graph shows the episode rewards
+The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
-![A3C training](imgs/a3c_cartpole.png "A3C training")
+![A3C training](imgs/a3c_cartpole_el001.png "A3C training")
 
-#### Acrobot-v1 result (4 workers)
+The following graph shows the episode rewards (# workers: 4, entropy loss: 0.0)
+
+![A3C training](imgs/a3c_cartpole_el0.png "A3C training")
+
+
+#### Acrobot-v1 result 
 
 `> python acrobot_a3c.py`
 
-The following graph shows the episode rewards
+The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
 ![A3C training](imgs/a3c_acrobot.png "A3C training")
+
+#### MountainCar-v0 result
+
+`> python mountaincar_a3c.py`
+
+The following graph shows the episode rewards (in progress ..) (# workers: 8, entropy loss: 1.0)
+
+![A3C training](imgs/mountaincar_el1.png "A3C training")
+
 
 #### References
 
