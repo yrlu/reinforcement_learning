@@ -9,15 +9,39 @@ import multiprocessing
 import matplotlib.pyplot as plt
 
 
+# env = gym.make('Acrobot-v1')
+# print(env.observation_space)
+# print(env.action_space)
+
+
+# # env = gym.make('MountainCar-v0')
+# env = gym.make('Acrobot-v1')
+# env._max_episode_steps = 3000
+# for i_episode in range(100):
+#   cum_reward = 0
+#   observation = env.reset()
+#   for t in range(10000):
+#     # env.render()
+#     action = env.action_space.sample()
+#     observation, reward, done, info = env.step(action)
+#     cum_reward += reward
+#     # print observation, action, reward, done, info
+#     if done:
+#       print("Episode finished after {} timesteps, cumulated reward: {}".format(t+1, cum_reward))
+#       cum_reward = 0
+#       break
+
+
+
 DEVICE = 'cpu'
-STATE_SIZE = 4
-ACTION_SIZE = 2
+STATE_SIZE = 6
+ACTION_SIZE = 3
 LEARNING_RATE = 0.0001
 GAMMA = 0.99
 T_MAX = 5
 # NUM_WORKERS = multiprocessing.cpu_count()
 NUM_WORKERS = 4
-NUM_EPISODES = 1000
+NUM_EPISODES = 500
 
 N_H1 = 300
 N_H2 = 300
@@ -31,8 +55,8 @@ with tf.device('/{}:0'.format(DEVICE)):
   global_model = ac_net.AC_Net(STATE_SIZE, ACTION_SIZE, LEARNING_RATE, 'global', n_h1=N_H1, n_h2=N_H2)
   workers = []
   for i in xrange(NUM_WORKERS):
-    env = gym.make('CartPole-v0')
-    env._max_episode_steps = 200
+    env = gym.make('Acrobot-v1')
+    env._max_episode_steps = 3000
     workers.append(worker.Worker(env, 
       state_size=STATE_SIZE, action_size=ACTION_SIZE, 
       worker_name='worker_{}'.format(i), global_name='global', 

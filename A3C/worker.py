@@ -5,7 +5,7 @@ from collections import namedtuple
 import random
 import tf_utils
 
-MAX_STEPS = 200
+MAX_STEPS = 10000
 
 
 Step = namedtuple('Step','cur_step action next_step reward done')
@@ -24,8 +24,9 @@ class Worker(object):
 
     self.local_model = ac_net.AC_Net(state_size, action_size, lr, 
               worker_name, n_h1=n_h1, n_h2=n_h2, global_name=global_name)
-
     self.copy_to_local_op = tf_utils.update_target_graph(global_name, worker_name)
+
+    self.summary_writer = tf.summary.FileWriter("logs/train_{}".format(worker_name))
 
 
   def _copy_to_local(self):
@@ -36,6 +37,8 @@ class Worker(object):
     episode_i = 0
     episode_len = 1
     cur_state = self.env.reset()
+    count = 1
+    cum_reward = 0
     while episode_i < n_episodes:
       # 1) sync from global model to local model
       self._copy_to_local()
@@ -45,14 +48,20 @@ class Worker(object):
         action = self.local_model.get_action(cur_state, self.sess)
         # action = self.env.action_space.sample()
         next_state, reward, done, info = self.env.step(action)
+        cum_reward += reward
         episode_len = episode_len + 1
         steps.append(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
         if done or episode_len >= MAX_STEPS:
           cur_state = self.env.reset()
           self.history.append(episode_len)
-          print 'worker {}: episode {} finished in {} steps'.format(self.name, episode_i, episode_len)
+          summary = tf.Summary()
+          summary.value.add(tag='Perf/episode_len', simple_value=float(episode_len))
+          summary.value.add(tag='Perf/episode_reward', simple_value=float(cum_reward))
+          self.summary_writer.add_summary(summary, episode_i)
+          print 'worker {}: episode {} finished in {} steps, cumulative reward: {}'.format(self.name, episode_i, episode_len, cum_reward)
           print action
           print self.local_model.predict_policy(cur_state, self.sess)
+          cum_reward = 0
           episode_i = episode_i + 1
           episode_len = 0
           break
@@ -83,4 +92,29 @@ class Worker(object):
         self.local_model.advantage: advantage_batch,
         self.local_model.target_v: R_batch,
       }
-      loss, _, _ = self.sess.run([self.local_model.loss, self.local_model.gradients, self.local_model.apply_gradients], feed_dict)
+      v_l, p_l, e_l, loss, _, _, v_n = self.sess.run(
+                                              [self.local_model.value_loss, 
+                                              self.local_model.policy_loss, 
+                                              self.local_model.entropy_loss, 
+                                              self.local_model.loss, 
+                                              self.local_model.gradients, 
+                                              self.local_model.apply_gradients, 
+                                              # self.local_model.grad_norms, 
+                                              self.local_model.var_norms], 
+                                              feed_dict)
+
+
+      mean_reward = np.mean([step.reward for step in steps])
+      mean_value = np.mean(R_batch)
+
+      summary = tf.Summary()
+      summary.value.add(tag='Perf/Reward', simple_value=float(mean_reward))
+      summary.value.add(tag='Perf/Value', simple_value=float(mean_value))
+      summary.value.add(tag='Losses/Value Loss', simple_value=float(v_l))
+      summary.value.add(tag='Losses/Policy Loss', simple_value=float(p_l))
+      summary.value.add(tag='Losses/Entropy', simple_value=float(e_l))
+      # summary.value.add(tag='Losses/Grad Norm', simple_value=float(g_n))
+      summary.value.add(tag='Losses/Var Norm', simple_value=float(v_n))
+      self.summary_writer.add_summary(summary, count)
+      count += 1
+
