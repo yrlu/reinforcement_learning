@@ -22,7 +22,7 @@ Implementations of selected reinforcement learning algorithms with tensorflow an
 
 ##### Advanced 
 
-- [Asynchronized Advantage Actor-Critic (A3C) (Working in Progress)](A3C/)
+- [Asynchronized Advantage Actor-Critic (A3C)](A3C/)
 - [Deep Deterministic Policy Gradient (DDPG)](ddpg/)
 
 ##### Policy Gradient Methods
