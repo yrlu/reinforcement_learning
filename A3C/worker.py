@@ -14,7 +14,9 @@ Step = namedtuple('Step','cur_step action next_step reward done')
 class Worker(object):
 
 
-  def __init__(self, env, state_size, action_size, worker_name, global_name, lr, gamma, t_max, sess, history, n_h1=400, n_h2=300):
+  def __init__(self, env, state_size, action_size, 
+    worker_name, global_name, lr, gamma, t_max, sess, 
+    history, n_h1=400, n_h2=300, logdir='logs'):
     self.env = env
     self.name = worker_name
     self.gamma = gamma
@@ -26,7 +28,7 @@ class Worker(object):
               worker_name, n_h1=n_h1, n_h2=n_h2, global_name=global_name)
     self.copy_to_local_op = tf_utils.update_target_graph(global_name, worker_name)
 
-    self.summary_writer = tf.summary.FileWriter("logs/train_{}".format(worker_name))
+    self.summary_writer = tf.summary.FileWriter("{}/train_{}".format(logdir, worker_name))
 
 
   def _copy_to_local(self):
