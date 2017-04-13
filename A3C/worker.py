@@ -45,8 +45,8 @@ class Worker(object):
       # 2) collect t_max steps (if terminated then i++)
       steps = []
       for _ in xrange(self.t_max):
-        action = self.local_model.get_action(cur_state, self.sess)
         # action = self.env.action_space.sample()
+        action = self.local_model.get_action(cur_state, self.sess)
         next_state, reward, done, info = self.env.step(action)
         cum_reward += reward
         episode_len = episode_len + 1
