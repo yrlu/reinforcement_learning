@@ -18,8 +18,9 @@ class AC_Net(object):
     self.optimizer = tf.train.AdamOptimizer(lr)
     self.input_s, self.input_a, self.advantage, self.target_v, self.policy, self.value, self.action_est, self.model_variables = self._build_network(name)
 
+    # 0.5, 0.2, 1.0
     self.value_loss = 0.5 * tf.reduce_sum(tf.square(self.target_v - tf.reshape(self.value,[-1])))
-    self.entropy_loss = 0.2 * tf.reduce_sum(self.policy * tf.log(self.policy))
+    self.entropy_loss = 1.0 * tf.reduce_sum(self.policy * tf.log(self.policy))
     self.policy_loss = 1.0 * tf.reduce_sum(-tf.log(self.action_est) * self.advantage)
     self.l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in self.model_variables]) 
     # self.loss = 0.5 * self.value_loss + self.policy_loss + 0.2 * self.entropy_loss

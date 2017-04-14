@@ -18,7 +18,6 @@ T_MAX = 5
 # NUM_WORKERS = multiprocessing.cpu_count()
 NUM_WORKERS = 4
 NUM_EPISODES = 1000
-ENTROPY_LOSS = 0.02
 
 
 N_H1 = 300

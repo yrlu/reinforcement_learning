@@ -41,10 +41,10 @@ STATE_SIZE = env.observation_space.shape[0] # 2
 ACTION_SIZE = env.action_space.n # 3
 LEARNING_RATE = 0.0001
 GAMMA = 0.99
-T_MAX = 200
+T_MAX = 5
 NUM_WORKERS = multiprocessing.cpu_count()
 # NUM_WORKERS = 4
-NUM_EPISODES = 500
+NUM_EPISODES = 20000
 MAX_STEPS = 10000
 
 
@@ -67,7 +67,7 @@ with tf.device('/{}:0'.format(DEVICE)):
       state_size=STATE_SIZE, action_size=ACTION_SIZE, 
       worker_name='worker_{}'.format(i), global_name='global', 
       lr=LEARNING_RATE, gamma=GAMMA, t_max=T_MAX, sess=sess, 
-      history=history, n_h1=N_H1, n_h2=N_H2))
+      history=history, n_h1=N_H1, n_h2=N_H2, logdir='mountaincar_logs4'))
 
   sess.run(tf.global_variables_initializer())
 
