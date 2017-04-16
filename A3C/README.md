@@ -10,10 +10,10 @@ The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
 ![A3C training](imgs/a3c_cartpole_el001.png "A3C training")
 
-The following graph shows the episode rewards (# workers: 4, entropy loss: 0.0)
+<!-- The following graph shows the episode rewards (# workers: 4, entropy loss: 0.0)
 
 ![A3C training](imgs/a3c_cartpole_el0.png "A3C training")
-
+ -->
 
 #### Acrobot-v1 result 
 
