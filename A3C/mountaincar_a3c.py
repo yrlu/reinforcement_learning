@@ -1,10 +1,8 @@
+import tensorflow as tf
 import gym
-import numpy as np
 import time
 import threading
-import multiprocessing
-import matplotlib.pyplot as plt
-import tensorflow as tf
+# import multiprocessing
 import argparse
 import ac_net
 import worker
@@ -62,21 +60,4 @@ with tf.device('/{}:0'.format(DEVICE)):
     t = threading.Thread(target=worker_work)
     t.start()
 
-while(len(history) < NUM_EPISODES*NUM_WORKERS * 0.9):
-  time.sleep(5)
-
-
-def plot_curve(history, smooth=10):
-  window = smooth
-  avg_reward = [np.mean(history[i*window:(i+1)*window]) for i in xrange(int(len(history)/window))]
-  f_reward = plt.figure(1)
-  plt.plot(np.linspace(0, len(history), len(avg_reward)), avg_reward)
-  plt.ylabel('Rewards')
-  f_reward.show()
-  print 'press enter to continue'
-  raw_input()
-
-
-
-plot_curve(history, 20)
 

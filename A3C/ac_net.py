@@ -28,7 +28,6 @@ class AC_Net(object):
     self.gradients = tf.gradients(self.loss, self.model_variables)
     if name != global_name:
       self.var_norms = tf.global_norm(self.model_variables)
-      # self.grads_global, self.grad_norms = tf.clip_by_global_norm(self.gradients, 40.0)
       global_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, global_name)
       self.apply_gradients = self.optimizer.apply_gradients(zip(self.gradients, global_variables))
 

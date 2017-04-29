@@ -47,7 +47,6 @@ class Worker(object):
       # 2) collect t_max steps (if terminated then i++)
       steps = []
       for _ in xrange(self.t_max):
-        # action = self.env.action_space.sample()
         action = self.local_model.get_action(cur_state, self.sess)
         next_state, reward, done, info = self.env.step(action)
         cum_reward += reward
@@ -101,7 +100,6 @@ class Worker(object):
                                               self.local_model.loss, 
                                               self.local_model.gradients, 
                                               self.local_model.apply_gradients, 
-                                              # self.local_model.grad_norms, 
                                               self.local_model.var_norms], 
                                               feed_dict)
 
@@ -115,7 +113,6 @@ class Worker(object):
       summary.value.add(tag='Losses/Value Loss', simple_value=float(v_l))
       summary.value.add(tag='Losses/Policy Loss', simple_value=float(p_l))
       summary.value.add(tag='Losses/Entropy', simple_value=float(e_l))
-      # summary.value.add(tag='Losses/Grad Norm', simple_value=float(g_n))
       summary.value.add(tag='Losses/Var Norm', simple_value=float(v_n))
       self.summary_writer.add_summary(summary, count)
       count += 1

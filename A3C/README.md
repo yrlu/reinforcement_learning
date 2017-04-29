@@ -8,6 +8,10 @@ Following paper: Asynchronous Methods for Deep Reinforcement Learning [(https://
 
 The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
+Tensorboard:
+
+`$ tensorboard --logdir=cartpole_logs/`
+
 ![A3C training](imgs/a3c_cartpole_el001.png "A3C training")
 
 <!-- The following graph shows the episode rewards (# workers: 4, entropy loss: 0.0)
