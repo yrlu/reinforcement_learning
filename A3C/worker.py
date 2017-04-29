@@ -1,22 +1,24 @@
-import tensorflow as tf
-import numpy as np
-import ac_net
+'''Worker class for A3C'''
 from collections import namedtuple
 import random
+import numpy as np
+import tensorflow as tf
+
+import ac_net
 import tf_utils
 
 MAX_STEPS = 10000
 
 
-Step = namedtuple('Step','cur_step action next_step reward done')
+Step = namedtuple('Step', 'cur_step action next_step reward done')
 
 
 class Worker(object):
+  '''Worker class for A3C'''
 
-
-  def __init__(self, env, state_size, action_size, 
-    worker_name, global_name, lr, gamma, t_max, sess, 
-    history, n_h1=400, n_h2=300, logdir='logs'):
+  def __init__(self, env, state_size, action_size,
+               worker_name, global_name, lr, gamma, t_max, sess,
+               history, n_h1=400, n_h2=300, logdir='logs'):
     self.env = env
     self.name = worker_name
     self.gamma = gamma
@@ -24,16 +26,14 @@ class Worker(object):
     self.t_max = t_max
     self.history = history
 
-    self.local_model = ac_net.AC_Net(state_size, action_size, lr, 
-              worker_name, n_h1=n_h1, n_h2=n_h2, global_name=global_name)
+    self.local_model = ac_net.AC_Net(state_size, action_size, lr,
+                                     worker_name, n_h1=n_h1, n_h2=n_h2, global_name=global_name)
     self.copy_to_local_op = tf_utils.update_target_graph(global_name, worker_name)
 
     self.summary_writer = tf.summary.FileWriter("{}/train_{}".format(logdir, worker_name))
 
-
   def _copy_to_local(self):
     self.sess.run(self.copy_to_local_op)
-
 
   def work(self, n_episodes):
     episode_i = 0
@@ -51,7 +51,13 @@ class Worker(object):
         next_state, reward, done, info = self.env.step(action)
         cum_reward += reward
         episode_len = episode_len + 1
-        steps.append(Step(cur_step=cur_state, action=action, next_step=next_state, reward=reward, done=done))
+        steps.append(
+            Step(
+                cur_step=cur_state,
+                action=action,
+                next_step=next_state,
+                reward=reward,
+                done=done))
         if done or episode_len >= MAX_STEPS:
           cur_state = self.env.reset()
           self.history.append(episode_len)
@@ -82,27 +88,26 @@ class Worker(object):
       cur_state_batch = [step.cur_step for step in steps]
       pred_v_batch = self.local_model.predict_value(cur_state_batch, self.sess)
       action_batch = [step.action for step in steps]
-      advantage_batch = [R_batch[i]-pred_v_batch[i] for i in xrange(len(steps))]
+      advantage_batch = [R_batch[i] - pred_v_batch[i] for i in xrange(len(steps))]
       # 4) compute the gradient and update the global model
       action_batch = np.reshape(action_batch, [-1])
       advantage_batch = np.reshape(advantage_batch, [-1])
       R_batch = np.reshape(R_batch, [-1])
       feed_dict = {
-        self.local_model.input_s: cur_state_batch,
-        self.local_model.input_a: action_batch,
-        self.local_model.advantage: advantage_batch,
-        self.local_model.target_v: R_batch,
+          self.local_model.input_s: cur_state_batch,
+          self.local_model.input_a: action_batch,
+          self.local_model.advantage: advantage_batch,
+          self.local_model.target_v: R_batch,
       }
       v_l, p_l, e_l, loss, _, _, v_n = self.sess.run(
-                                              [self.local_model.value_loss, 
-                                              self.local_model.policy_loss, 
-                                              self.local_model.entropy_loss, 
-                                              self.local_model.loss, 
-                                              self.local_model.gradients, 
-                                              self.local_model.apply_gradients, 
-                                              self.local_model.var_norms], 
-                                              feed_dict)
-
+          [self.local_model.value_loss,
+           self.local_model.policy_loss,
+           self.local_model.entropy_loss,
+           self.local_model.loss,
+           self.local_model.gradients,
+           self.local_model.apply_gradients,
+           self.local_model.var_norms],
+          feed_dict)
 
       mean_reward = np.mean([step.reward for step in steps])
       mean_value = np.mean(R_batch)
@@ -116,4 +121,3 @@ class Worker(object):
       summary.value.add(tag='Losses/Var Norm', simple_value=float(v_n))
       self.summary_writer.add_summary(summary, count)
       count += 1
-

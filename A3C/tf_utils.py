@@ -3,7 +3,7 @@ import tensorflow as tf
 import numpy as np
 
 
-def max_pool(x, k_sz=[2,2]):
+def max_pool(x, k_sz=[2, 2]):
   """max pooling layer wrapper
   Args
     x:      4d tensor [batch, height, width, channels]
@@ -11,7 +11,11 @@ def max_pool(x, k_sz=[2,2]):
   Returns
     a max pooling layer
   """
-  return tf.nn.max_pool(x, ksize=[1, k_sz[0], k_sz[1], 1], strides=[1, k_sz[0], k_sz[1], 1], padding='SAME')
+  return tf.nn.max_pool(
+      x, ksize=[
+          1, k_sz[0], k_sz[1], 1], strides=[
+          1, k_sz[0], k_sz[1], 1], padding='SAME')
+
 
 def conv2d(x, n_kernel, k_sz, stride=1):
   """convolutional layer with relu activation wrapper
@@ -29,8 +33,9 @@ def conv2d(x, n_kernel, k_sz, stride=1):
   # - padding can be 'VALID'(without padding) or 'SAME'(zero padding)
   #     - http://stackoverflow.com/questions/37674306/what-is-the-difference-between-same-and-valid-padding-in-tf-nn-max-pool-of-t
   conv = tf.nn.conv2d(x, W, strides=[1, stride, stride, 1], padding='SAME')
-  conv = tf.nn.bias_add(conv, b) # add bias term
-  return tf.nn.relu(conv) # rectified linear unit: https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
+  conv = tf.nn.bias_add(conv, b)  # add bias term
+  # rectified linear unit: https://en.wikipedia.org/wiki/Rectifier_(neural_networks)
+  return tf.nn.relu(conv)
 
 
 def fc(x, n_output, scope="fc", activation_fn=None, initializer=None):
@@ -46,7 +51,8 @@ def fc(x, n_output, scope="fc", activation_fn=None, initializer=None):
       b = tf.Variable(tf.random_normal([n_output]))
     else:
       W = tf.get_variable("W", shape=[int(x.get_shape()[1]), n_output], initializer=initializer)
-      b = tf.get_variable("b", shape=[n_output], initializer=tf.constant_initializer(.0, dtype=tf.float32))
+      b = tf.get_variable("b", shape=[n_output],
+                          initializer=tf.constant_initializer(.0, dtype=tf.float32))
     fc1 = tf.add(tf.matmul(x, W), b)
     if not activation_fn is None:
       fc1 = activation_fn(fc1)
@@ -59,20 +65,20 @@ def flatten(x):
     x:          4d tensor [batch, height, width, channels]
   Returns a flattened 2d tensor
   """
-  return tf.reshape(x, [-1, int(x.get_shape()[1]*x.get_shape()[2]*x.get_shape()[3])])
+  return tf.reshape(x, [-1, int(x.get_shape()[1] * x.get_shape()[2] * x.get_shape()[3])])
 
 
-def update_target_graph(from_scope,to_scope):
+def update_target_graph(from_scope, to_scope):
   from_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, from_scope)
   to_vars = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, to_scope)
 
   op_holder = []
-  for from_var,to_var in zip(from_vars,to_vars):
+  for from_var, to_var in zip(from_vars, to_vars):
       op_holder.append(to_var.assign(from_var))
   return op_holder
 
 
-#Used to initialize weights for policy and value output layers
+# Used to initialize weights for policy and value output layers
 def normalized_columns_initializer(std=1.0):
   def _initializer(shape, dtype=None, partition_info=None):
       out = np.random.randn(*shape).astype(np.float32)
