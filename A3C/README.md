@@ -25,7 +25,7 @@ The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
 #### MountainCar-v0 result
 
-`$ python mountaincar_a3c.py --device=cpu --episodes=20000 --workers=4 --log_dir=mc_logs`
+`$ python mountaincar_a3c.py --device=cpu --episodes=20000 --workers=8 --log_dir=mc_logs`
 
 The following graph shows the episode rewards (# workers: 8, entropy loss: 1.0, tmax=5)
 
