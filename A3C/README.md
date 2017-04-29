@@ -4,7 +4,7 @@ Following paper: Asynchronous Methods for Deep Reinforcement Learning [(https://
 
 #### Cartpole-v0 result 
 
-`> python cartpole_a3c.py`
+`$ python cartpole_a3c.py --device=cpu --episodes=1000 --workers=4 --log_dir=cartpole_logs`
 
 The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
@@ -17,7 +17,7 @@ The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
 #### Acrobot-v1 result 
 
-`> python acrobot_a3c.py`
+`$ python acrobot_a3c.py --device=cpu --episodes=500 --workers=4 --log_dir=acrobot_logs`
 
 The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
@@ -25,7 +25,7 @@ The following graph shows the episode rewards (# workers: 4, entropy loss: 0.2)
 
 #### MountainCar-v0 result
 
-`> python mountaincar_a3c.py`
+`$ python mountaincar_a3c.py --device=cpu --episodes=20000 --workers=4 --log_dir=mc_logs`
 
 The following graph shows the episode rewards (# workers: 8, entropy loss: 1.0, tmax=5)
 

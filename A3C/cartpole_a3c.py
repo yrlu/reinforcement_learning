@@ -1,5 +1,6 @@
 import ac_net
 import worker
+import argparse
 import tensorflow as tf
 import gym
 import numpy as np
@@ -8,16 +9,26 @@ import threading
 import multiprocessing
 import matplotlib.pyplot as plt
 
+parser = argparse.ArgumentParser(description=None)
+parser.add_argument('-d', '--device', default='cpu', type=str, help='choose device: cpu/gpu')
+parser.add_argument('-e', '--episodes', default=1000, type=int, help='number of episodes')
+parser.add_argument('-w', '--workers', default=4, type=int, help='number of workers')
+parser.add_argument('-l', '--log_dir', default='cartpole_logs', type=str, help='log directory')
+args = parser.parse_args()
+print(args)
 
-DEVICE = 'cpu'
+
+
+DEVICE = args.device
 STATE_SIZE = 4
 ACTION_SIZE = 2
 LEARNING_RATE = 0.0001
 GAMMA = 0.99
 T_MAX = 5
 # NUM_WORKERS = multiprocessing.cpu_count()
-NUM_WORKERS = 4
-NUM_EPISODES = 1000
+NUM_WORKERS = args.workers
+NUM_EPISODES = args.episodes
+LOG_DIR = args.log_dir
 
 
 N_H1 = 300
@@ -38,7 +49,7 @@ with tf.device('/{}:0'.format(DEVICE)):
       state_size=STATE_SIZE, action_size=ACTION_SIZE, 
       worker_name='worker_{}'.format(i), global_name='global', 
       lr=LEARNING_RATE, gamma=GAMMA, t_max=T_MAX, sess=sess, 
-      history=history, n_h1=N_H1, n_h2=N_H2, logdir='cartpole_logs'))
+      history=history, n_h1=N_H1, n_h2=N_H2, logdir=LOG_DIR))
 
   sess.run(tf.global_variables_initializer())
 
