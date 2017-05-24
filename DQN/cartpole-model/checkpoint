@@ -1,2 +1,0 @@
-model_checkpoint_path: "/tmp/cartpole-experiment-0/model"
-all_model_checkpoint_paths: "/tmp/cartpole-experiment-0/model"
