@@ -15,7 +15,7 @@ PARSER = argparse.ArgumentParser(description=None)
 PARSER.add_argument('-d', '--device', default='cpu', type=str, help='choose device: cpu/gpu')
 PARSER.add_argument('-e', '--episodes', default=150, type=int, help='number of episodes')
 PARSER.add_argument('-m', '--model_dir', default='cartpole-model', type=str, help='model directory (no slash at the end)')
-PARSER.add_argument('-t', '--train', default=False, type=str, help='train for [number of episodes] IF MODEL EXISTED')
+PARSER.add_argument('-t', '--train', default=False, type=str, help='train for [number of episodes] IF MODEL EXISTS')
 ARGS = PARSER.parse_args()
 print ARGS
 
