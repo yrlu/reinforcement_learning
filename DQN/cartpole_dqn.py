@@ -1,3 +1,4 @@
+import argparse
 import gym
 import numpy as np
 import sys
@@ -10,8 +11,17 @@ import os
 import pickle
 
 
-DEVICE = sys.argv[1]
-NUM_EPISODES = int(sys.argv[2])
+PARSER = argparse.ArgumentParser(description=None)
+PARSER.add_argument('-d', '--device', default='cpu', type=str, help='choose device: cpu/gpu')
+PARSER.add_argument('-e', '--episodes', default=150, type=int, help='number of episodes')
+PARSER.add_argument('-m', '--model_dir', default='cartpole-model', type=str, help='model directory (no slash at the end)')
+PARSER.add_argument('-t', '--train', default=False, type=str, help='train for [number of episodes] IF MODEL EXISTED')
+ARGS = PARSER.parse_args()
+print ARGS
+
+
+DEVICE = ARGS.device
+NUM_EPISODES = ARGS.episodes
 ACTIONS = {0:0, 1:1}
 MAX_STEPS = 300
 FAIL_PENALTY = 0
@@ -26,9 +36,11 @@ START_MEM = 1e2
 STATE_SIZE = [4]
 EPOCH_SIZE = 100
 
-MODEL_DIR = 'cartpole-model'
-MODEL_PATH = 'cartpole-model/model'
-MEMORY_PATH = 'cartpole-model/memory.p'
+TRAIN = ARGS.train
+
+MODEL_DIR = ARGS.model_dir
+MODEL_PATH = MODEL_DIR + '/model'
+MEMORY_PATH = MODEL_DIR + '/memory.p'
 
 
 def train(agent, exprep, env):
@@ -63,13 +75,31 @@ with tf.device('/{}:0'.format(DEVICE)):
   agent = dqn.DQNAgent(session=sess, epsilon=EPSILON, epsilon_anneal=EPSILON_DECAY, end_epsilon=END_EPSILON, 
         lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, state_size=4, 
         action_size=len(ACTIONS), n_hidden_1=10, n_hidden_2=10)
+
 sess.run(tf.initialize_all_variables())
 saver = tf.train.Saver()
 if os.path.isdir(MODEL_DIR):
   saver.restore(sess, MODEL_PATH)
-  # exprep = pickle.load(open(MEMORY_PATH,"rb"))
   agent.epsilon = agent.end_epsilon
   print 'restored model'
+  if TRAIN:
+    exprep = pickle.load(open(MEMORY_PATH,"rb"))
+    history = [e_length for e_length in train(agent, exprep, env)]
+    saver.save(sess, MODEL_PATH)
+    pickle.dump(exprep, open(MEMORY_PATH, "wb"))
+    print 'saved model'
+    # plot
+    import matplotlib.pyplot as plt
+    avg_reward = [np.mean(history[i*10:(i+1)*10]) for i in xrange(int(len(history)/10))]
+    f_reward = plt.figure(1)
+    plt.plot(np.linspace(0, len(history), len(avg_reward)), avg_reward)
+    plt.ylabel('Episode length')
+    plt.xlabel('Training episodes')
+    f_reward.show()
+    print 'press enter to continue'
+    raw_input()
+    plt.close()
+
 else:
   os.makedirs(MODEL_DIR)
   history = [e_length for e_length in train(agent, exprep, env)]

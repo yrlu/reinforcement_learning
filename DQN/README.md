@@ -2,7 +2,7 @@
 
 #### Run Code
 
-`$ python cartpole_dqn.py cpu 150`
+`$ python cartpole_dqn.py --device=cpu --episodes=150 --model_dir=cartpole-model`
 
 #### Cartpole-v0 Result
 
