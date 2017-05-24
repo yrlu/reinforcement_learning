@@ -6,6 +6,8 @@ import dqn
 import exp_replay
 from exp_replay import Step
 import matplotlib.pyplot as plt
+import os
+import pickle
 
 
 DEVICE = sys.argv[1]
@@ -23,6 +25,10 @@ MEM_SIZE = 1e4
 START_MEM = 1e2
 STATE_SIZE = [4]
 EPOCH_SIZE = 100
+
+MODEL_DIR = 'cartpole-model'
+MODEL_PATH = 'cartpole-model/model'
+MEMORY_PATH = 'cartpole-model/memory.p'
 
 
 def train(agent, exprep, env):
@@ -58,20 +64,29 @@ with tf.device('/{}:0'.format(DEVICE)):
         lr=LEARNING_RATE, gamma=DISCOUNT_FACTOR, state_size=4, 
         action_size=len(ACTIONS), n_hidden_1=10, n_hidden_2=10)
 sess.run(tf.initialize_all_variables())
-history = [e_length for e_length in train(agent, exprep, env)]
-
-
-# plot
-import matplotlib.pyplot as plt
-avg_reward = [np.mean(history[i*10:(i+1)*10]) for i in xrange(int(len(history)/10))]
-f_reward = plt.figure(1)
-plt.plot(np.linspace(0, len(history), len(avg_reward)), avg_reward)
-plt.ylabel('Episode length')
-plt.xlabel('Training episodes')
-f_reward.show()
-print 'press enter to continue'
-raw_input()
-plt.close()
+saver = tf.train.Saver()
+if os.path.isdir(MODEL_DIR):
+  saver.restore(sess, MODEL_PATH)
+  # exprep = pickle.load(open(MEMORY_PATH,"rb"))
+  agent.epsilon = agent.end_epsilon
+  print 'restored model'
+else:
+  os.makedirs(MODEL_DIR)
+  history = [e_length for e_length in train(agent, exprep, env)]
+  saver.save(sess, MODEL_PATH)
+  pickle.dump(exprep, open(MEMORY_PATH, "wb"))
+  print 'saved model'
+  # plot
+  import matplotlib.pyplot as plt
+  avg_reward = [np.mean(history[i*10:(i+1)*10]) for i in xrange(int(len(history)/10))]
+  f_reward = plt.figure(1)
+  plt.plot(np.linspace(0, len(history), len(avg_reward)), avg_reward)
+  plt.ylabel('Episode length')
+  plt.xlabel('Training episodes')
+  f_reward.show()
+  print 'press enter to continue'
+  raw_input()
+  plt.close()
 
 
 # Display:
@@ -83,7 +98,7 @@ while True:
   while not done:
     env.render()
     t = t+1
-    action = agent.get_action(cur_state)
+    action = agent.get_optimal_action(cur_state)
     next_state, reward, done, info = env.step(action)
     cur_state = next_state
     if done:
