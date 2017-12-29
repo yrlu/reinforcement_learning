@@ -30,7 +30,7 @@ class ActorNetwork(object):
 
     self.action_gradients = tf.placeholder(tf.float32, [None, self.action_size])
     self.actor_gradients = tf.gradients(self.action_values, self.actor_variables, -self.action_gradients)
-    self.update_target_op = [self.actor_variables_target[i].assign(tf.mul(self.actor_variables[i], self.tau) + tf.mul(self.actor_variables_target[i], 1 - self.tau)) 
+    self.update_target_op = [self.actor_variables_target[i].assign(tf.multiply(self.actor_variables[i], self.tau) + tf.multiply(self.actor_variables_target[i], 1 - self.tau)) 
                               for i in range(len(self.actor_variables))]
     self.optimize = self.optimizer.apply_gradients(zip(self.actor_gradients, self.actor_variables))
 

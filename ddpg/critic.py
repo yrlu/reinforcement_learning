@@ -31,7 +31,7 @@ class CriticNetwork(object):
     self.l2_loss = tf.add_n([tf.nn.l2_loss(v) for v in self.critic_variables])
     self.loss = tf.reduce_mean(tf.square(self.target - self.q_value)) + 0.01*self.l2_loss
     self.optimize = self.optimizer.minimize(self.loss)
-    self.update_target_op = [self.critic_variables_target[i].assign(tf.mul(self.critic_variables[i], self.tau) + tf.mul(self.critic_variables_target[i], 1 - self.tau)) for i in range(len(self.critic_variables))]
+    self.update_target_op = [self.critic_variables_target[i].assign(tf.multiply(self.critic_variables[i], self.tau) + tf.multiply(self.critic_variables_target[i], 1 - self.tau)) for i in range(len(self.critic_variables))]
     self.action_gradients = tf.gradients(self.q_value, self.action)
 
 
@@ -41,7 +41,8 @@ class CriticNetwork(object):
     with tf.variable_scope(name):
       layer_1 = tf_utils.fc(input_s, self.n_h1, scope="fc1", activation_fn=tf.nn.relu, 
         initializer=tf.contrib.layers.variance_scaling_initializer(mode="FAN_IN"))
-      layer_2 = tf_utils.fc(tf.concat(1, (layer_1, action)), self.n_h2, scope="fc2", activation_fn=tf.nn.relu,
+      # tf.concat((layer_1, action), 1)
+      layer_2 = tf_utils.fc(tf.concat((layer_1, action), 1), self.n_h2, scope="fc2", activation_fn=tf.nn.relu,
         initializer=tf.contrib.layers.variance_scaling_initializer(mode="FAN_IN"))
       q_value = tf_utils.fc(layer_2, 1, scope="out", initializer=tf.random_uniform_initializer(-3e-3, 3e-3))
     critic_variables = tf.get_collection(tf.GraphKeys.TRAINABLE_VARIABLES, scope=name)
