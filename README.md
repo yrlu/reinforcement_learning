@@ -43,20 +43,6 @@ Implementations of selected reinforcement learning algorithms with tensorflow.
 - [Value iteration](DP/value_iteration.py)
 - [Policy iteration - policy evaluation & policy improvement](DP/policy_iteration.py)
 
-### OpenAI Gym Examples
-
-- Cartpole-v0
-    - [`TD/cartpole_qlearning.py`](TD/cartpole_qlearning.py): [solved cartpole-v0 after 1598 episodes of training](https://gym.openai.com/evaluations/eval_qXAq3TZxS6WBnMci1xJ4XQ#reproducibility)
-    - [`DQN/cartpole_dqn.py`](DQN/): [solved cartpole-v0 after 75 episodes of training](https://gym.openai.com/evaluations/eval_ry9ynv6ZQQm14FJdT7dvQ)
-    - [`policy_gradient/cartpole_policy_gradient.py`](policy_gradient/): REINFORCE [solved cartpole-v0 after 632 episodes](https://gym.openai.com/evaluations/eval_0qE4YdUoQMi60hslLEGg)
-
-<!-- - Breakout-v0 (refactoring.., code coming soon)
-
-<img src="imgs/breakout10.gif" alt="breakout" width="200">
- -->
-- Pendulum-v0
-    - [`ddpg/pendulum_ddpg.py`](ddpg/): [Best 100-episode average reward was -148.19 ± 9.14](https://gym.openai.com/evaluations/eval_9kvdhHSCTMqU8mYTaPWFrQ)
-
 ### Environments
 
 - `envs/gridworld.py`: minimium gridworld implementation for testings
