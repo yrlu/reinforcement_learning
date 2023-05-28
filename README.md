@@ -1,6 +1,6 @@
-## Implementations of Reinforcement Learning Algorithms in Python
+## Implementation of Reinforcement Learning Algorithms in Python
 
-Implementations of selected reinforcement learning algorithms with tensorflow.
+Implementation of selected reinforcement learning algorithms with tensorflow.
 <!-- | Implemented Algorthms   |      Working Examples
 |-----------------|:--------------|
 | *Policy Gradient Methods* |   |
